@@ -49,6 +49,8 @@ public class PlayerScript : MonoBehaviour
 	private bool moveBackward = true;
 	private bool moveForward = false;
 	private bool moving = false;
+	
+	private PickupCounterScript coinsCounter;
 
 	void Start() {
 
@@ -59,6 +61,9 @@ public class PlayerScript : MonoBehaviour
 		cachedTransform = transform;
 		//Save starting position
 		startingPos = cachedTransform.position;
+		
+		GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
+		coinsCounter = scripts.GetComponent<PickupCounterScript>();
 
 
 		
@@ -497,6 +502,9 @@ public class PlayerScript : MonoBehaviour
 
 	public void IncreaseCoins(int value) {
 
+      if(coinsCounter!=null) {
+        coinsCounter.AddPickup();
+      }
 	}
 
 	public bool IsMovingBackward() {

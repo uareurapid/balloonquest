@@ -18,6 +18,8 @@ public class EnemyScript : MonoBehaviour
 	public bool isBoss = false;
 
 	private GameObject scripts;
+	
+	private ParticleSystem particles;
 
 	
 	void Awake()
@@ -35,6 +37,7 @@ public class EnemyScript : MonoBehaviour
 	  //isBloody = gameObject.tag!=null && gameObject.tag.Equals("Bloody");
 	  //scripts = GameObject.FindGameObjectWithTag("Scripts");
 
+       particles = GetComponentInChildren<ParticleSystem>();
 	}
 
 	void Update()
@@ -81,19 +84,24 @@ public class EnemyScript : MonoBehaviour
 
 	void OnTriggerEnter2D(Collider2D collision)
 	{
-	  PlayerScript player = collision.gameObject.GetComponent<PlayerScript>();
-	  if(player!=null) {
-	    player.KillPlayer();
-	  }
+	  PerformUpdate(collision.gameObject);
 	}
 
 	void OnCollisionEnter2D(Collision2D collision)
 	{
 
-	  PlayerScript player = collision.gameObject.GetComponent<PlayerScript>();
-	  if(player!=null) {
-	    player.KillPlayer();
-	  }
+	  PerformUpdate(collision.gameObject);
+	}
+	
+	void PerformUpdate(GameObject collisionObject) {
+		PlayerScript player = collisionObject.GetComponent<PlayerScript>();
+		if(player!=null) {
+		
+		    if(particles!=null && !particles.isPlaying) {
+		      particles.Play();
+		    }
+			player.KillPlayer();
+		}
 	}
 	//alows spawning again
 	void UnlockSpawning() {
