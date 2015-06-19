@@ -12,8 +12,7 @@ public class SoundEffectsHelper : MonoBehaviour
 	/// </summary>
 	private static SoundEffectsHelper instance;
 
-	public AudioClip explosionSound;
-	public AudioClip landSafeSound;
+	public AudioClip pickupCoinSound;
 	public AudioClip hitDeadSound;
 	public AudioClip waterSplashSound;
 	public AudioClip redAlertSound;
@@ -42,9 +41,9 @@ public class SoundEffectsHelper : MonoBehaviour
 		
 	}
 
-	public void PlayExplosionSound()
+	public void PlayPickupCoinSound()
 	{
-		MakeSound(explosionSound);
+		MakeSound(pickupCoinSound);
 	}
 
 	public void PlayHitDeadSound()
@@ -52,10 +51,6 @@ public class SoundEffectsHelper : MonoBehaviour
 		MakeSound(hitDeadSound);
 	}
 
-	public void PlayLandSafeSound()
-	{
-		MakeSound(landSafeSound);
-	}
 	
 	public void PlayWaterSplashSound()
 	{

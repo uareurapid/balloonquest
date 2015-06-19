@@ -3,10 +3,13 @@ using System.Collections;
 
 public class PickupCoinScript : MonoBehaviour {
 
-	AudioSource source;
+	SoundEffectsHelper sfx;
 	// Use this for initialization
 	void Start () {
-	  source =  gameObject.GetComponent<AudioSource>();
+	  GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
+	  if(scripts!=null) {
+	    sfx = scripts.GetComponent<SoundEffectsHelper>();
+	  }
 	}
 	
 	// Update is called once per frame
@@ -30,8 +33,8 @@ public class PickupCoinScript : MonoBehaviour {
    
 		PlayerScript player = collisionObject.GetComponent<PlayerScript>();
 		if(player!=null) {
-			if(source!=null && !source.isPlaying) {
-				source.Play();
+			if(sfx!=null) {
+				sfx.PlayPickupCoinSound();
 			}
 			player.IncreaseCoins(1);
 			Destroy(gameObject);
