@@ -122,12 +122,6 @@ public class GameControllerScript : MonoBehaviour {
 	Texture2D leaderBoardTexture;
 
 
-	//private SocialAPI socialAPIInstance;
-	private	bool buyedExtraLifes = false;
-	private bool buyedExtraTime = false;
-	private bool buyedExtraSpeed = false;
-	private bool buyedInfiniteLifes = false;
-
 	private GameObject[] paralaxLevels;
 	void Awake()
 	{
@@ -146,19 +140,19 @@ public class GameControllerScript : MonoBehaviour {
 		GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
 		if(scripts!=null) {
 			resolutionHelper = scripts.GetComponent<GUIResolutionHelper>();
-			translationManager = scripts.GetComponent<TextLocalizationManager>();
+			//translationManager = scripts.GetComponent<TextLocalizationManager>();
 		}
 		else {
 			resolutionHelper = GUIResolutionHelper.Instance;
 			//handle translation language
-		    translationManager = TextLocalizationManager.Instance;
+		    //translationManager = TextLocalizationManager.Instance;
 		
 		}
 		screenWidth = resolutionHelper.screenWidth;
 		screenHeight = resolutionHelper.screenHeight;
 				
 		//translations
-		translationManager.LoadSystemLanguage(Application.systemLanguage);
+		//translationManager.LoadSystemLanguage(Application.systemLanguage);
 		
 		InitPlayer();
 
@@ -166,11 +160,7 @@ public class GameControllerScript : MonoBehaviour {
 		//get a reference to the object
 		//socialAPIInstance = SocialAPI.Instance;
 	  
-	  	 
-	  	//set the score key pref, if not set yet
 
-
-		openedPlatform = false;
 		
 		showUnlockLevel = false;
 		isGameOver = true;
@@ -180,7 +170,7 @@ public class GameControllerScript : MonoBehaviour {
 		isRollingFinalCredits = false;
 
 		//we need to do this before we do the time math, so we can update in case of an existing in app purchase
-		CheckInAppPurchases();
+		//CheckInAppPurchases();
 
 
 		//seconds to display
@@ -206,7 +196,6 @@ public class GameControllerScript : MonoBehaviour {
 		//??
 		
 		appliedHurryUpFactor = false;
-		hasMovedSpikesLine = false;
 		
 
 		isGameOver = true;
@@ -216,7 +205,7 @@ public class GameControllerScript : MonoBehaviour {
 			lastHowToTime = initialHowToTime;
 		}
 
-		paralaxLevels = GameObject.FindGameObjectsWithTag("Scroller");
+		//paralaxLevels = GameObject.FindGameObjectsWithTag("Scroller");
 		
 	}
 
@@ -468,7 +457,6 @@ public class GameControllerScript : MonoBehaviour {
 	public void CompletedGame() {
 	  isGameComplete = true;
 	  //disable camera follow
-
 	  ShowNextScreen();
 	}
 	
@@ -684,8 +672,8 @@ public class GameControllerScript : MonoBehaviour {
 
 		    if(Event.current.type==EventType.Repaint && !isGameOver) {
 
-			 	DrawText(GetTranslationKey(GameConstants.MSG_LEVEL) 
-						+ " " + currentLevel, messagesFontSizeSmaller +10, 20, 10,200,50);
+			 	//DrawText(GetTranslationKey(GameConstants.MSG_LEVEL) 
+					//	+ " " + currentLevel, messagesFontSizeSmaller +10, 20, 10,200,50);
 	
 				if(elapsedMissionSeconds>=1) {
 					  DrawText(elapsedMissionSeconds +" meters!"  , messagesFontSizeSmaller +10, 280, 10,200,50);
@@ -720,14 +708,14 @@ public class GameControllerScript : MonoBehaviour {
 
 					if(isGamePaused) {
 					//if not running
-					  // GUI.DrawTexture(pausePlayRect, playIcon);
+					   GUI.DrawTexture(pausePlayRect, playIcon);
 					 
 					}
 					//game is not paused
 				    //draw pause icon
 				    else {
 						
-						//GUI.DrawTexture(pausePlayRect, pauseIcon);
+						GUI.DrawTexture(pausePlayRect, pauseIcon);
 					}
 
 				/*backRect = new Rect(60 ,height-160,64,64);
@@ -837,7 +825,7 @@ public class GameControllerScript : MonoBehaviour {
 							ResumeGame();
 						}
 			     } 
-			     else if(backRect.Contains(Event.current.mousePosition)) {
+			     /*else if(backRect.Contains(Event.current.mousePosition)) {
 					EnableLevelsScroll();
 			        player.MoveBackward();
 			        ScrollLevelsForward();
@@ -853,7 +841,7 @@ public class GameControllerScript : MonoBehaviour {
 			     }
 			     else {
 			       DisableLevelsScroll();
-			     }
+			     }*/
 			  }
 			      
 			}
