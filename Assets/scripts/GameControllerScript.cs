@@ -78,7 +78,7 @@ public class GameControllerScript : MonoBehaviour {
 
 	//display time
 
-	private int elapsedMissionSeconds = 0;
+	private int elapsedMissionSeconds = 5000;
 	
 	//show in app for level xxx?
 	private bool showUnlockLevel = true;
@@ -174,7 +174,7 @@ public class GameControllerScript : MonoBehaviour {
 
 
 		//seconds to display
-	    elapsedMissionSeconds = 0;
+	    elapsedMissionSeconds = 5000;
 
 		CheckPause();
 
@@ -283,7 +283,7 @@ public class GameControllerScript : MonoBehaviour {
 
 		if(!isGamePaused && player!=null && player.IsPlayerAlive()) {
 
-		  elapsedMissionSeconds+=1;
+		  elapsedMissionSeconds-=1;
 													
 		}//if !gamePaused
 		
@@ -400,11 +400,11 @@ public class GameControllerScript : MonoBehaviour {
 	}
 
 	private AudioSource GetGameMusic() {
-		GameObject music = GameObject.FindGameObjectWithTag("GameMusic");
+		/*GameObject music = GameObject.FindGameObjectWithTag("GameMusic");
 		if(music!=null) {
 			AudioSource source = music.GetComponentInChildren<AudioSource>();
 			return source;
-		}
+		}*/
 	    return null;
 	}
 
@@ -703,7 +703,7 @@ public class GameControllerScript : MonoBehaviour {
 					}
 
 
-					pausePlayRect = new Rect(width-60 ,15,48,48);
+					pausePlayRect = new Rect(width-60 ,15,64,64);
 
 
 					if(isGamePaused) {
