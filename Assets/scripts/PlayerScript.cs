@@ -49,6 +49,7 @@ public class PlayerScript : MonoBehaviour
 	private bool moveBackward = true;
 	private bool moveForward = false;
 	private bool moving = false;
+	private bool canMove = true;
 	
 	private PickupCounterScript coinsCounter;
 
@@ -102,6 +103,13 @@ public class PlayerScript : MonoBehaviour
 		  }
 		}
 	}*/
+
+	public void EnableGravityScale() {
+		Rigidbody2D rig = GetComponent<Rigidbody2D>();
+		if(rig!=null) {
+			rig.gravityScale =1.0f;
+		}
+	}
 
 	void CheckInAppPurchases() {
 	   //infinite lifes
@@ -275,7 +283,7 @@ public class PlayerScript : MonoBehaviour
 					moving = false;
 				}
 				
-				if(moving) {
+				if(moving && canMove) {
 					// The Speed animator parameter is set to the absolute value of the horizontal input.
 					//anim.SetFloat("Speed", Mathf.Abs(h));
 					
@@ -307,7 +315,7 @@ public class PlayerScript : MonoBehaviour
 				//anim.SetFloat("Speed", Mathf.Abs(h));
 				
 				// If the player is changing direction (h has a different sign to velocity.x) or hasn't reached maxSpeed yet...
-				if(moving) {
+				if(moving && canMove) {
 
 				    float speed = moveForward ? moveSpeed : -moveSpeed;
 				    
@@ -492,6 +500,10 @@ public class PlayerScript : MonoBehaviour
 
 	}
 
+	//disable player movement
+	public void DisableMovement() {
+		canMove = false;
+	}
 	public void PlayerStationary() {
 
 	}
