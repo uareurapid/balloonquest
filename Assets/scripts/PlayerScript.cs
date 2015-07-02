@@ -22,6 +22,12 @@ public class PlayerScript : MonoBehaviour
 	private Rect failSafeRect;
 	public bool failSafeUsed = false;
 
+	public Sprite defaultBalloon;
+	public Sprite balloonOne;
+	public Sprite balloonTwo;
+	public Sprite balloonThree;
+	public Sprite balloonFour;
+
 	//this is needed for the pickup speed
 	//the jelly must inherit player speed
 	//at every new level the value is reset to deafut speed (1)
@@ -164,8 +170,8 @@ public class PlayerScript : MonoBehaviour
 		return	translationManager.GetText(key);
 	}
 
-	public void KillPlayer() {
-	  HandleLooseAllLifes();
+	public void KillPlayer(bool onlyBurstBalloon) {
+	  HandleLooseAllLifes(onlyBurstBalloon);
 	}
 	
 	GUIStyle BuildSmallerLabelStyle() {
@@ -238,7 +244,7 @@ public class PlayerScript : MonoBehaviour
 		
 
 		if(playerHealth.hitPoints==0) {
-		  HandleLooseAllLifes();
+		  HandleLooseAllLifes(false);
 		}
 
 		var dist = (transform.position - Camera.main.transform.position).z;
@@ -457,13 +463,21 @@ public class PlayerScript : MonoBehaviour
 	
 	
 	//when player dies, we save the score and end the game
-	public void HandleLooseAllLifes() {
+	public void HandleLooseAllLifes(bool onlyBurstBalloon) {
 		
 		isDead = true;
 		playerHealth.hitPoints=0;
 		//set the score key pref
 		//PlayerPrefs.SetInt("HighScore",scoreScript.score);
-		Destroy(gameObject);
+
+		if (onlyBurstBalloon)
+			BurstBallon ();
+		else {
+			BurstBallon();
+			Destroy(gameObject);
+		}
+
+
 	}
 	
 	public bool IsPlayerAlive() {
@@ -525,6 +539,17 @@ public class PlayerScript : MonoBehaviour
 
 	public bool IsMovingForward() {
 	 return true;
+	}
+
+	//disables balloon
+	public void BurstBallon() {
+		//TODO play effects/sound
+
+		//disable colliders and renderers
+		gameObject.GetComponent<SpriteRenderer> ().enabled = false;
+		gameObject.GetComponent<PolygonCollider2D> ().enabled = false;
+		//make him fall to the ground
+		EnableGravityScale ();
 	}
 }
 

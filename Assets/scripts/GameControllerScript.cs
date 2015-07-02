@@ -78,7 +78,7 @@ public class GameControllerScript : MonoBehaviour {
 
 	//display time
 
-	private int elapsedMissionSeconds = 5000;
+	private int elapsedMissionMeters = 1000;
 	
 	//show in app for level xxx?
 	private bool showUnlockLevel = true;
@@ -174,7 +174,7 @@ public class GameControllerScript : MonoBehaviour {
 
 
 		//seconds to display
-	    elapsedMissionSeconds = 5000;
+	    elapsedMissionMeters = 5000;
 
 		CheckPause();
 
@@ -283,7 +283,7 @@ public class GameControllerScript : MonoBehaviour {
 
 		if(!isGamePaused && player!=null && player.IsPlayerAlive()) {
 
-		  elapsedMissionSeconds-=1;
+		  elapsedMissionMeters-=1;
 													
 		}//if !gamePaused
 		
@@ -296,7 +296,7 @@ public class GameControllerScript : MonoBehaviour {
 	public void	IncreaseTimeSecondsBy(int seconds) {
 	//do we overlap the min?
 		
-		elapsedMissionSeconds+=seconds;
+		elapsedMissionMeters+=seconds;
 
 	  
 	}
@@ -675,8 +675,8 @@ public class GameControllerScript : MonoBehaviour {
 			 	//DrawText(GetTranslationKey(GameConstants.MSG_LEVEL) 
 					//	+ " " + currentLevel, messagesFontSizeSmaller +10, 20, 10,200,50);
 	
-				if(elapsedMissionSeconds>=1) {
-					  DrawText(elapsedMissionSeconds +" meters!"  , messagesFontSizeSmaller +10, 280, 10,200,50);
+				if(elapsedMissionMeters>=1) {
+					  DrawText(elapsedMissionMeters +" meters!"  , messagesFontSizeSmaller +10, 280, 10,200,50);
 					
 				}
 
@@ -703,7 +703,7 @@ public class GameControllerScript : MonoBehaviour {
 					}
 
 
-					pausePlayRect = new Rect(width-60 ,15,64,64);
+					pausePlayRect = new Rect(width-160 ,15,128,64);
 
 
 					if(isGamePaused) {

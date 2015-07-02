@@ -7,7 +7,7 @@ public class SelectStageScene : MonoBehaviour {
 	public Texture2D        screenTexture;
 	
 	private float           minSwipeDistance        = 14;
-	private float           maxSwipeTime            = 10;
+	//private float           maxSwipeTime            = 10;
 	private float           startTime;
 	
 	private Vector2         startPos;
@@ -25,6 +25,13 @@ public class SelectStageScene : MonoBehaviour {
 	private float           fadeSpeed               = 1f; // How fast the texture fades after swipe.
 
 	public bool isMobilePlatform = true;
+
+	private float fingerStartTime  = 0.0f;
+	private Vector2 fingerStartPos = Vector2.zero;
+	
+	private bool isSwipe = false;
+	private float minSwipeDist  = 50.0f;
+	private float maxSwipeTime = 0.5f;
 	
 	public void Update() {
 
@@ -45,62 +52,113 @@ public class SelectStageScene : MonoBehaviour {
 		else {
 		
 		
-			if (swipeDirection == SelectStageScene.SWIPE_NONE) {
-				// To fade back in after swipe (just to complete the loop)
-				if (fadeAlpha > 0) {
-					fadeAlpha -= Time.deltaTime * fadeSpeed;
-				}
-				// Getting input
-				if (Input.touchCount > 0) {
-					Touch touch = Input.touches [0];
-					switch (touch.phase) {
-					case TouchPhase.Began:
-						startPos = touch.position;
-						startTime = Time.time;
+			float gestureTime;
+			float gestureDist;
+			
+			if (Input.touchCount > 0){
+				
+				foreach (Touch touch in Input.touches)
+				{
+					switch (touch.phase)
+					{
+					case TouchPhase.Began :
+						/* this is a new touch */
+						isSwipe = true;
+						fingerStartTime = Time.time;
+						fingerStartPos = touch.position;
 						break;
-					case TouchPhase.Moved:
-						currentPos = touch.position;
+						
+					case TouchPhase.Canceled :
+						/* The touch is being canceled */
+						isSwipe = false;
 						break;
-					case TouchPhase.Ended:
-						screenTextureOffset = currentPos - startPos;
-					
-					// By using swipe distance as a magnitude here, regardless of x or y axis, we'll be choosing a swipe direction.
-					// If we were only interested in X axis we would use screenTextureOffset.x instead of swipeDistance
-						if (Time.time - startTime < maxSwipeTime && (currentPos - startPos).magnitude > minSwipeDistance) {
-							// Find if we've moved more on the x-axis or y-axis.
-							if (Mathf.Abs (screenTextureOffset.x) > Mathf.Abs (screenTextureOffset.y)) {
-								// x-axis
-								if (screenTextureOffset.x > 0) {
-									swipeDirection = SelectStageScene.SWIPE_RIGHT;
+						
+					case TouchPhase.Moved :
+						/* The touch is being moved */
+						isSwipe = true;
+						
+						gestureTime = Time.time - fingerStartTime;
+						gestureDist = (touch.position - fingerStartPos).magnitude;
+						
+						if (isSwipe && gestureTime < maxSwipeTime && gestureDist > minSwipeDist){
+							Vector2 direction = touch.position - fingerStartPos;
+							Vector2 swipeType = Vector2.zero;
+							
+							if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y)){
+								// the swipe is horizontal:
+								swipeType = Vector2.right * Mathf.Sign(direction.x);
+							}else{
+								// the swipe is vertical:
+								swipeType = Vector2.up * Mathf.Sign(direction.y);
+							}
+							
+							if(swipeType.x != 0.0f){
+								if(swipeType.x > 0.0f){
+									// MOVE RIGHT
+									Debug.Log("GO RIGHT");
 									GetComponent<CameraZoomInOutScript> ().MoveToNextLevel ();
-								} else {
-									swipeDirection = SelectStageScene.SWIPE_LEFT;
+								}else{
+									// MOVE LEFT
+									Debug.Log("GO LEFT");
 									GetComponent<CameraZoomInOutScript> ().MoveToPreviousLevel ();
 								}
-							} /*else {
-							// y-axis
-							if ( screenTextureOffset.y > 0 ) {
-								swipeDirection = SelectStageScene.SWIPE_UP;
-							} else {
-								swipeDirection = SelectStageScene.SWIPE_DOWN;
 							}
-						}*/
-						} else {
-							swipeDirection = SelectStageScene.SWIPE_NONE;
+							
+				
+							
+							
 						}
 						break;
+					case TouchPhase.Stationary :
+						/* The touch is being moved */
+						isSwipe = true;
+						/*if(player.IsMovingBackward()) {
+							player.MoveBackward();
+						}
+						else if(player.IsMovingForward()) {
+							player.MoveForward();
+						}
+						break;*/
+						break;
+						
+					case TouchPhase.Ended :
+						
+						gestureTime = Time.time - fingerStartTime;
+						gestureDist = (touch.position - fingerStartPos).magnitude;
+						
+						if (isSwipe && gestureTime < maxSwipeTime && gestureDist > minSwipeDist){
+							Vector2 direction = touch.position - fingerStartPos;
+							Vector2 swipeType = Vector2.zero;
+							
+							if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y)){
+								// the swipe is horizontal:
+								swipeType = Vector2.right * Mathf.Sign(direction.x);
+							}else{
+								// the swipe is vertical:
+								swipeType = Vector2.up * Mathf.Sign(direction.y);
+							}
+							
+							if(swipeType.x != 0.0f){
+								if(swipeType.x > 0.0f){
+									// MOVE RIGHT
+									Debug.Log("GO RIGHT 2");
+									GetComponent<CameraZoomInOutScript> ().MoveToNextLevel ();
+								}else{
+									// MOVE LEFT
+									GetComponent<CameraZoomInOutScript> ().MoveToPreviousLevel ();
+									Debug.Log("GO LEFT 2");
+								}
+							}
+					
+							
+						}
+						
+						break;
 					}
-				} else {
-					screenTextureOffset *= 1 - Time.deltaTime * fadeSpeed;
 				}
-			} else {
-				// This fades the texture and moves it further in direction of swipe.
-				screenTextureOffset *= 1 + Time.deltaTime * fadeSpeed;
-				fadeAlpha += Time.deltaTime * fadeSpeed;
-				if (fadeAlpha > 1) {
-					swipeDirection = SelectStageScene.SWIPE_NONE;
-					Debug.Log ("Finished swipe movement : " + swipeDirection);
-				}
+			}
+			else {
+				//player.PlayerStationary();
 			}
 
 		}

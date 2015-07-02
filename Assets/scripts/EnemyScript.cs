@@ -94,14 +94,35 @@ public class EnemyScript : MonoBehaviour
 	}
 	
 	void PerformUpdate(GameObject collisionObject) {
-		PlayerScript player = collisionObject.GetComponent<PlayerScript>();
-		if(player!=null) {
+
+	   if(collisionObject.tag!=null ) {
+
+		 bool onlyBurstBalloon = false;
+		 PlayerScript player = null;
+
+		 if(collisionObject.CompareTag("Player")) {
+			player = collisionObject.GetComponent<PlayerScript>();
+			onlyBurstBalloon = true;
+			
+		 }
+		 else if(collisionObject.CompareTag("Hero") ) {
+
+			player = collisionObject.GetComponentInParent<PlayerScript>();
+
+		 }
 		
-		    if(particles!=null && !particles.isPlaying) {
-		      particles.Play();
-		    }
-			player.KillPlayer();
+		if(player!=null) {
+				
+			if(particles!=null && !particles.isPlaying) {
+				particles.Play();
+			}
+			player.KillPlayer(onlyBurstBalloon);
 		}
+
+
+		}//end if tag !=null
+
+
 	}
 	//alows spawning again
 	void UnlockSpawning() {
