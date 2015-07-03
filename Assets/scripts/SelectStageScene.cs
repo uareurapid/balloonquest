@@ -33,17 +33,26 @@ public class SelectStageScene : MonoBehaviour {
 	private float minSwipeDist  = 50.0f;
 	private float maxSwipeTime = 0.5f;
 	
+	private CameraZoomInOutScript cameraScript;
+	private int cameraDirection;
+	
+	
+	void Start() {
+		cameraScript = GetComponent<CameraZoomInOutScript>();
+	}
+	
 	public void Update() {
 
 
+		
 		if (!isMobilePlatform) {
 			
 			float input = Input.GetAxis ("Horizontal");
 			if(input < 0) {
-				GetComponent<CameraZoomInOutScript> ().MoveToPreviousLevel ();
+				cameraScript.MoveToPreviousLevel ();
 			}
 			else if(input>0) {
-				GetComponent<CameraZoomInOutScript> ().MoveToNextLevel ();
+				cameraScript.MoveToNextLevel ();
 			}
 
 		}
@@ -96,11 +105,11 @@ public class SelectStageScene : MonoBehaviour {
 								if(swipeType.x > 0.0f){
 									// MOVE RIGHT
 									Debug.Log("GO RIGHT");
-									GetComponent<CameraZoomInOutScript> ().MoveToNextLevel ();
+									cameraScript.MoveToNextLevel ();
 								}else{
 									// MOVE LEFT
 									Debug.Log("GO LEFT");
-									GetComponent<CameraZoomInOutScript> ().MoveToPreviousLevel ();
+									cameraScript.MoveToPreviousLevel ();
 								}
 							}
 							
@@ -142,10 +151,10 @@ public class SelectStageScene : MonoBehaviour {
 								if(swipeType.x > 0.0f){
 									// MOVE RIGHT
 									Debug.Log("GO RIGHT 2");
-									GetComponent<CameraZoomInOutScript> ().MoveToNextLevel ();
+									cameraScript.MoveToNextLevel ();
 								}else{
 									// MOVE LEFT
-									GetComponent<CameraZoomInOutScript> ().MoveToPreviousLevel ();
+									cameraScript.MoveToPreviousLevel ();
 									Debug.Log("GO LEFT 2");
 								}
 							}

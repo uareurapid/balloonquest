@@ -39,6 +39,7 @@ public class CameraZoomInOutScript : MonoBehaviour {
 	public int previousLevel = 0;
 	public int numLevels = 6;
 
+
 	void Start () {
 		Time.timeScale = 1.0f;
 	  // save the current values
@@ -112,15 +113,33 @@ public class CameraZoomInOutScript : MonoBehaviour {
 
 		}
 	}
+	
 
+    //-1 for left, 1 for right
 	void UpdatePosition(int targetLevel) {
 		Debug.Log ("SEARCH FOR " + "Level" + targetLevel);
-		GameObject obj = GameObject.FindGameObjectWithTag ("Level" + targetLevel);
+		GameObject obj = GameObject.FindGameObjectWithTag ("start" + targetLevel); //"start" + targetLevel
+		
+		StartCoroutine(MoveToTarget(obj.transform));
+		/*
 		target = obj.transform;
 		targetPosition.x = target.position.x;
 		targetPosition.y = target.position.y;
 		targetPosition.z = cameraOriginalPosition.z;
-		currentLevel = targetLevel;
+		currentLevel = targetLevel;*/
+	}
+	
+	
+	IEnumerator MoveToTarget(Transform target) {
+	
+		Vector3 sourcePos = transform.position;
+		Vector3 destPos = target.position - transform.forward * 2;
+		float i = 0.0f;
+		while (i < 1.0f ) {
+			transform.position = Vector3.Lerp(sourcePos, destPos, Mathf.SmoothStep(0,1,i));
+			i += Time.deltaTime;
+			yield return 0;
+		}
 	}
 	
 	// Update is called once per frame

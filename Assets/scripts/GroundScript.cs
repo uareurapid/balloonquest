@@ -17,7 +17,7 @@ public class GroundScript : MonoBehaviour {
 	}
 	
 	void OnBecameVisible() {
-		Debug.Log ("ON VISIBLE");
+		//Debug.Log ("ON VISIBLE");
 		//disable movement when collider becames visible
 		isVisible = true;
 		if(platformScript!=null) {
@@ -58,6 +58,6 @@ public class GroundScript : MonoBehaviour {
 	}
 	
 	void OnBecameInvisible() {
-		Debug.Log ("ON INVISIBLE");
+		//Debug.Log ("ON INVISIBLE");
 	}
 }
