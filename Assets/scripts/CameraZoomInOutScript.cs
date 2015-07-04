@@ -66,9 +66,10 @@ public class CameraZoomInOutScript : MonoBehaviour {
 	void FixedUpdate() {
 	    //only move camera if zoom already stopped
 		//if(isCameraZoomingIn ) {//&& !isZoomComplete
-		if (canMove && !isMovementComplete) {
-			transform.position = Vector3.SmoothDamp (transform.position, targetPosition, ref velocity, timeToReachTarget);
-		}
+		//if (canMove && !isMovementComplete) {
+		//	transform.position = Vector3.SmoothDamp (transform.position, targetPosition, ref velocity, timeToReachTarget);
+
+		//}
 						//http://docs.unity3d.com/ScriptReference/Vector3.SmoothDamp.html
 		//}
 		//else if(isCameraZoomingOut) {
@@ -120,7 +121,7 @@ public class CameraZoomInOutScript : MonoBehaviour {
 		Debug.Log ("SEARCH FOR " + "Level" + targetLevel);
 		GameObject obj = GameObject.FindGameObjectWithTag ("start" + targetLevel); //"start" + targetLevel
 		
-		StartCoroutine(MoveToTarget(obj.transform));
+		StartCoroutine(MoveToTarget(obj.transform,targetLevel));
 		/*
 		target = obj.transform;
 		targetPosition.x = target.position.x;
@@ -130,7 +131,7 @@ public class CameraZoomInOutScript : MonoBehaviour {
 	}
 	
 	
-	IEnumerator MoveToTarget(Transform target) {
+	IEnumerator MoveToTarget(Transform target,int targetLevel) {
 	
 		Vector3 sourcePos = transform.position;
 		Vector3 destPos = target.position - transform.forward * 2;
@@ -140,6 +141,8 @@ public class CameraZoomInOutScript : MonoBehaviour {
 			i += Time.deltaTime;
 			yield return 0;
 		}
+		isMovementComplete = true;
+		currentLevel = targetLevel;
 	}
 	
 	// Update is called once per frame

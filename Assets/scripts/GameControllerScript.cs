@@ -78,7 +78,7 @@ public class GameControllerScript : MonoBehaviour {
 
 	//display time
 
-	private int elapsedMissionMeters = 1000;
+	public int elapsedMissionMeters = 1000;
 	
 	//show in app for level xxx?
 	private bool showUnlockLevel = true;
@@ -174,7 +174,7 @@ public class GameControllerScript : MonoBehaviour {
 
 
 		//seconds to display
-	    elapsedMissionMeters = 5000;
+	    //elapsedMissionMeters = 5000;
 
 		CheckPause();
 
@@ -286,8 +286,15 @@ public class GameControllerScript : MonoBehaviour {
 		  elapsedMissionMeters-=1;
 													
 		}//if !gamePaused
-		
-		
+
+		//TODO this should be configurable
+		if (elapsedMissionMeters <= 960) {
+			GameObject ground = GameObject.FindGameObjectWithTag("Ground");
+			if(ground!=null) {
+				MovingPlatformScript move = ground.GetComponent<MovingPlatformScript>();
+				move.enabled = true;
+			}
+		}
 		
 	}
 	/**
