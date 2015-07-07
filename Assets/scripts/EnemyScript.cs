@@ -97,27 +97,35 @@ public class EnemyScript : MonoBehaviour
 
 	   if(collisionObject.tag!=null ) {
 
-		 bool onlyBurstBalloon = false;
+		 
 		 PlayerScript player = null;
 
-		 if(collisionObject.CompareTag("Player")) {
-			player = collisionObject.GetComponent<PlayerScript>();
-			onlyBurstBalloon = true;
-			
+
+		 if(collisionObject.CompareTag("Parachute") ) {
+				
+			player = collisionObject.GetComponentInParent<PlayerScript>();
+			player.BurstParachute();
+				
 		 }
 		 else if(collisionObject.CompareTag("Hero") ) {
-
+				
 			player = collisionObject.GetComponentInParent<PlayerScript>();
-
+			player.KillPlayer();
+				
 		 }
-		
-		if(player!=null) {
+		 else if(collisionObject.CompareTag("Player")) {
+			player = collisionObject.GetComponent<PlayerScript>();
+			player.BurstBallon();
+				
+		 }
+
+		/*if(player!=null) {
 				
 			if(particles!=null && !particles.isPlaying) {
 				particles.Play();
 			}
 			player.KillPlayer(onlyBurstBalloon);
-		}
+		}*/
 
 
 		}//end if tag !=null

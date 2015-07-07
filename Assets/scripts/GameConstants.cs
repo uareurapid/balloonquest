@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 //APP STORE LINK https://itunes.apple.com/us/app/super-jelly-troopers/id925880432?ls=1&mt=8
-namespace JumpAndRun
+namespace BalloonQuest
 {
 		public class GameConstants
 		{
-				//public GameConstants ()
-				//{
-				//}
+				public const int MINIMUM_COINS_FAILSAFE_PARACHUTE = 5;
 				public const string PLAYING_WORLD = "last_world";
 				public const string PLAYING_LEVEL = "last_level";
 

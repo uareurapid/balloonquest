@@ -41,9 +41,20 @@ public class PickupCounterScript : MonoBehaviour {
 	public void AddPickup() {
 		numberPickups+=1;
 	}
+	public void RemovePickup() {
+		if(numberPickups > 0)
+			numberPickups--;
+	}
 	
 	public void AddMultiplePickups(int count) {
 		numberPickups+=count;
+	}
+
+	public void RemoveMultiplePickups(int count) {
+		numberPickups-=count;
+		if (numberPickups < 0) {
+			numberPickups = 0;
+		}
 	}
 	
 	public void ResetPickups() {
@@ -89,9 +100,5 @@ public class PickupCounterScript : MonoBehaviour {
 		GUI.Label (new Rect(x, y, width, height), text);
 	}
 	
-	public void RemovePickup() {
-		if(numberPickups>0)
-		   numberPickups--;
-		
-	}
+
 }

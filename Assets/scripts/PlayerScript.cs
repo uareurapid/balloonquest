@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+using BalloonQuest;
 
 
 /// <summary>
@@ -41,8 +41,6 @@ public class PlayerScript : MonoBehaviour
 
 	public bool isMobilePlatform = false;
 	
-	private bool isVisible=false;
-	
 	private Vector3 startingPos;
 	
 	private GUISkin skin;
@@ -58,6 +56,7 @@ public class PlayerScript : MonoBehaviour
 	private bool canMove = true;
 	
 	private PickupCounterScript coinsCounter;
+	private bool hasParachute = false;
 
 	void Start() {
 
@@ -71,7 +70,8 @@ public class PlayerScript : MonoBehaviour
 		
 		GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
 		coinsCounter = scripts.GetComponent<PickupCounterScript>();
-
+		controller = scripts.GetComponent<GameControllerScript> ();
+		hasParachute = false;
 
 		
 	}
@@ -114,6 +114,7 @@ public class PlayerScript : MonoBehaviour
 		Rigidbody2D rig = GetComponent<Rigidbody2D>();
 		if(rig!=null) {
 			rig.gravityScale =1.0f;
+			canMove = false;
 		}
 	}
 
@@ -170,8 +171,8 @@ public class PlayerScript : MonoBehaviour
 		return	translationManager.GetText(key);
 	}
 
-	public void KillPlayer(bool onlyBurstBalloon) {
-	  HandleLooseAllLifes(onlyBurstBalloon);
+	public void KillPlayer() {
+	  HandleLooseAllLifes();
 	}
 	
 	GUIStyle BuildSmallerLabelStyle() {
@@ -244,10 +245,13 @@ public class PlayerScript : MonoBehaviour
 		
 
 		if(playerHealth.hitPoints==0) {
-		  HandleLooseAllLifes(false);
+		  HandleLooseAllLifes();
 		}
 
-		var dist = (transform.position - Camera.main.transform.position).z;
+		if (canMove) {
+
+			//only clamp if can move otherwise let him go outside screen and kill it
+			var dist = (transform.position - Camera.main.transform.position).z;
 			
 			var leftBorder = Camera.main.ViewportToWorldPoint(
 				new Vector3(0, 0, dist)
@@ -264,13 +268,16 @@ public class PlayerScript : MonoBehaviour
 			var bottomBorder = Camera.main.ViewportToWorldPoint(
 				new Vector3(0, 1, dist)
 				).y;
-
-		transform.position = new Vector3(
+			
+			transform.position = new Vector3(
 				Mathf.Clamp(transform.position.x, leftBorder, rightBorder),
 				Mathf.Clamp(transform.position.y, topBorder, bottomBorder),
 				transform.position.z
 				);
-		
+
+		}
+
+
 	}
 	
 		
@@ -369,15 +376,6 @@ public class PlayerScript : MonoBehaviour
 	}
 
 
-	
-	void OnBecameVisible() {
-		isVisible = true;
-	}
-	
-	void OnBecameInvisible() {
-		isVisible = false;
-	}
-	
 	//reset for a new game/level
 	public void ResetPlayer() {
 	
@@ -387,7 +385,10 @@ public class PlayerScript : MonoBehaviour
 		}
 		isDead = false;
 	}
-	
+
+	public void AddFailsafeParachute() {
+		hasParachute = true;
+	}
 
 	
 	void OnTriggerEnter2D(Collider2D otherCollider)
@@ -463,23 +464,16 @@ public class PlayerScript : MonoBehaviour
 	
 	
 	//when player dies, we save the score and end the game
-	public void HandleLooseAllLifes(bool onlyBurstBalloon) {
+	public void HandleLooseAllLifes() {
 		
 		isDead = true;
 		playerHealth.hitPoints=0;
-		//set the score key pref
-		//PlayerPrefs.SetInt("HighScore",scoreScript.score);
-
-		if (onlyBurstBalloon)
-			BurstBallon ();
-		else {
-			BurstBallon();
-			Destroy(gameObject);
-		}
-
+		ShowGameOver (false);
+		Destroy(gameObject);
 
 	}
-	
+
+
 	public bool IsPlayerAlive() {
 	  return !isDead && playerHealth.hitPoints > 0;
 	}
@@ -530,8 +524,14 @@ public class PlayerScript : MonoBehaviour
 
       if(coinsCounter!=null) {
         coinsCounter.AddPickup();
+		if(coinsCounter.numberPickups>=GameConstants.MINIMUM_COINS_FAILSAFE_PARACHUTE && !hasParachute) {
+			//should be bought with virtual currency?
+			AddFailsafeParachute();
+			coinsCounter.RemoveMultiplePickups(GameConstants.MINIMUM_COINS_FAILSAFE_PARACHUTE);
+		}
       }
 	}
+	
 
 	public bool IsMovingBackward() {
 	 return true;
@@ -548,9 +548,48 @@ public class PlayerScript : MonoBehaviour
 		//disable colliders and renderers
 		gameObject.GetComponent<SpriteRenderer> ().enabled = false;
 		gameObject.GetComponent<PolygonCollider2D> ().enabled = false;
+
+		if (hasParachute) {
+			//enable parachute sprite
+			EnableParachute ();
+		} 
+		else {
+			//make him fall to the ground
+			EnableGravityScale ();
+		}
+	}
+
+	//check if parachute is enabled/rendered
+	private bool IsParachuteEnabled() {
+		if (!hasParachute) {
+			return false;
+		}
+		GameObject parachute = GameObject.FindGameObjectWithTag("Parachute");
+		return parachute.GetComponent<SpriteRenderer> ().enabled;
+	}
+
+	public void BurstParachute() {
+		GameObject parachute = GameObject.FindGameObjectWithTag("Parachute");
+		parachute.GetComponent<SpriteRenderer> ().enabled = false;
+		parachute.GetComponent<CircleCollider2D> ().enabled = false;
 		//make him fall to the ground
 		EnableGravityScale ();
+		hasParachute = false;
 	}
+
+	private void EnableParachute() {
+		GameObject parachute = GameObject.FindGameObjectWithTag("Parachute");
+		if(parachute!=null) {
+			parachute.GetComponent<SpriteRenderer>().enabled = true;
+			parachute.GetComponent<CircleCollider2D> ().enabled = true;
+		}
+	}
+
+	public bool CanPlayerMove() {
+		return canMove;
+	}
+
+
 }
 
 

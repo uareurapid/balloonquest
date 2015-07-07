@@ -68,8 +68,8 @@ public class GameOverScript : MonoBehaviour
 		isShowingMessage = true;
 
 				//handle translation language
-		translationManager = TextLocalizationManager.Instance;
-		translationManager.LoadSystemLanguage(Application.systemLanguage);
+		//translationManager = TextLocalizationManager.Instance;
+		//translationManager.LoadSystemLanguage(Application.systemLanguage);
 
 		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer || platform == RuntimePlatform.Android || platform == RuntimePlatform.BlackBerryPlayer);
 
