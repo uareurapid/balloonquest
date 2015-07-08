@@ -8,7 +8,8 @@ public class GroundScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
-	   platformScript = GetComponentInParent<MovingPlatformScript>();
+		GameObject ground = GameObject.FindGameObjectWithTag("Ground");
+		platformScript = ground.GetComponent<MovingPlatformScript>();
 	}
 	
 	// Update is called once per frame
@@ -17,23 +18,23 @@ public class GroundScript : MonoBehaviour {
 	}
 	
 	void OnBecameVisible() {
-		//Debug.Log ("ON VISIBLE");
+		Debug.Log ("ON VISIBLE");
 		//disable movement when collider becames visible
 		isVisible = true;
-		if(platformScript!=null) {
-		  	//Stop the platform
-			StopMovement();
+		if (platformScript != null) {
+			//Stop the platform
+			StopMovement ();
 
-		  	//enable player gravity scale to touch the ground
-			MakePlayerFall();
+			//enable player gravity scale to touch the ground
+			MakePlayerFall ();
 		
 			//disable the layers scrolling
-			DisableScrolling();
+			DisableScrolling ();
 
 			//maybe show some fireworks here? ;.)
 
 			 
-		}
+		} 
 	}
 
 	//disables movement and set gravity scale to 1.0f
@@ -54,10 +55,11 @@ public class GroundScript : MonoBehaviour {
 	}
 	
 	void StopMovement() {
+		Debug.Log ("STOP MOVEMENT");
 		platformScript.enabled = false;
 	}
 	
 	void OnBecameInvisible() {
-		//Debug.Log ("ON INVISIBLE");
+		Debug.Log ("ON INVISIBLE");
 	}
 }
