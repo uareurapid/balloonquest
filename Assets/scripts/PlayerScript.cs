@@ -41,7 +41,7 @@ public class PlayerScript : MonoBehaviour
 	public float moveForce = 200f;
 	public float moveSpeed = 0.5f;
 
-	public bool isMobilePlatform = false;
+	private bool isMobilePlatform = false;
 	
 	private Vector3 startingPos;
 	
@@ -63,6 +63,7 @@ public class PlayerScript : MonoBehaviour
 	private bool hasParachute = false;
 
 	private GameObject scripts;
+	private RuntimePlatform platform;
 
 	void Start() {
 
@@ -79,6 +80,9 @@ public class PlayerScript : MonoBehaviour
 		controller = scripts.GetComponent<GameControllerScript> ();
 		hasParachute = false;
 		hasBalloon = true;
+
+		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer) || (platform == RuntimePlatform.Android);
+
 
 		
 	}
@@ -411,9 +415,40 @@ public class PlayerScript : MonoBehaviour
 	//handle the collision with another sprite (not other trigger)
 	void OnCollisionEnter2D(Collision2D collision)
 	{
+		GameObject collisionObject = collision.gameObject;
+		GroundScript ground = collisionObject.GetComponentInChildren<GroundScript> ();
+		if (ground != null) {
+			HandleGroundCollision ();
+		}
+	}
+
+	//handle collision with ground
+	void HandleGroundCollision() {
+
+		//play effects
+		SpecialEffectsHelper fx = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
+		if (fx != null) {
+			fx.PlayJellyLandedEffect(transform.position);
+		}
+		//finish level
+			
+		int level = controller.currentLevel;
+		int max = controller.numberOfLevels;
+		if(level<max) {
+			//Go to next level in 2 seconds!
+
+			//Play some animation
+			controller.FinishLevel();
+			Invoke("LoadNextLevel",2.0f);
+		}
+			
 
 	}
-	
+
+    void LoadNextLevel() {
+		Application.LoadLevel("Level" + controller.GetNextLevel());
+	}
+
 
 	//takes a life
 
@@ -481,6 +516,11 @@ public class PlayerScript : MonoBehaviour
 		isDead = true;
 		playerHealth.hitPoints=0;
 		ShowGameOver (false);
+		//play effects
+		SpecialEffectsHelper fx = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
+		if (fx != null) {
+			fx.PlayJellySoulEffect(transform.position);
+		}
 		Destroy(gameObject);
 
 	}
@@ -558,6 +598,11 @@ public class PlayerScript : MonoBehaviour
 		//TODO play effects/sound
 		Debug.Log ("BURST BALLON");
 		hasBalloon = false;
+		//play effects
+		SpecialEffectsHelper fx = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
+		if (fx != null) {
+			fx.PlayJellyHitDeadEffect(transform.position);
+		}
 
 		//disable colliders and renderers
 		gameObject.GetComponent<SpriteRenderer> ().enabled = false;
@@ -593,6 +638,13 @@ public class PlayerScript : MonoBehaviour
 	}
 
 	public void BurstParachute() {
+
+		//play effects
+		SpecialEffectsHelper fx = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
+		if (fx != null) {
+			fx.PlayJellyHitDeadEffect(transform.position);
+		}
+
 		GameObject parachute = GameObject.FindGameObjectWithTag("Parachute");
 		parachute.GetComponent<SpriteRenderer> ().enabled = false;
 		parachute.GetComponent<CircleCollider2D> ().enabled = false;

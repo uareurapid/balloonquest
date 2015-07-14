@@ -3,10 +3,11 @@ using System.Collections;
 
 public class MainLoaderScript : MonoBehaviour {
 
-    public bool isMobilePlatform = false;
+    private bool isMobilePlatform = false;
+	private RuntimePlatform platform;
 	// Use this for initialization
 	void Start () {
-	
+		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer) || (platform == RuntimePlatform.Android);
 	}
 	
 	// Update is called once per frame

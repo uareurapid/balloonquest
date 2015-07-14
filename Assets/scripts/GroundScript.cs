@@ -32,6 +32,7 @@ public class GroundScript : MonoBehaviour {
 			DisableScrolling ();
 
 			//maybe show some fireworks here? ;.)
+			DisableSpawning();
 
 			 
 		} 
@@ -53,6 +54,20 @@ public class GroundScript : MonoBehaviour {
 			scroll.enabled = false;
 		}
 	}
+
+	void DisableSpawning() {
+		GameObject [] spawners = GameObject.FindGameObjectsWithTag ("Spawner");
+		if (spawners != null && spawners.Length > 0) {
+			foreach(GameObject spawner in spawners) {
+				SpawnerScript script = spawner.GetComponent<SpawnerScript>();
+				if(script!=null) {
+					script.canSpawn = false;
+				}
+			}
+		}
+	}
+
+
 	
 	void StopMovement() {
 		Debug.Log ("STOP MOVEMENT");

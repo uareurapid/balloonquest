@@ -64,17 +64,7 @@ public class CameraZoomInOutScript : MonoBehaviour {
 
 
 	void FixedUpdate() {
-	    //only move camera if zoom already stopped
-		//if(isCameraZoomingIn ) {//&& !isZoomComplete
-		//if (canMove && !isMovementComplete) {
-		//	transform.position = Vector3.SmoothDamp (transform.position, targetPosition, ref velocity, timeToReachTarget);
-
-		//}
-						//http://docs.unity3d.com/ScriptReference/Vector3.SmoothDamp.html
-		//}
-		//else if(isCameraZoomingOut) {
-		//	transform.position = Vector3.SmoothDamp(transform.position, cameraOriginalPosition, ref velocity, timeToReachTarget);
-		//}
+	
 		
 	}
 

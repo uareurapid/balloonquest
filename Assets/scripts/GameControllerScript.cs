@@ -6,7 +6,7 @@ public class GameControllerScript : MonoBehaviour {
 
 	//flaby_alien_level_two
 	private static RuntimePlatform platform;
-	public bool isMobilePlatform = false;
+	private bool isMobilePlatform = false;
 	private static GameControllerScript instance;
 	
 	//number of energy star pickups spread in level
@@ -38,6 +38,7 @@ public class GameControllerScript : MonoBehaviour {
 	private bool isGameStarted = false;
 	private bool isGameOver = true;
 	private bool isGameComplete = false;
+	private bool isLevelComplete = false;
 
 	private GUITexture redTexture;
 	
@@ -82,6 +83,8 @@ public class GameControllerScript : MonoBehaviour {
 	
 	//show in app for level xxx?
 	private bool showUnlockLevel = true;
+	//to control if we already released the Ground
+	private bool movedGround = false;
 
 
 
@@ -193,7 +196,8 @@ public class GameControllerScript : MonoBehaviour {
 		//		exitTexture	= Resources.Load("button_playstart") as Texture2D;
 
 		isGameComplete = false;
-		//??
+		movedGround = false;
+		isLevelComplete = false;
 		
 		appliedHurryUpFactor = false;
 		
@@ -206,6 +210,7 @@ public class GameControllerScript : MonoBehaviour {
 		}
 
 		//paralaxLevels = GameObject.FindGameObjectsWithTag("Scroller");
+		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer) || (platform == RuntimePlatform.Android);
 		
 	}
 
@@ -279,20 +284,22 @@ public class GameControllerScript : MonoBehaviour {
 		
 	
 	//invoked every second
-	void CheckMissionTime() {
+	void CheckElapsedMeters() {
 
 		if(!isGamePaused && player!=null && player.IsPlayerAlive()) {
 
-		  elapsedMissionMeters-=1;
+		  elapsedMissionMeters-=5;
 													
 		}//if !gamePaused
 
 		//TODO this should be configurable
-		if (elapsedMissionMeters <= 960) {
+		if (elapsedMissionMeters <= 960 && !movedGround) {
 			GameObject ground = GameObject.FindGameObjectWithTag("Ground");
 			if(ground!=null) {
 				MovingPlatformScript move = ground.GetComponent<MovingPlatformScript>();
 				move.enabled = true;
+				//avoid that we enable this once more!
+				movedGround = true;
 			}
 		}
 		
@@ -631,7 +638,7 @@ public class GameControllerScript : MonoBehaviour {
 			}
 		}
 		
-		InvokeRepeating("CheckMissionTime", 1.0f, 1.0f);
+		InvokeRepeating("CheckElapsedMeters", 1.0f, 1.0f);
 			
 	 }
 	 
@@ -682,9 +689,13 @@ public class GameControllerScript : MonoBehaviour {
 			 	//DrawText(GetTranslationKey(GameConstants.MSG_LEVEL) 
 					//	+ " " + currentLevel, messagesFontSizeSmaller +10, 20, 10,200,50);
 	
-				if(elapsedMissionMeters>=1) {
+				if(elapsedMissionMeters>=1 && !isLevelComplete) {
 					  DrawText(elapsedMissionMeters +" meters!"  , messagesFontSizeSmaller +10, 280, 10,200,50);
 					
+				}
+
+			    if(isLevelComplete) {
+					DrawText("Congratulations! Level " + currentLevel + " Complete."  , messagesFontSizeLarger, width/2-200, height/2,450,50);
 				}
 
 			}
@@ -944,6 +955,17 @@ public class GameControllerScript : MonoBehaviour {
 	  GUI.matrix = svMat;
 	
 }	
+
+	public void FinishLevel() {
+		isLevelComplete = true;
+	}
+
+	public int GetNextLevel() {
+		if (currentLevel < numberOfLevels) {
+			return currentLevel + 1;
+		}
+		return 1;//the first again!!
+	}
 
     void InvertParalaxScrollingDirection(int direction) {
 	 foreach(GameObject obj in paralaxLevels) {

@@ -10,8 +10,8 @@ public class PickupCounterScript : MonoBehaviour {
 	
 	public int textureXPosition;
 	public int textureYPosition;
-	public int textureWidth = 48;
-	public int textureHeight = 48; 
+	public int textureWidth = 128;
+	public int textureHeight = 128; 
 
 	private GUIResolutionHelper resolutionHelper;
 
