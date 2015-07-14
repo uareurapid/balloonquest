@@ -31,6 +31,8 @@ public class PlayerScript : MonoBehaviour
 	//this is needed for the pickup speed
 	//the jelly must inherit player speed
 	//at every new level the value is reset to deafut speed (1)
+
+
 	public float speedX = 1;
 
 	Transform cachedTransform;
@@ -56,7 +58,11 @@ public class PlayerScript : MonoBehaviour
 	private bool canMove = true;
 	
 	private PickupCounterScript coinsCounter;
+
+	private bool hasBalloon = true;
 	private bool hasParachute = false;
+
+	private GameObject scripts;
 
 	void Start() {
 
@@ -68,10 +74,11 @@ public class PlayerScript : MonoBehaviour
 		//Save starting position
 		startingPos = cachedTransform.position;
 		
-		GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
+		scripts = GameObject.FindGameObjectWithTag("Scripts");
 		coinsCounter = scripts.GetComponent<PickupCounterScript>();
 		controller = scripts.GetComponent<GameControllerScript> ();
 		hasParachute = false;
+		hasBalloon = true;
 
 		
 	}
@@ -387,7 +394,12 @@ public class PlayerScript : MonoBehaviour
 	}
 
 	public void AddFailsafeParachute() {
+		Debug.Log ("ADDING PARACHUTE");
 		hasParachute = true;
+		SpecialEffectsHelper effects = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
+		if (effects != null) {
+			effects.PlayJElectricityEffect(transform.position);
+		}
 	}
 
 	
@@ -544,6 +556,8 @@ public class PlayerScript : MonoBehaviour
 	//disables balloon
 	public void BurstBallon() {
 		//TODO play effects/sound
+		Debug.Log ("BURST BALLON");
+		hasBalloon = false;
 
 		//disable colliders and renderers
 		gameObject.GetComponent<SpriteRenderer> ().enabled = false;
@@ -551,12 +565,22 @@ public class PlayerScript : MonoBehaviour
 
 		if (hasParachute) {
 			//enable parachute sprite
+			Debug.Log("ENABLE PARACHUTE");
 			EnableParachute ();
 		} 
 		else {
 			//make him fall to the ground
+			Debug.Log("EnableGravityScale");
 			EnableGravityScale ();
 		}
+	}
+
+	public bool PlayerHasBalloon() {
+		return hasBalloon;
+	}
+
+	public bool PlayerHasParachute() {
+		return hasParachute;
 	}
 
 	//check if parachute is enabled/rendered

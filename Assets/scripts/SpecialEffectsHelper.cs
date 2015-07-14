@@ -19,6 +19,8 @@ public class SpecialEffectsHelper : MonoBehaviour
 	public ParticleSystem lavaSplashEffect;
 	public ParticleSystem dustEffect;
 
+	public ParticleSystem electricityEffect;
+
 	
 	void Awake()
 	{
@@ -67,6 +69,10 @@ public class SpecialEffectsHelper : MonoBehaviour
 	
 	public void PlayJellySoulEffect(Vector3 position) {
 		instantiate(soulEffect, position);
+	}
+
+	public void PlayJElectricityEffect(Vector3 position) {
+		instantiate(electricityEffect, position);
 	}
 
 	public void PlayWaterSplashEffect(Vector3 position) {
