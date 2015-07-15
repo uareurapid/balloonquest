@@ -16,6 +16,8 @@ namespace BalloonQuest
 				//the normal hitpoints for a player
 				public const int NUM_LIFES_PER_LEVEL = 4;
 
+				public const int METERS_BOUNDARY_TO_MOVE_GROUND = 50;//50/5 = 10 seconds
+
 				public const int NUM_LEVELS_PER_WORLD = 6;
 				public const int NUM_WORLDS = 4;
 

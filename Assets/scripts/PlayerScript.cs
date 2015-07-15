@@ -20,7 +20,7 @@ public class PlayerScript : MonoBehaviour
 
 	public Texture2D failSafeIcon;
 	private Rect failSafeRect;
-	public bool failSafeUsed = false;
+	private bool failSafeUsed = false;
 
 	public Sprite defaultBalloon;
 	public Sprite balloonOne;
@@ -79,6 +79,7 @@ public class PlayerScript : MonoBehaviour
 		coinsCounter = scripts.GetComponent<PickupCounterScript>();
 		controller = scripts.GetComponent<GameControllerScript> ();
 		hasParachute = false;
+		failSafeUsed = false;
 		hasBalloon = true;
 
 		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer) || (platform == RuntimePlatform.Android);
@@ -141,10 +142,10 @@ public class PlayerScript : MonoBehaviour
 		if(Event.current.type==EventType.Repaint ) {//&& !controller.IsGameOver()
 
 			
-			/*Matrix4x4 svMat = GUI.matrix;//save current matrix
+			Matrix4x4 svMat = GUI.matrix;//save current matrix
 			GUI.matrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,resolutionHelper.scaleVector);
 			
-			int num = buyedInfiniteLifes ? 1 : playerHealth.hitPoints;
+			/*int num = buyedInfiniteLifes ? 1 : playerHealth.hitPoints;
 			
 			DrawText(GetTranslationKey(GameConstants.MSG_LIFES) + " ",20,20,45,120,40);
 
@@ -164,8 +165,8 @@ public class PlayerScript : MonoBehaviour
 			}
 
 
-
-			if(failSafeIcon!=null && !failSafeUsed) {
+			*/
+			if(failSafeIcon!=null && hasParachute && !failSafeUsed) {
 			  failSafeRect = new Rect(40, resolutionHelper.screenHeight-100,48,48);
 			  GUI.DrawTexture(failSafeRect,failSafeIcon);
 			  DrawText(GetTranslationKey(GameConstants.MSG_FAILSAFE),20,35,resolutionHelper.screenHeight-130,120,40);
@@ -173,7 +174,7 @@ public class PlayerScript : MonoBehaviour
 
 
 			GUI.matrix = svMat;
-			*/
+
 		}
 	}
 
@@ -658,6 +659,7 @@ public class PlayerScript : MonoBehaviour
 		if(parachute!=null) {
 			parachute.GetComponent<SpriteRenderer>().enabled = true;
 			parachute.GetComponent<CircleCollider2D> ().enabled = true;
+			failSafeUsed = true;
 		}
 	}
 
