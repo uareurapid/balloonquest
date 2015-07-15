@@ -167,9 +167,9 @@ public class PlayerScript : MonoBehaviour
 
 			*/
 			if(failSafeIcon!=null && hasParachute && !failSafeUsed) {
-			  failSafeRect = new Rect(40, resolutionHelper.screenHeight-100,48,48);
+			  failSafeRect = new Rect(40, 40,48,48);
 			  GUI.DrawTexture(failSafeRect,failSafeIcon);
-			  DrawText(GetTranslationKey(GameConstants.MSG_FAILSAFE),20,35,resolutionHelper.screenHeight-130,120,40);
+			  DrawText("failsafe",20,35,53,120,40);
 			}
 
 

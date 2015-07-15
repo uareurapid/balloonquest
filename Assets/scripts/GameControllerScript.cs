@@ -293,7 +293,7 @@ public class GameControllerScript : MonoBehaviour {
 		}//if !gamePaused
 
 		//TODO this should be configurable
-		if (elapsedMissionMeters <= 960 && !movedGround) {
+		if (elapsedMissionMeters <= GameConstants.METERS_BOUNDARY_TO_MOVE_GROUND && !movedGround) {
 			GameObject ground = GameObject.FindGameObjectWithTag("Ground");
 			if(ground!=null) {
 				MovingPlatformScript move = ground.GetComponent<MovingPlatformScript>();
@@ -638,7 +638,7 @@ public class GameControllerScript : MonoBehaviour {
 			}
 		}
 		
-		InvokeRepeating("CheckElapsedMeters", 1.0f, 1.0f);
+		InvokeRepeating("CheckElapsedMeters", 1.0f, 0.5f);
 			
 	 }
 	 
