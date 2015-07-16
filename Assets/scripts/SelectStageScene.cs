@@ -25,7 +25,7 @@ public class SelectStageScene : MonoBehaviour {
 	private float           fadeSpeed               = 1f; // How fast the texture fades after swipe.
 
 	public bool isMobilePlatform = true;
-	private RuntimePlatform platform;
+	private static RuntimePlatform platform;
 
 	private float fingerStartTime  = 0.0f;
 	private Vector2 fingerStartPos = Vector2.zero;

@@ -63,7 +63,7 @@ public class PlayerScript : MonoBehaviour
 	private bool hasParachute = false;
 
 	private GameObject scripts;
-	private RuntimePlatform platform;
+	private static RuntimePlatform platform;
 
 	void Start() {
 
@@ -506,8 +506,20 @@ public class PlayerScript : MonoBehaviour
 		// Add the script to the parent because the current game
 		// object is likely going to be destroyed immediately.
 		transform.parent.gameObject.AddComponent<GameOverScript>();
+
+		ShowGameOverBoard ();
 		
 		
+	}
+
+	void ShowGameOverBoard() {
+		GameObject gameOver = GameObject.FindGameObjectWithTag ("GameOver");
+		if (gameOver != null) {
+			SpriteRenderer spr = gameOver.GetComponent<SpriteRenderer>();
+			if(spr!=null) {
+				spr.enabled = true;
+			}
+		}
 	}
 	
 	

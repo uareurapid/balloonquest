@@ -4,7 +4,7 @@ using System.Collections;
 public class MainLoaderScript : MonoBehaviour {
 
     private bool isMobilePlatform = false;
-	private RuntimePlatform platform;
+	private static RuntimePlatform platform;
 	// Use this for initialization
 	void Start () {
 		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer) || (platform == RuntimePlatform.Android);
