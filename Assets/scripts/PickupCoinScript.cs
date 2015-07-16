@@ -33,11 +33,39 @@ public class PickupCoinScript : MonoBehaviour {
    
 		PlayerScript player = collisionObject.GetComponent<PlayerScript>();
 		if(player!=null) {
-			if(sfx!=null) {
-				sfx.PlayPickupCoinSound();
+
+			HandleCollisionWithPlayer(player);
+
+		}//else could be the parachute or the hero objects
+		else {
+			//Get the reference for the player
+			GameObject p = GameObject.FindGameObjectWithTag("Player");
+			if(p!=null) {
+				player = p.GetComponent<PlayerScript>();
 			}
-			player.IncreaseCoins(1);
-			Destroy(gameObject);
+			
+			
+			ParachuteScript parachute = collisionObject.GetComponent<ParachuteScript>();
+			if(parachute!=null) {
+				if (player!=null && player.PlayerHasParachute ()) {
+					HandleCollisionWithPlayer(player);
+				} 
+			}
+			else {
+				HeroScript hero = collisionObject.GetComponent<HeroScript>();
+				if(player!=null && hero!=null)  {
+					HandleCollisionWithPlayer(player);
+				}
+			}
 		}
    }
+
+   void HandleCollisionWithPlayer(PlayerScript player) {
+		if (sfx != null) {
+			sfx.PlayPickupCoinSound();
+		}
+
+		player.IncreaseCoins(1);
+		Destroy(gameObject);
+	}
 }

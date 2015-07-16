@@ -84,28 +84,44 @@ public class EnemyScript : MonoBehaviour
 
 	void OnTriggerEnter2D(Collider2D collision)
 	{
+		Debug.Log ("COLLISION TRIGGER");
 	  PerformUpdate(collision.gameObject);
 	}
 
 	void OnCollisionEnter2D(Collision2D collision)
 	{
-
+		Debug.Log ("COLLISION");
 	  PerformUpdate(collision.gameObject);
 	}
 	
 	void PerformUpdate(GameObject collisionObject) {
 		
 		PlayerScript player = collisionObject.GetComponent<PlayerScript>();
-		if(player!=null) {
-				if(player.PlayerHasBalloon()) {
-					player.BurstBallon();
+		//collided with player?
+		if (player != null) {
+			if (player.PlayerHasBalloon ()) {
+				player.BurstBallon ();
+			} 
+		} else {
+			//Get the reference for the player
+			GameObject p = GameObject.FindGameObjectWithTag("Player");
+			if(p!=null) {
+				player = p.GetComponent<PlayerScript>();
+			}
+
+
+			ParachuteScript parachute = collisionObject.GetComponent<ParachuteScript>();
+			if(parachute!=null) {
+				if (player!=null && player.PlayerHasParachute ()) {
+					player.BurstParachute ();
+				} 
+			}
+			else {
+				HeroScript hero = collisionObject.GetComponent<HeroScript>();
+				if(player!=null && hero!=null)  {
+					player.KillPlayer ();
 				}
-				else if(player.PlayerHasParachute()) {
-					player.BurstParachute();
-				}
-				else {
-					player.KillPlayer();
-				}
+			}
 		}
 		
 

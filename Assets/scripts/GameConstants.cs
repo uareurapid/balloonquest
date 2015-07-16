@@ -18,6 +18,8 @@ namespace BalloonQuest
 
 				public const int METERS_BOUNDARY_TO_MOVE_GROUND = 50;//50/5 = 10 seconds
 
+				public const int STARTING_POINT_IN_METERS = 1000;
+
 				public const int NUM_LEVELS_PER_WORLD = 6;
 				public const int NUM_WORLDS = 4;
 
@@ -59,8 +61,11 @@ namespace BalloonQuest
 				public const string TOTAL_ELAPSED_TIME_SECS_KEY = "total_elapsed_time_secs";
 				public const string TOTAL_LOST_LIFES_KEY = "total_lost_lifes";
 				public const string TOTAL_SAVED_JELLIES_KEY = "total_saved_jellies";
-				public const string TOTAL_SCORE_KEY = "total_score";
-				public const string HIGH_SCORE_KEY = "high_score";
+		
+				public const string BEST_SCORE_KEY = "best_score";//the best so far
+				public const string HIGH_SCORE_KEY = "high_score";//the current score
+
+				public const string SOUND_SETTINGS_KEY = "sound_settings";
 
 
 				//missions

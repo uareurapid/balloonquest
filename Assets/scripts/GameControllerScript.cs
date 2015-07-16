@@ -14,6 +14,8 @@ public class GameControllerScript : MonoBehaviour {
 
 	public Texture2D pauseIcon;
 	public Texture2D playIcon;
+	public Texture2D soundIcon;
+	public Texture2D muteIcon;
 
 	public Texture2D backButton;
 	public Texture2D forwardButton;
@@ -33,7 +35,9 @@ public class GameControllerScript : MonoBehaviour {
 	Rect forwardRect;
 	Rect backRect;
     Rect jumpRect;
-	
+	Rect soundRect;
+
+	private bool soundOn = true;
 	public bool isGamePaused = true;
 	private bool isGameStarted = false;
 	private bool isGameOver = true;
@@ -79,7 +83,7 @@ public class GameControllerScript : MonoBehaviour {
 
 	//display time
 
-	public int elapsedMissionMeters = 1000;
+	public int elapsedMissionMeters = GameConstants.STARTING_POINT_IN_METERS;
 	
 	//show in app for level xxx?
 	private bool showUnlockLevel = true;
@@ -181,6 +185,8 @@ public class GameControllerScript : MonoBehaviour {
 
 		CheckPause();
 
+		checkSoundSettings();
+
 		lastHowToTime = 0f;
 		initialHowToTime = 0f;
 		isShowingHowTo = false;
@@ -211,7 +217,21 @@ public class GameControllerScript : MonoBehaviour {
 
 		//paralaxLevels = GameObject.FindGameObjectsWithTag("Scroller");
 		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer) || (platform == RuntimePlatform.Android);
+
 		
+	}
+
+	//check if we have sound enabled/disabled
+	void checkSoundSettings() {
+		if (!PlayerPrefs.HasKey (GameConstants.SOUND_SETTINGS_KEY)) {
+			soundOn = true;
+			PlayerPrefs.SetInt (GameConstants.SOUND_SETTINGS_KEY, 1);
+			PlayerPrefs.Save ();
+		} 
+		else {
+			int value = PlayerPrefs.GetInt (GameConstants.SOUND_SETTINGS_KEY, 1);
+			soundOn = (value == 1);
+		}
 	}
 
 	/**
@@ -414,11 +434,11 @@ public class GameControllerScript : MonoBehaviour {
 	}
 
 	private AudioSource GetGameMusic() {
-		/*GameObject music = GameObject.FindGameObjectWithTag("GameMusic");
+		GameObject music = GameObject.FindGameObjectWithTag("GameMusic");
 		if(music!=null) {
 			AudioSource source = music.GetComponentInChildren<AudioSource>();
 			return source;
-		}*/
+		}
 	    return null;
 	}
 
@@ -627,7 +647,10 @@ public class GameControllerScript : MonoBehaviour {
 		}*/
 
 		CheckPause();
-		StartMusic();
+		if (soundOn) {
+			StartMusic();
+		}
+
 
 		if(currentLevel==1) {
 		  //if we are on level 1, clear the history
@@ -702,7 +725,7 @@ public class GameControllerScript : MonoBehaviour {
 
          //Draw the final boss hits instead
          //TODO on last level show new instructions, like on first level
-		 if(IsFinalLevel()) {
+		  if(IsFinalLevel()) {
 
 		  }
 		    			
@@ -743,8 +766,12 @@ public class GameControllerScript : MonoBehaviour {
 				GUI.DrawTexture(backRect, backButton);
 				GUI.DrawTexture(jumpRect, JumpButton);*/
 
+				soundRect = new Rect(width-300 ,15,128,64);
+				GUI.DrawTexture(soundRect, soundOn ? soundIcon : muteIcon);
+
 				}
 				else {
+
 				
 				  //Debug.Log("Not started yet");
 				  //if null means it was destroyd, is game over
@@ -832,6 +859,20 @@ public class GameControllerScript : MonoBehaviour {
 						}*/
 			    }
 				else {
+
+					//change sound settings?
+
+					if(soundRect.Contains(Event.current.mousePosition)) {
+						soundOn = !soundOn;
+						if(soundOn) {
+							ResumeMusic();
+						}
+						else {
+							PauseMusic();
+						}
+						PlayerPrefs.SetInt(GameConstants.SOUND_SETTINGS_KEY,soundOn ? 1 : 0);
+						PlayerPrefs.Save();
+					}
 
 				//Did i paused the game???
 				  if(pausePlayRect.Contains(Event.current.mousePosition)) {
@@ -922,6 +963,17 @@ public class GameControllerScript : MonoBehaviour {
 								ResumeGame();
 							}
 
+					  }
+					  else if(soundRect.Contains(Event.current.mousePosition)) {
+						soundOn = !soundOn;
+						if(soundOn) {
+							ResumeMusic();
+						}
+						else {
+							PauseMusic();
+						}
+						PlayerPrefs.SetInt(GameConstants.SOUND_SETTINGS_KEY,soundOn ? 1 : 0);
+						PlayerPrefs.Save();
 					  }
 
 
