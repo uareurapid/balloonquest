@@ -651,6 +651,8 @@ public class GameControllerScript : MonoBehaviour {
 			StartMusic();
 		}
 
+		//hide the board
+		HideGameOverBoard ();
 
 		if(currentLevel==1) {
 		  //if we are on level 1, clear the history
@@ -664,6 +666,16 @@ public class GameControllerScript : MonoBehaviour {
 		InvokeRepeating("CheckElapsedMeters", 1.0f, 0.5f);
 			
 	 }
+
+	void HideGameOverBoard() {
+		GameObject gameOver = GameObject.FindGameObjectWithTag ("GameOver");
+		if (gameOver != null) {
+			SpriteRenderer spr = gameOver.GetComponent<SpriteRenderer>();
+			if(spr!=null) {
+				spr.enabled = false;
+			}
+		}
+	}
 	 
 	
 	
@@ -836,6 +848,10 @@ public class GameControllerScript : MonoBehaviour {
 
 		if(!isMobilePlatform) { //desktop
 
+			if(DetectReplayTouchesDesktop()) {
+				Debug.Log("TOUCH GAME OVER");
+			}
+
 			if(Event.current.type == EventType.MouseUp ) {
 				
 				if(isGameOver) {
@@ -908,6 +924,10 @@ public class GameControllerScript : MonoBehaviour {
 		  }
 		  //if mobile platform
 		  else {
+
+			if(DetectReplayTouchesDesktop())
+			Debug.Log("TOUCH GAME OVER");
+
 		   //----------------------------------------------------------------
 		      //detect touches on leaderboards
 		      //for this we need the normal matrix
@@ -1156,5 +1176,38 @@ public class GameControllerScript : MonoBehaviour {
 	}
 	
 
+	private bool DetectReplayTouchesDesktop() {
+		
+		
+		if(Input.GetMouseButtonDown(0)){
+			Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			Collider2D hitCollider = Physics2D.OverlapPoint(mousePosition);
+			
+			if(hitCollider){
+				return hitCollider.transform.gameObject.tag.Equals("GameOver") ;
+				
+			}
+		}
+		return false;
+	}
+	
+	private bool DetectReplayTouchesMobile() {
+		
+		
+		for (int i = 0; i < Input.touchCount; ++i) {
+			if (Input.GetTouch(i).phase == TouchPhase.Began) {
+				Vector3 touchPosition = Camera.main.ScreenToWorldPoint(Input.GetTouch(i).position);
+				RaycastHit2D hitInfo = Physics2D.Raycast(touchPosition, Vector2.zero);
+				// RaycastHit2D can be either true or null, but has an implicit conversion to bool, so we can use it like this
+				if(hitInfo)
+				{
+					return hitInfo.transform.gameObject.tag.Equals("GameOver") ;
+					
+					// Here you can check hitInfo to see which collider has been hit, and act appropriately.
+				}
+			}
+		}
+		return false;
+	}
 	
 }
