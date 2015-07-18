@@ -506,12 +506,13 @@ public class PlayerScript : MonoBehaviour
 		// Add the script to the parent because the current game
 		// object is likely going to be destroyed immediately.
 		transform.parent.gameObject.AddComponent<GameOverScript>();
-
+		//show them to the user
 		ShowGameOverBoard ();
 		
 		
 	}
 
+	//show the game over panel (it is hidden at start, and will be hidden by game controller afterwards)
 	void ShowGameOverBoard() {
 		GameObject gameOver = GameObject.FindGameObjectWithTag ("GameOver");
 		if (gameOver != null) {
@@ -520,6 +521,7 @@ public class PlayerScript : MonoBehaviour
 				spr.enabled = true;
 			}
 		}
+	
 	}
 	
 	

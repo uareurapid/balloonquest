@@ -677,7 +677,17 @@ public class GameControllerScript : MonoBehaviour {
 		}
 	}
 	 
-	
+	private bool IsShowingGameOverPanel() {
+		GameObject gameOver = GameObject.FindGameObjectWithTag ("GameOver");
+		if (gameOver != null) {
+			SpriteRenderer spr = gameOver.GetComponent<SpriteRenderer> ();
+			if (spr != null) {
+				return spr.enabled;
+			}
+
+		}
+		return false;
+	}
 	
 
 	//i shoul stop the scroll of the level
@@ -689,9 +699,24 @@ public class GameControllerScript : MonoBehaviour {
 		StopMusic();
 		showUnlockLevel = showUnlockNextLevel;
 		//EnableScreenshots();
+		SaveScores ();
 		CheckPause();
 				
 		
+	}
+
+	public void SaveScores() {
+		int metersDone = GameConstants.STARTING_POINT_IN_METERS - elapsedMissionMeters;
+		PlayerPrefs.SetInt (GameConstants.HIGH_SCORE_KEY, metersDone);
+		int bestScore = PlayerPrefs.GetInt (GameConstants.BEST_SCORE_KEY, metersDone);
+
+		if (metersDone > bestScore) {
+			//we have a new best score!
+			bestScore = metersDone;
+		}
+
+		PlayerPrefs.SetInt (GameConstants.BEST_SCORE_KEY, bestScore);
+
 	}
 
 	void OnGUI() {
@@ -737,9 +762,8 @@ public class GameControllerScript : MonoBehaviour {
 
          //Draw the final boss hits instead
          //TODO on last level show new instructions, like on first level
-		  if(IsFinalLevel()) {
-
-		  }
+		 // if(IsFinalLevel()) {
+		  //}
 		    			
 			if(Event.current.type==EventType.Repaint) {
 
@@ -771,14 +795,8 @@ public class GameControllerScript : MonoBehaviour {
 						GUI.DrawTexture(pausePlayRect, pauseIcon);
 					}
 
-				/*backRect = new Rect(60 ,height-160,64,64);
-				forwardRect = new Rect(160,height - 160 ,64,64);
-				jumpRect = new Rect(width-200,height - 160 ,64,64);
-				GUI.DrawTexture(forwardRect, forwardButton);
-				GUI.DrawTexture(backRect, backButton);
-				GUI.DrawTexture(jumpRect, JumpButton);*/
 
-				soundRect = new Rect(width-300 ,15,128,64);
+				soundRect = new Rect(width-300 ,15,96,64);
 				GUI.DrawTexture(soundRect, soundOn ? soundIcon : muteIcon);
 
 				}
@@ -799,8 +817,13 @@ public class GameControllerScript : MonoBehaviour {
 						GUI.matrix = normalMatrix;
 					}
 
-					exitTextureRect = new Rect( width/2 - 100,screenHeight/2-60,200,80);
+
+					exitTextureRect = new Rect( width/2 - 100, screenHeight/2-60,200,80);
 					GUI.DrawTexture(exitTextureRect, exitTexture);
+
+
+
+
 
 					#if UNITY_ANDROID && !UNITY_EDITOR
 					rateRect = new Rect( width/2 - 100,screenHeight/2+40,200,80);
@@ -849,7 +872,10 @@ public class GameControllerScript : MonoBehaviour {
 		if(!isMobilePlatform) { //desktop
 
 			if(DetectReplayTouchesDesktop()) {
-				Debug.Log("TOUCH GAME OVER");
+				Application.LoadLevel("Level"+currentLevel);
+			}
+			else if(DetectCloseGameOverTouchesDesktop()) {
+				HideGameOverBoard();
 			}
 
 			if(Event.current.type == EventType.MouseUp ) {
@@ -925,8 +951,15 @@ public class GameControllerScript : MonoBehaviour {
 		  //if mobile platform
 		  else {
 
-			if(DetectReplayTouchesDesktop())
-			Debug.Log("TOUCH GAME OVER");
+			if(DetectReplayTouchesMobile()) {
+
+				Application.LoadLevel("Level"+currentLevel);
+
+			}
+			else if(DetectCloseGameOverTouchesMobile()) {
+				HideGameOverBoard();
+			}
+
 
 		   //----------------------------------------------------------------
 		      //detect touches on leaderboards
@@ -1202,6 +1235,40 @@ public class GameControllerScript : MonoBehaviour {
 				if(hitInfo)
 				{
 					return hitInfo.transform.gameObject.tag.Equals("GameOver") ;
+					
+					// Here you can check hitInfo to see which collider has been hit, and act appropriately.
+				}
+			}
+		}
+		return false;
+	}
+
+	private bool DetectCloseGameOverTouchesDesktop() {
+		
+		
+		if(Input.GetMouseButtonDown(0)){
+			Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			Collider2D hitCollider = Physics2D.OverlapPoint(mousePosition);
+			
+			if(hitCollider){
+				return hitCollider.transform.gameObject.tag.Equals("GameOverClose") ;
+				
+			}
+		}
+		return false;
+	}
+	
+	private bool DetectCloseGameOverTouchesMobile() {
+		
+		
+		for (int i = 0; i < Input.touchCount; ++i) {
+			if (Input.GetTouch(i).phase == TouchPhase.Began) {
+				Vector3 touchPosition = Camera.main.ScreenToWorldPoint(Input.GetTouch(i).position);
+				RaycastHit2D hitInfo = Physics2D.Raycast(touchPosition, Vector2.zero);
+				// RaycastHit2D can be either true or null, but has an implicit conversion to bool, so we can use it like this
+				if(hitInfo)
+				{
+					return hitInfo.transform.gameObject.tag.Equals("GameOverClose") ;
 					
 					// Here you can check hitInfo to see which collider has been hit, and act appropriately.
 				}

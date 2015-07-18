@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SocialPlatforms;
-//using RescueJelly;
+using BalloonQuest;
 using System.Collections;
 
 
@@ -106,7 +106,7 @@ public class GameOverScript : MonoBehaviour
 		style.alignment = TextAnchor.MiddleLeft;
 		style.font = freeTextFont;
 		style.fontSize = freeTextFontSize;
-		style.normal.textColor = Color.white;
+		style.normal.textColor = Color.black;
 	}
 
     void Update() {
@@ -138,7 +138,8 @@ public class GameOverScript : MonoBehaviour
 		// Set the skin to use
 		GUI.skin = skin;
 
-		GUI.skin.label.normal.textColor = UnityEngine.Color.red;
+		//increase the font size
+		style.fontSize = freeTextFontSize + 20;
 		
 		Matrix4x4 svMat = GUI.matrix;//save current matrix
 		
@@ -179,14 +180,15 @@ public class GameOverScript : MonoBehaviour
 
 			       if(isShowingMessage) {
 
-						GUI.Label (new Rect(width/2-90, height/2-300, 200, 50), "Game Over!!!",style);
+						style.normal.textColor = Color.black;
+						GUI.Label (new Rect(width/2-120, height/2-300, 300, 50), "Game Over!!!",style);
 			       }
 
 
 
 					//*******************************
 
-				    startTextureRect = new Rect(width / 2-100,height -600,200,80);
+					startTextureRect = new Rect( width/2 - 100, height/2+160,200,80);
 				    //resumeTextureRect = new Rect(width / 2-100,height-500,200,80);
 					//missionsTextureRect = new Rect(width / 2-100,height -400,200,80);
 					//achievementsRect = new Rect(width / 2-100,height -300,200,80);
@@ -206,6 +208,12 @@ public class GameOverScript : MonoBehaviour
 					//	storeTextureRect = new Rect(width -110,30,96,96);
 					//    GUI.DrawTexture(storeTextureRect,storeTexture);
 					//}
+
+					int score = PlayerPrefs.GetInt (GameConstants.HIGH_SCORE_KEY,1);
+					int best = PlayerPrefs.GetInt (GameConstants.BEST_SCORE_KEY,1);
+					//try to keep the scores aligned
+					GUI.Label (new Rect(width/2-45, height/2-160, 300, 50), score < 10 ? " "+ score : score.ToString(),style);
+					GUI.Label (new Rect(width/2-45, height/2-95, 300, 50),best < 10 ? " " + best : best.ToString(),style);
 					    
 
 			}//end repaint
