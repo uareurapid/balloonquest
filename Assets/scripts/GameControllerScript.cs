@@ -675,6 +675,14 @@ public class GameControllerScript : MonoBehaviour {
 				spr.enabled = false;
 			}
 		}
+
+
+		//we have a new best score showing?
+		GameObject newBest = GameObject.FindGameObjectWithTag("NewBestScore");
+		if(newBest!=null) {
+			newBest.GetComponent<SpriteRenderer>().enabled = false;
+		}
+
 	}
 	 
 	private bool IsShowingGameOverPanel() {
@@ -711,10 +719,13 @@ public class GameControllerScript : MonoBehaviour {
 		int bestScore = PlayerPrefs.GetInt (GameConstants.BEST_SCORE_KEY, metersDone);
 
 		if (metersDone > bestScore) {
+			//save the previous one
+			PlayerPrefs.SetInt (GameConstants.PREVIOUS_BEST_SCORE_KEY, bestScore);
 			//we have a new best score!
 			bestScore = metersDone;
-		}
 
+		}
+		//now, save the new best score
 		PlayerPrefs.SetInt (GameConstants.BEST_SCORE_KEY, bestScore);
 
 	}

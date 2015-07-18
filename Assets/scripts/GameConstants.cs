@@ -64,6 +64,7 @@ namespace BalloonQuest
 		
 				public const string BEST_SCORE_KEY = "best_score";//the best so far
 				public const string HIGH_SCORE_KEY = "high_score";//the current score
+				public const string PREVIOUS_BEST_SCORE_KEY = "previous_best_score";//the previous best
 
 				public const string SOUND_SETTINGS_KEY = "sound_settings";
 

@@ -521,6 +521,19 @@ public class PlayerScript : MonoBehaviour
 				spr.enabled = true;
 			}
 		}
+
+		//TODO, this should be done on a score script
+		int bestScore = PlayerPrefs.GetInt (GameConstants.BEST_SCORE_KEY, 1);
+		int previousBestScore = PlayerPrefs.GetInt (GameConstants.PREVIOUS_BEST_SCORE_KEY, bestScore);
+
+		if (bestScore > previousBestScore) {
+			//we have a new best score
+			GameObject newBest = GameObject.FindGameObjectWithTag("NewBestScore");
+			if(newBest!=null) {
+				newBest.GetComponent<SpriteRenderer>().enabled = true;
+			}
+		}
+
 	
 	}
 	
