@@ -683,6 +683,13 @@ public class GameControllerScript : MonoBehaviour {
 			newBest.GetComponent<SpriteRenderer>().enabled = false;
 		}
 
+		GameOverScript script = FindObjectOfType<GameOverScript>();
+		if (script != null) {
+			script.enabled=false;
+		}
+
+
+
 	}
 	 
 	private bool IsShowingGameOverPanel() {
@@ -719,6 +726,7 @@ public class GameControllerScript : MonoBehaviour {
 		int bestScore = PlayerPrefs.GetInt (GameConstants.BEST_SCORE_KEY, metersDone);
 
 		if (metersDone > bestScore) {
+
 			//save the previous one
 			PlayerPrefs.SetInt (GameConstants.PREVIOUS_BEST_SCORE_KEY, bestScore);
 			//we have a new best score!
@@ -882,11 +890,8 @@ public class GameControllerScript : MonoBehaviour {
 
 		if(!isMobilePlatform) { //desktop
 
-			if(DetectReplayTouchesDesktop()) {
+			if(DetectReplayTouchesDesktop() || DetectCloseGameOverTouchesDesktop()) {
 				Application.LoadLevel("Level"+currentLevel);
-			}
-			else if(DetectCloseGameOverTouchesDesktop()) {
-				HideGameOverBoard();
 			}
 
 			if(Event.current.type == EventType.MouseUp ) {
@@ -962,14 +967,12 @@ public class GameControllerScript : MonoBehaviour {
 		  //if mobile platform
 		  else {
 
-			if(DetectReplayTouchesMobile()) {
+			if(DetectReplayTouchesMobile() || DetectCloseGameOverTouchesMobile()) {
 
 				Application.LoadLevel("Level"+currentLevel);
 
 			}
-			else if(DetectCloseGameOverTouchesMobile()) {
-				HideGameOverBoard();
-			}
+
 
 
 		   //----------------------------------------------------------------
