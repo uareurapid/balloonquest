@@ -82,6 +82,7 @@ public class PlayerScript : MonoBehaviour
 		failSafeUsed = false;
 		hasBalloon = true;
 
+		platform = Application.platform;
 		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer) || (platform == RuntimePlatform.Android);
 
 

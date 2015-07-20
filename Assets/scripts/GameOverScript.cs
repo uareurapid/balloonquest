@@ -70,7 +70,7 @@ public class GameOverScript : MonoBehaviour
 				//handle translation language
 		//translationManager = TextLocalizationManager.Instance;
 		//translationManager.LoadSystemLanguage(Application.systemLanguage);
-
+		platform = Application.platform;
 		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer || platform == RuntimePlatform.Android || platform == RuntimePlatform.BlackBerryPlayer);
 
 		//if(!settingsScene) {

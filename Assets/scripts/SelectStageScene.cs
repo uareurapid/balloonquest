@@ -40,6 +40,7 @@ public class SelectStageScene : MonoBehaviour {
 	
 	void Start() {
 		cameraScript = GetComponent<CameraZoomInOutScript>();
+		platform = Application.platform;
 		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer) || (platform == RuntimePlatform.Android);
 	}
 	
