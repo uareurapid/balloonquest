@@ -27,4 +27,32 @@ public class HeroScript : MonoBehaviour {
 			player.KillPlayer();
 		}
 	}
+
+	void OnTriggerEnter2D(Collider2D collision)
+	{
+		Debug.Log ("HERO TRIGGER " + collision.gameObject.tag);
+		PerformUpdate(collision.gameObject);
+	}
+	
+	void OnCollisionEnter2D(Collision2D collision)
+	{
+		Debug.Log ("HERO COLLISION " + collision.gameObject.tag);
+		PerformUpdate(collision.gameObject);
+	}
+	
+	void PerformUpdate(GameObject collisionObject) {
+		
+		
+		EnemyScript enemy = collisionObject.GetComponent<EnemyScript> ();
+		//collided with enemy
+		if (enemy != null && player != null) {
+
+			player.KillPlayer ();
+
+		}
+		
+		
+	}	
+		
+
 }

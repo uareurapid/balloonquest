@@ -411,7 +411,7 @@ public class PlayerScript : MonoBehaviour
 	
 	void OnTriggerEnter2D(Collider2D otherCollider)
 	{
-		
+		PerformUpdate(otherCollider.gameObject);
 	}
 
 	//handle the collision with another sprite (not other trigger)
@@ -421,8 +421,40 @@ public class PlayerScript : MonoBehaviour
 		GroundScript ground = collisionObject.GetComponentInChildren<GroundScript> ();
 		if (ground != null) {
 			HandleGroundCollision ();
+		} 
+		else {
+			PerformUpdate(collision.gameObject);
 		}
+
+
+
 	}
+
+	void PerformUpdate(GameObject collisionObject) {
+		
+		EnemyScript enemy = collisionObject.GetComponent<EnemyScript> ();
+		//collided with enemy
+		if (enemy != null) {
+				
+			if (PlayerHasBalloon ()) {
+				Debug.Log ("burst ballon");
+				BurstBallon ();
+			}
+			else if (PlayerHasParachute ()) {
+				Debug.Log ("burst patrachute");
+				BurstParachute ();
+			}
+			else {
+				KillPlayer();
+			}
+	
+				
+		}
+		
+		
+	}
+
+
 
 	//handle collision with ground
 	void HandleGroundCollision() {
