@@ -227,11 +227,11 @@ public class GameOverScript : MonoBehaviour
 
 			    if(startTextureRect.Contains(mousePosition) )
 				{
-					LoadNextLevel(1);
+					Application.LoadLevel("Main");
 				}
 				else if(resumeTextureRect.Contains(mousePosition) )
 				{
-				  LoadNextLevel(1);
+					Application.LoadLevel("Main");
 				}
 
 		}
@@ -256,12 +256,12 @@ public class GameOverScript : MonoBehaviour
 
 				if(startTextureRect.Contains(fingerPos) )
 				{
-					LoadNextLevel(1);
+					Application.LoadLevel("Main");
 				}
 				else if(resumeTextureRect.Contains(fingerPos) )
 				{
 				   //just resume the world, not the level
-				   LoadNextLevel(1);
+					Application.LoadLevel("Main");
 				}
 
 			}

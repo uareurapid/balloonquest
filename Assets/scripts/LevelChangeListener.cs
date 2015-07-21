@@ -12,6 +12,7 @@ public class LevelChangeListener : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
 		platform = Application.platform;
 		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer) || (platform == RuntimePlatform.Android);
 
@@ -22,28 +23,26 @@ public class LevelChangeListener : MonoBehaviour {
 		else {
 			levelLocked = false;
 		}
-
-		Debug.Log("LEVEL " + level + " " + (levelLocked?"locked":"unlocked"));
-
-
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
-		int level = 0;
+		int levelTouched = 0;
 	  	if (isMobilePlatform) {
-			level = DetectLevelTouchesMobile();
+			levelTouched = DetectLevelTouchesMobile();
 		} 
 		else {
-			level = DetectLevelTouchesDesktop();
+			levelTouched = DetectLevelTouchesDesktop();
 		}
-		if (level > 0 && !loading && !levelLocked) {
-			//is the level locked or unlocked?
+
+
+		if ( (levelTouched > 0 && levelTouched==level) && !loading && !levelLocked) {
+
 			Debug.Log("LOADING level " + level + " locked?"  + levelLocked);
 			loading = true;
 			Application.LoadLevel ("Level" + level);
-
+		
 		}	
 
 	}

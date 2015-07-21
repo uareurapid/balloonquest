@@ -1,20 +1,31 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 public class MainLoaderScript : MonoBehaviour {
-
-    private bool isMobilePlatform = false;
+	
+	private bool isMobilePlatform = false;
 	private static RuntimePlatform platform;
-
 	private GUISkin skin;
 	private GUIResolutionHelper resolutionHelper;
 	GUIStyle style;
+	public Texture2D swipeLeftIcon;
+	public Texture2D swipeRightIcon;
+	private Rect swipeLeftRect;
+	private Rect swipeRightRect;
+	public Texture2D swipeTouchIcon;
+	private Rect swipeTouchRect;
+
+
+	//the interval to show hide the icons/draw them or not
+	public float showSwipeIconsInterval = 2.0f;
+	private bool showSwipeIcons = false;
+
 	// Use this for initialization
 	void Start () {
 		platform = Application.platform;
 		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer) || (platform == RuntimePlatform.Android);
 		skin = Resources.Load("GUISkin") as GUISkin;
-
+		
 		//check screen size, this was breaking, probably some place we are calling Instance
 		GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
 		if(scripts!=null) {
@@ -27,72 +38,29 @@ public class MainLoaderScript : MonoBehaviour {
 			//translationManager = TextLocalizationManager.Instance;
 			
 		}
+		if (showSwipeIconsInterval > 0.0f) {
+			InvokeRepeating("ChangeIconsVisibility",showSwipeIconsInterval,showSwipeIconsInterval);
+		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
-	  int level = 0;
-	  if(isMobilePlatform)
-	    level = DetectLevelTouches();
-	  else
-	    level = DetectDesktopLevelTouches(); 
-	    
-	  if(level!=0) {
-	    Application.LoadLevel("Level" + level);
-	  } 
-	}
-	
-	private int DetectLevelTouches() {
+		
 
-		
-		for (int i = 0; i < Input.touchCount; ++i) {
-			if (Input.GetTouch(i).phase == TouchPhase.Began) {
-				Vector3 touchPosition = Camera.main.ScreenToWorldPoint(Input.GetTouch(i).position);
-				RaycastHit2D hitInfo = Physics2D.Raycast(touchPosition, Vector2.zero);
-				// RaycastHit2D can be either true or null, but has an implicit conversion to bool, so we can use it like this
-				if(hitInfo)
-				{
-					string tag = hitInfo.transform.gameObject.tag;
-					if(tag!=null && tag.Contains("start")) {
-					
-					
-						return int.Parse(tag.Substring(tag.Length-1));
-					}
-					// Here you can check hitInfo to see which collider has been hit, and act appropriately.
-				}
-				
-			}
-		}
-		return 0;
 	}
-	
-	//desktop click on Jelly
-	private int DetectDesktopLevelTouches() {
-		
-	
-		if(Input.GetMouseButtonDown(0)){
-			Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-			Collider2D hitCollider = Physics2D.OverlapPoint(mousePosition);
-			
-			if(hitCollider){
-				string tag = hitCollider.transform.gameObject.tag;
-				if(tag!=null && tag.Contains("start")) {
-					return int.Parse(tag.Substring(tag.Length-1));
-				}
-				
-			}
-			
-		}
-		return 0;
+
+	void ChangeIconsVisibility() {
+		showSwipeIcons = !showSwipeIcons;
 	}
 	
 	void OnGUI() {
+		
+		
+		GUI.skin = skin;
 
-
-		/*GUI.skin = skin;
-
-
+		/*if (style == null) {
+			LoadStyle();
+		}*/
 		skin.label.normal.textColor = Color.black;
 		
 		Matrix4x4 svMat = GUI.matrix;//save current matrix
@@ -112,16 +80,31 @@ public class MainLoaderScript : MonoBehaviour {
 		GUI.matrix = normalMatrix;
 		
 		if (Event.current.type == EventType.Repaint) {
-			style.normal.textColor = Color.black;
-			GUI.Label (new Rect(width/2-120, height/2-300, 400, 50), "Swipe Left or Right to choose level!",style);
+			//style.normal.textColor = Color.black;
+			GUI.Label (new Rect(width/2-120, height/2-300, 400, 50), "Swipe Left or Right to choose level!");//style
+		
+			if(showSwipeIcons) {
+
+				swipeLeftRect = new Rect( width/2 - 300, height/2-200,200,80);
+				GUI.DrawTexture(swipeLeftRect,swipeLeftIcon);
+				
+				swipeRightRect = new Rect( width/2 + 200, height/2-200,200,80);
+				GUI.DrawTexture(swipeRightRect,swipeRightIcon);
+				
+				swipeTouchRect = new Rect( width/2 , height/2+200,200,80);
+				GUI.DrawTexture(swipeTouchRect,swipeTouchIcon);
+			}
+
 		}
 
-		GUI.matrix = svMat;*/
-
+		GUI.matrix = svMat;
+		
 	}
-
-	/*
-	void LoadStyle() {
+	
+	void OnDestroy() {
+		CancelInvoke ("ChangeIconsVisibility");
+	}
+	/*void LoadStyle() {
 		style = GUI.skin.GetStyle("Label");
 		style.alignment = TextAnchor.MiddleLeft;
 		style.font = freeTextFont;
