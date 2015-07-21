@@ -13,7 +13,7 @@ public class CameraZoomInOutScript : MonoBehaviour {
 	private bool isMovementComplete = true;
 	// Use this for initialization
 
-	Vector3 targetPosition;
+	//Vector3 targetPosition;
 	Vector3 velocity = Vector3.zero;
 	public float timeToReachTarget = 4f; //seconds
 
@@ -46,8 +46,8 @@ public class CameraZoomInOutScript : MonoBehaviour {
 	  cameraOriginalOrthographicSize = Camera.main.orthographicSize;
 	  cameraOriginalPosition = Camera.main.transform.position; //or local position??
 	  skin = Resources.Load("GUISkin") as GUISkin;
-	  targetPosition = target.position;
-	  targetPosition.z = cameraOriginalPosition.z;
+	  //targetPosition = target.position;
+	  //targetPosition.z = cameraOriginalPosition.z;
 	  isMovementComplete = true;
 	  canMove = false;
 	  
@@ -69,9 +69,9 @@ public class CameraZoomInOutScript : MonoBehaviour {
 	}
 
 	public void MoveToNextLevel (){
-		//Debug.Log ("MOVE NEXT");
+
 		if (isMovementComplete) {
-			Debug.Log ("MOVE NEXT");
+
 			isMovementComplete = false;
 			canMove = true;
 
@@ -91,7 +91,7 @@ public class CameraZoomInOutScript : MonoBehaviour {
 
 
 		if (isMovementComplete) {
-			Debug.Log ("MOVE PREVIOUS");
+		
 			isMovementComplete = false;
 			canMove = true;
 
@@ -108,16 +108,11 @@ public class CameraZoomInOutScript : MonoBehaviour {
 
     //-1 for left, 1 for right
 	void UpdatePosition(int targetLevel) {
-		Debug.Log ("SEARCH FOR " + "Level" + targetLevel);
+
 		GameObject obj = GameObject.FindGameObjectWithTag ("start" + targetLevel); //"start" + targetLevel
 		
 		StartCoroutine(MoveToTarget(obj.transform,targetLevel));
-		/*
-		target = obj.transform;
-		targetPosition.x = target.position.x;
-		targetPosition.y = target.position.y;
-		targetPosition.z = cameraOriginalPosition.z;
-		currentLevel = targetLevel;*/
+
 	}
 	
 	
@@ -125,6 +120,7 @@ public class CameraZoomInOutScript : MonoBehaviour {
 	
 		Vector3 sourcePos = transform.position;
 		Vector3 destPos = target.position - transform.forward * 2;
+		destPos.z = -10.0f;
 		float i = 0.0f;
 		while (i < 1.0f ) {
 			transform.position = Vector3.Lerp(sourcePos, destPos, Mathf.SmoothStep(0,1,i));

@@ -1077,6 +1077,9 @@ public class GameControllerScript : MonoBehaviour {
 
 	public void FinishLevel() {
 		isLevelComplete = true;
+		PlayerPrefs.SetString(GameConstants.UNLOCKED_LEVEL_KEY + currentLevel,GameConstants.UNLOCKED_LEVEL_KEY + currentLevel);
+		PlayerPrefs.Save ();
+
 	}
 
 	public int GetNextLevel() {

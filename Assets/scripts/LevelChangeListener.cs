@@ -1,14 +1,31 @@
 ﻿using UnityEngine;
 using System.Collections;
+using BalloonQuest;
 
 public class LevelChangeListener : MonoBehaviour {
 
 	public int level = 1;
-	public bool isMobilePlatform = false;
+	private bool isMobilePlatform = false;
+	private static RuntimePlatform platform;
+	private bool levelLocked = true;
+	private bool loading = false;
 
 	// Use this for initialization
 	void Start () {
-	
+		platform = Application.platform;
+		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer) || (platform == RuntimePlatform.Android);
+
+		if (level > 1) {
+			bool hasKey = PlayerPrefs.HasKey(GameConstants.UNLOCKED_LEVEL_KEY + level);
+			levelLocked = !hasKey;
+		} 
+		else {
+			levelLocked = false;
+		}
+
+		Debug.Log("LEVEL " + level + " " + (levelLocked?"locked":"unlocked"));
+
+
 	}
 	
 	// Update is called once per frame
@@ -21,9 +38,14 @@ public class LevelChangeListener : MonoBehaviour {
 		else {
 			level = DetectLevelTouchesDesktop();
 		}
-		if (level > 0) {
-			Application.LoadLevel("Level"+level);
-		}
+		if (level > 0 && !loading && !levelLocked) {
+			//is the level locked or unlocked?
+			Debug.Log("LOADING level " + level + " locked?"  + levelLocked);
+			loading = true;
+			Application.LoadLevel ("Level" + level);
+
+		}	
+
 	}
 
 

@@ -69,6 +69,9 @@ namespace BalloonQuest
 				public const string SOUND_SETTINGS_KEY = "sound_settings";
 
 
+				//to track level unlocked/locked
+				public const string UNLOCKED_LEVEL_KEY = "unlocked_level";//+ level number
+
 				//missions
 				public const string MISSION_1_KEY = "mission_1";
 				public const string MISSION_2_KEY = "mission_2";

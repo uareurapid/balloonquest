@@ -468,7 +468,7 @@ public class PlayerScript : MonoBehaviour
 			
 		int level = controller.currentLevel;
 		int max = controller.numberOfLevels;
-		if(level<max) {
+		if(level < max) {
 			//Go to next level in 2 seconds!
 
 			//Play some animation
