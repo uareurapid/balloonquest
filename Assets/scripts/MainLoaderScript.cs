@@ -108,13 +108,13 @@ public class MainLoaderScript : MonoBehaviour {
 		
 			if(showSwipeIcons) {
 
-				swipeLeftRect = new Rect( width/2 - 300, height/2-200,200,80);
+				swipeLeftRect = new Rect( width/2 - 300, height/2-200,100,100);
 				GUI.DrawTexture(swipeLeftRect,swipeLeftIcon);
 				
-				swipeRightRect = new Rect( width/2 + 200, height/2-200,200,80);
+				swipeRightRect = new Rect( width/2 + 200, height/2-200,100,100);
 				GUI.DrawTexture(swipeRightRect,swipeRightIcon);
 				
-				swipeTouchRect = new Rect( width/2 , height/2+200,200,80);
+				swipeTouchRect = new Rect( width/2 , height/2+200,100,100);
 				GUI.DrawTexture(swipeTouchRect,swipeTouchIcon);
 			}
 
