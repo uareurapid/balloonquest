@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using BalloonQuest;
 
 public class MainLoaderScript : MonoBehaviour {
 	
@@ -14,6 +15,11 @@ public class MainLoaderScript : MonoBehaviour {
 	private Rect swipeRightRect;
 	public Texture2D swipeTouchIcon;
 	private Rect swipeTouchRect;
+
+	public Texture2D soundIcon;
+	public Texture2D muteIcon;
+	private	Rect soundRect;
+	private bool soundOn = true;
 
 
 	//the interval to show hide the icons/draw them or not
@@ -40,6 +46,23 @@ public class MainLoaderScript : MonoBehaviour {
 		}
 		if (showSwipeIconsInterval > 0.0f) {
 			InvokeRepeating("ChangeIconsVisibility",showSwipeIconsInterval,showSwipeIconsInterval);
+		}
+	}
+
+	void Awake() {
+		checkSoundSettings ();
+	}
+
+	//check if we have sound enabled/disabled
+	void checkSoundSettings() {
+		if (!PlayerPrefs.HasKey (GameConstants.SOUND_SETTINGS_KEY)) {
+			soundOn = true;
+			PlayerPrefs.SetInt (GameConstants.SOUND_SETTINGS_KEY, 1);
+			PlayerPrefs.Save ();
+		} 
+		else {
+			int value = PlayerPrefs.GetInt (GameConstants.SOUND_SETTINGS_KEY, 1);
+			soundOn = (value == 1);
 		}
 	}
 	
@@ -95,12 +118,61 @@ public class MainLoaderScript : MonoBehaviour {
 				GUI.DrawTexture(swipeTouchRect,swipeTouchIcon);
 			}
 
+			soundRect = new Rect(width-300 ,15,96,96);
+			GUI.DrawTexture(soundRect, soundOn ? soundIcon : muteIcon);
+
 		}
+
+		//change sound settings?
+		if (!isMobilePlatform) {
+			if (Event.current.type == EventType.MouseUp) {
+				if (soundRect.Contains (Event.current.mousePosition)) {
+					soundOn = !soundOn;
+					PlayerPrefs.SetInt (GameConstants.SOUND_SETTINGS_KEY, soundOn ? 1 : 0);
+					PlayerPrefs.Save ();
+				}
+			}
+		} 
+		else {
+			if (Input.touches.Length ==1) {
+				
+				Touch touch = Input.touches[0];
+				
+				if(touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)  {
+					
+					Vector2 fingerPos = GetFingerPosition(touch,isWideScreen);
+					
+					if(soundRect.Contains(Event.current.mousePosition)) {
+						soundOn = !soundOn;
+						PlayerPrefs.SetInt(GameConstants.SOUND_SETTINGS_KEY,soundOn ? 1 : 0);
+						PlayerPrefs.Save();
+					}
+				
+				}
+				
+			}  //end if (Input.touches.Length ==1) 
+		}
+
 
 		GUI.matrix = svMat;
 		
 	}
-	
+
+	/**
+	*Get the correct finger touch position
+	*/
+	Vector2 GetFingerPosition(Touch touch, bool isWideScreen) {
+		
+		
+		Vector2 fingerPos = new Vector2(0,0);
+		float diference = 0f;
+		
+		fingerPos.y =  resolutionHelper.screenHeight - (touch.position.y / Screen.height) * resolutionHelper.screenHeight;
+		fingerPos.x = (touch.position.x / Screen.width) * resolutionHelper.screenWidth;
+		
+		return fingerPos;
+	}
+
 	void OnDestroy() {
 		CancelInvoke ("ChangeIconsVisibility");
 	}

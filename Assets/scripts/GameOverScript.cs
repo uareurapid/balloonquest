@@ -22,8 +22,8 @@ public class GameOverScript : MonoBehaviour
 	const int buttonHeight = 60;
 
 	//Texture2D resumeTexture ;
-	Texture2D startTexture ;
-	Texture2D exitTexture ;
+	Texture2D homeTexture ;
+	//Texture2D exitTexture ;
 	//Texture2D achievementsTexture;
 	//Texture2D creditsTexture ;
 	//Texture2D missionsTexture ;
@@ -31,8 +31,8 @@ public class GameOverScript : MonoBehaviour
 	//Texture2D storeTexture;
 	Rect storeTextureRect;
 
-	Rect startTextureRect ;
-	Rect exitTextureRect ;
+	Rect homeTextureRect ;
+	//Rect exitTextureRect ;
 	Rect achievementsRect;
 	Rect creditsTextureRect ;
 	Rect missionsTextureRect ;
@@ -56,9 +56,9 @@ public class GameOverScript : MonoBehaviour
 		// Load a skin for the buttons
 		skin = Resources.Load("GUISkin") as GUISkin;
 		//exitTexture = Resources.Load("menu") as Texture2D;
-		startTexture = Resources.Load("button_playstart") as Texture2D;
+		homeTexture = Resources.Load("home") as Texture2D;
 
-		exitTexture = Resources.Load("button_quit") as Texture2D;
+		//exitTexture = Resources.Load("button_quit") as Texture2D;
 		//achievementsTexture = Resources.Load("button_achievements") as Texture2D;
 		//creditsTexture = Resources.Load("button_credits") as Texture2D;
 		//missionsTexture = Resources.Load("button_missions") as Texture2D;
@@ -74,10 +74,11 @@ public class GameOverScript : MonoBehaviour
 		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer || platform == RuntimePlatform.Android || platform == RuntimePlatform.BlackBerryPlayer);
 
 		//if(!settingsScene) {
-			Invoke("PauseGame", 4f);
+		Invoke("PauseGame", 4f);
 		//}
 
-
+		//show them to the user
+		ShowGameOverBoard ();
 		
 	}
 	
@@ -98,6 +99,31 @@ public class GameOverScript : MonoBehaviour
 	
 	void CheckInAppPurchases() {
 	  
+	}
+
+	//show the game over panel (it is hidden at start, and will be hidden by game controller afterwards)
+	void ShowGameOverBoard() {
+		GameObject gameOver = GameObject.FindGameObjectWithTag ("GameOver");
+		if (gameOver != null) {
+			SpriteRenderer spr = gameOver.GetComponent<SpriteRenderer>();
+			if(spr!=null) {
+				spr.enabled = true;
+			}
+		}
+		
+		//TODO, this should be done on a score script
+		int bestScore = PlayerPrefs.GetInt (GameConstants.BEST_SCORE_KEY, 1);
+		int previousBestScore = PlayerPrefs.GetInt (GameConstants.PREVIOUS_BEST_SCORE_KEY, bestScore);
+		
+		if (bestScore > previousBestScore) {
+			//we have a new best score
+			GameObject newBest = GameObject.FindGameObjectWithTag("NewBestScore");
+			if(newBest!=null) {
+				newBest.GetComponent<SpriteRenderer>().enabled = true;
+			}
+		}
+		
+		
 	}
 
 	
@@ -188,7 +214,7 @@ public class GameOverScript : MonoBehaviour
 
 					//*******************************
 
-					startTextureRect = new Rect( width/2 - 100, height/2+160,200,80);
+					homeTextureRect = new Rect( width/2 - 100, height/2+160,200,80);
 				    //resumeTextureRect = new Rect(width / 2-100,height-500,200,80);
 					//missionsTextureRect = new Rect(width / 2-100,height -400,200,80);
 					//achievementsRect = new Rect(width / 2-100,height -300,200,80);
@@ -197,7 +223,7 @@ public class GameOverScript : MonoBehaviour
 
 					//}
 
-					GUI.DrawTexture(startTextureRect,startTexture);
+					GUI.DrawTexture(homeTextureRect,homeTexture);
 					//GUI.DrawTexture(missionsTextureRect,missionsTexture);
 					//GUI.DrawTexture(achievementsRect,achievementsTexture);
 					//GUI.DrawTexture(creditsTextureRect,creditsTexture);
@@ -225,7 +251,7 @@ public class GameOverScript : MonoBehaviour
 
 			Vector2 mousePosition = Event.current.mousePosition;
 
-			    if(startTextureRect.Contains(mousePosition) )
+			    if(homeTextureRect.Contains(mousePosition) )
 				{
 					Application.LoadLevel("Main");
 				}
@@ -254,7 +280,7 @@ public class GameOverScript : MonoBehaviour
 					fingerPos.x = fingerPos.x + (GUIResolutionHelper.Instance.scaleX - GUIResolutionHelper.Instance.scaleVector.y) / 2 * width;
 				}
 
-				if(startTextureRect.Contains(fingerPos) )
+				if(homeTextureRect.Contains(fingerPos) )
 				{
 					Application.LoadLevel("Main");
 				}
@@ -335,7 +361,36 @@ public class GameOverScript : MonoBehaviour
 
 	
 	void OnDestroy() {
-
+		HideGameOverBoard ();
 	}
 
+	void HideGameOverBoard() {
+		GameObject gameOver = GameObject.FindGameObjectWithTag ("GameOver");
+		if (gameOver != null) {
+			SpriteRenderer spr = gameOver.GetComponent<SpriteRenderer>();
+			if(spr!=null) {
+				spr.enabled = false;
+			}
+		}
+		
+		
+		//we have a new best score showing?
+		GameObject newBest = GameObject.FindGameObjectWithTag("NewBestScore");
+		if(newBest!=null) {
+			newBest.GetComponent<SpriteRenderer>().enabled = false;
+		}
+		
+	}
+	
+	private bool IsShowingGameOverPanel() {
+		GameObject gameOver = GameObject.FindGameObjectWithTag ("GameOver");
+		if (gameOver != null) {
+			SpriteRenderer spr = gameOver.GetComponent<SpriteRenderer> ();
+			if (spr != null) {
+				return spr.enabled;
+			}
+			
+		}
+		return false;
+	}
 }

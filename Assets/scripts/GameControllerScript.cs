@@ -14,8 +14,6 @@ public class GameControllerScript : MonoBehaviour {
 
 	public Texture2D pauseIcon;
 	public Texture2D playIcon;
-	public Texture2D soundIcon;
-	public Texture2D muteIcon;
 
 	public Texture2D backButton;
 	public Texture2D forwardButton;
@@ -35,7 +33,6 @@ public class GameControllerScript : MonoBehaviour {
 	Rect forwardRect;
 	Rect backRect;
     Rect jumpRect;
-	Rect soundRect;
 
 	private bool soundOn = true;
 	public bool isGamePaused = true;
@@ -233,6 +230,8 @@ public class GameControllerScript : MonoBehaviour {
 			soundOn = (value == 1);
 		}
 	}
+
+
 
 	/**
 	* Check if we have bought any boosters
@@ -652,7 +651,7 @@ public class GameControllerScript : MonoBehaviour {
 		}
 
 		//hide the board
-		HideGameOverBoard ();
+		HideGameOver ();
 
 		if(currentLevel==1) {
 		  //if we are on level 1, clear the history
@@ -667,41 +666,11 @@ public class GameControllerScript : MonoBehaviour {
 			
 	 }
 
-	void HideGameOverBoard() {
-		GameObject gameOver = GameObject.FindGameObjectWithTag ("GameOver");
-		if (gameOver != null) {
-			SpriteRenderer spr = gameOver.GetComponent<SpriteRenderer>();
-			if(spr!=null) {
-				spr.enabled = false;
-			}
-		}
-
-
-		//we have a new best score showing?
-		GameObject newBest = GameObject.FindGameObjectWithTag("NewBestScore");
-		if(newBest!=null) {
-			newBest.GetComponent<SpriteRenderer>().enabled = false;
-		}
-
+	void HideGameOver() {
 		GameOverScript script = FindObjectOfType<GameOverScript>();
 		if (script != null) {
-			script.enabled=false;
+			Destroy(script.gameObject);
 		}
-
-
-
-	}
-	 
-	private bool IsShowingGameOverPanel() {
-		GameObject gameOver = GameObject.FindGameObjectWithTag ("GameOver");
-		if (gameOver != null) {
-			SpriteRenderer spr = gameOver.GetComponent<SpriteRenderer> ();
-			if (spr != null) {
-				return spr.enabled;
-			}
-
-		}
-		return false;
 	}
 	
 
@@ -815,8 +784,7 @@ public class GameControllerScript : MonoBehaviour {
 					}
 
 
-				soundRect = new Rect(width-300 ,15,96,64);
-				GUI.DrawTexture(soundRect, soundOn ? soundIcon : muteIcon);
+
 
 				}
 				else {
@@ -837,7 +805,7 @@ public class GameControllerScript : MonoBehaviour {
 					}
 
 
-					exitTextureRect = new Rect( width/2 - 100, screenHeight/2-60,200,80);
+					exitTextureRect = new Rect( width/2 - 100, screenHeight/2,200,80);
 					GUI.DrawTexture(exitTextureRect, exitTexture);
 
 
@@ -918,19 +886,7 @@ public class GameControllerScript : MonoBehaviour {
 			    }
 				else {
 
-					//change sound settings?
 
-					if(soundRect.Contains(Event.current.mousePosition)) {
-						soundOn = !soundOn;
-						if(soundOn) {
-							ResumeMusic();
-						}
-						else {
-							PauseMusic();
-						}
-						PlayerPrefs.SetInt(GameConstants.SOUND_SETTINGS_KEY,soundOn ? 1 : 0);
-						PlayerPrefs.Save();
-					}
 
 				//Did i paused the game???
 				  if(pausePlayRect.Contains(Event.current.mousePosition)) {
@@ -1031,18 +987,6 @@ public class GameControllerScript : MonoBehaviour {
 							}
 
 					  }
-					  else if(soundRect.Contains(Event.current.mousePosition)) {
-						soundOn = !soundOn;
-						if(soundOn) {
-							ResumeMusic();
-						}
-						else {
-							PauseMusic();
-						}
-						PlayerPrefs.SetInt(GameConstants.SOUND_SETTINGS_KEY,soundOn ? 1 : 0);
-						PlayerPrefs.Save();
-					  }
-
 
 					  if(backRect.Contains(fingerPos)) {
 					  	//move player back

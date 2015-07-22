@@ -539,36 +539,12 @@ public class PlayerScript : MonoBehaviour
 		// Add the script to the parent because the current game
 		// object is likely going to be destroyed immediately.
 		transform.parent.gameObject.AddComponent<GameOverScript>();
-		//show them to the user
-		ShowGameOverBoard ();
+
 		
 		
 	}
 
-	//show the game over panel (it is hidden at start, and will be hidden by game controller afterwards)
-	void ShowGameOverBoard() {
-		GameObject gameOver = GameObject.FindGameObjectWithTag ("GameOver");
-		if (gameOver != null) {
-			SpriteRenderer spr = gameOver.GetComponent<SpriteRenderer>();
-			if(spr!=null) {
-				spr.enabled = true;
-			}
-		}
 
-		//TODO, this should be done on a score script
-		int bestScore = PlayerPrefs.GetInt (GameConstants.BEST_SCORE_KEY, 1);
-		int previousBestScore = PlayerPrefs.GetInt (GameConstants.PREVIOUS_BEST_SCORE_KEY, bestScore);
-
-		if (bestScore > previousBestScore) {
-			//we have a new best score
-			GameObject newBest = GameObject.FindGameObjectWithTag("NewBestScore");
-			if(newBest!=null) {
-				newBest.GetComponent<SpriteRenderer>().enabled = true;
-			}
-		}
-
-	
-	}
 	
 	
 	//when player dies, we save the score and end the game
