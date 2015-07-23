@@ -98,9 +98,15 @@ public class MainLoaderScript : MonoBehaviour {
 		//we use the center matrix for the buttons
 		wideMatrix = Matrix4x4.TRS (new Vector3 ((resolutionHelper.scaleX - scaleVector.y) / 2 * width, 0, 0), Quaternion.identity, scaleVector);
 		normalMatrix = Matrix4x4.TRS (Vector3.zero, Quaternion.identity, scaleVector);
-		
-		//assign normal matrix by default
-		GUI.matrix = normalMatrix;
+
+		if (isWideScreen) {
+			GUI.matrix = wideMatrix;
+		} 
+		else {
+			//assign normal matrix by default
+			GUI.matrix = normalMatrix;
+		}
+
 		
 		if (Event.current.type == EventType.Repaint) {
 			//style.normal.textColor = Color.black;
@@ -109,17 +115,17 @@ public class MainLoaderScript : MonoBehaviour {
 			if(showSwipeIcons) {
 
 				swipeLeftRect = new Rect( width/2 - 300, height/2-200,100,100);
-				GUI.DrawTexture(swipeLeftRect,swipeLeftIcon);
+				GUI.DrawTexture(swipeLeftRect,swipeLeftIcon,ScaleMode.ScaleToFit);
 				
 				swipeRightRect = new Rect( width/2 + 200, height/2-200,100,100);
-				GUI.DrawTexture(swipeRightRect,swipeRightIcon);
+				GUI.DrawTexture(swipeRightRect,swipeRightIcon,ScaleMode.ScaleToFit);
 				
 				swipeTouchRect = new Rect( width/2 , height/2+200,100,100);
-				GUI.DrawTexture(swipeTouchRect,swipeTouchIcon);
+				GUI.DrawTexture(swipeTouchRect,swipeTouchIcon,ScaleMode.ScaleToFit);
 			}
 
 			soundRect = new Rect(width-300 ,15,96,96);
-			GUI.DrawTexture(soundRect, soundOn ? soundIcon : muteIcon);
+			GUI.DrawTexture(soundRect, soundOn ? soundIcon : muteIcon,ScaleMode.ScaleToFit);
 
 		}
 
