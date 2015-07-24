@@ -551,8 +551,15 @@ public class PlayerScript : MonoBehaviour
 	public void HandleLooseAllLifes() {
 		
 		isDead = true;
+
 		playerHealth.hitPoints=0;
 		ShowGameOver (false);
+
+		SoundEffectsHelper sfx = scripts.GetComponentInChildren<SoundEffectsHelper> ();
+		if (sfx != null) {
+			sfx.PlayHitDeadSound();
+		}
+
 		//play effects
 		SpecialEffectsHelper fx = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
 		if (fx != null) {

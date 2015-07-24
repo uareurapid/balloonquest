@@ -50,6 +50,7 @@ public class GameOverScript : MonoBehaviour
 	private TextLocalizationManager translationManager;
 
 	private bool showStore = false;
+	private bool blinkOnBestScore = false;
 
 	void Start() {
 	
@@ -109,6 +110,11 @@ public class GameOverScript : MonoBehaviour
 			if(spr!=null) {
 				spr.enabled = true;
 			}
+
+			CircleCollider2D collider = gameOver.GetComponent<CircleCollider2D>();
+			if(collider!=null) {
+				collider.enabled = true;
+			}
 		}
 		
 		//TODO, this should be done on a score script
@@ -121,6 +127,8 @@ public class GameOverScript : MonoBehaviour
 			if(newBest!=null) {
 				newBest.GetComponent<SpriteRenderer>().enabled = true;
 			}
+			//blinkOnBestScore = true;
+			InvokeRepeating ("BlinkBestScore", 0.2f, 0.3f);
 		}
 		
 		
@@ -239,7 +247,13 @@ public class GameOverScript : MonoBehaviour
 					int best = PlayerPrefs.GetInt (GameConstants.BEST_SCORE_KEY,1);
 					//try to keep the scores aligned
 					GUI.Label (new Rect(width/2-45, height/2-160, 300, 50), score < 10 ? " "+ score : score.ToString(),style);
-					GUI.Label (new Rect(width/2-45, height/2-95, 300, 50),best < 10 ? " " + best : best.ToString(),style);
+
+					//default is not blink, the blink var will only be set to true if we have a best score
+					//
+					if (!blinkOnBestScore) {
+						GUI.Label (new Rect(width/2-45, height/2-95, 300, 50),best < 10 ? " " + best : best.ToString(),style);
+					}//else do not print it
+					
 					    
 
 			}//end repaint
@@ -303,6 +317,10 @@ public class GameOverScript : MonoBehaviour
 
 	}
 
+	void BlinkBestScore() {
+		blinkOnBestScore = !blinkOnBestScore;
+	}
+
 
 	IEnumerator ShowCredits() {
  
@@ -361,6 +379,8 @@ public class GameOverScript : MonoBehaviour
 
 	
 	void OnDestroy() {
+		blinkOnBestScore = false;
+		CancelInvoke("BlinkBestScore");
 		HideGameOverBoard ();
 	}
 
@@ -379,6 +399,8 @@ public class GameOverScript : MonoBehaviour
 		if(newBest!=null) {
 			newBest.GetComponent<SpriteRenderer>().enabled = false;
 		}
+
+
 		
 	}
 	
