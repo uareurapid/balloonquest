@@ -99,5 +99,34 @@ public class GUIResolutionHelper : MonoBehaviour {
 			return instance;
 		}
 	}
-	
+
+	public float getRatio(){
+		return (float)Screen.width / screenWidth;
+	}
 }
+	
+	// This should work as well
+	//  public Matrix4x4 SetGUIMatrix(){
+	//    guiRatio = getRatio();
+	//    return Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(guiRatio, guiRatio, 1.0f));
+	//}
+	 
+	//public float getRatio(){
+	//    return (float)Screen.width / defaultWidth;
+	//}
+	   
+	//void OnGUI () {
+	    //Get the Width of screen
+	  //  screenWidth = Screen.width;
+	    //Get the Height of screen
+	    //screenHeight = Screen.height;
+	 
+	    //float screenWidthRatio = screenWidth / guiRatio;
+	    //float screenHeightRatio = screenHeight / guiRatio;
+	 
+	    //GUI.matrix = SetGUIMatrix();
+	 
+	    //GUI.DrawTexture(new Rect((screenWidthRatio - (titleTex.width * titleScale)) / 2 - titleXPos, (screenHeightRatio - (titleTex.height * titleScale)) / 2 - titleYPos, titleTex.width * titleScale, titleTex.height * titleScale), titleTex);
+	//}
+	
+

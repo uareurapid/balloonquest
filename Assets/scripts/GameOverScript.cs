@@ -251,8 +251,18 @@ public class GameOverScript : MonoBehaviour
 					//default is not blink, the blink var will only be set to true if we have a best score
 					//
 					if (!blinkOnBestScore) {
-						GUI.Label (new Rect(width/2-45, height/2-95, 300, 50),best < 10 ? " " + best : best.ToString(),style);
+						//SpriteRenderer spr = GetNewBestScoreSprite ();
+						//if (spr != null) {
+						//	spr.enabled = false;
+						//}
+						GUI.Label (new Rect (width / 2 - 45, height / 2 - 95, 300, 50), best < 10 ? " " + best : best.ToString (), style);
 					}//else do not print it
+					else {
+						//SpriteRenderer spr = GetNewBestScoreSprite ();
+						//if (spr != null) {
+						//	spr.enabled = true;
+						//}
+					}
 					
 					    
 
@@ -415,4 +425,13 @@ public class GameOverScript : MonoBehaviour
 		}
 		return false;
 	}
+
+	/*private SpriteRenderer GetNewBestScoreSprite() {
+		//we have a new best score showing?
+		GameObject newBest = GameObject.FindGameObjectWithTag("NewBestScore2");
+		if(newBest!=null) {
+			return newBest.GetComponent<SpriteRenderer>();
+		}
+		return null;
+	}*/
 }

@@ -36,12 +36,11 @@ public class LevelChangeListener : MonoBehaviour {
 			levelTouched = DetectLevelTouchesDesktop();
 		}
 
-
 		if ( (levelTouched > 0 && levelTouched==level) && !loading && !levelLocked) {
 
-			Debug.Log("LOADING level " + level + " locked?"  + levelLocked);
+			Debug.Log("LOADING level " + levelTouched + " locked?"  + levelLocked);
 			loading = true;
-			Application.LoadLevel ("Level" + level);
+			Application.LoadLevel ("Level" + levelTouched);
 		
 		}	
 
@@ -52,8 +51,10 @@ public class LevelChangeListener : MonoBehaviour {
 		
 	
 		for (int i = 0; i < Input.touchCount; ++i) {
-			if (Input.GetTouch(i).phase == TouchPhase.Began) {
-				Vector3 touchPosition = Camera.main.ScreenToWorldPoint(Input.GetTouch(i).position);
+
+			Touch touch = Input.GetTouch(i);
+			if (touch.phase == TouchPhase.Ended && touch.tapCount==1) {
+				Vector3 touchPosition = Camera.main.ScreenToWorldPoint(touch.position);
 				RaycastHit2D hitInfo = Physics2D.Raycast(touchPosition, Vector2.zero);
 				// RaycastHit2D can be either true or null, but has an implicit conversion to bool, so we can use it like this
 				if(hitInfo)
@@ -61,6 +62,7 @@ public class LevelChangeListener : MonoBehaviour {
 					string tag = hitInfo.transform.gameObject.tag;
 					if(tag.Contains("start") ) {
 						string level = tag.Substring(tag.Length-1);
+						return int.Parse(level);
 					}
 					// Here you can check hitInfo to see which collider has been hit, and act appropriately.
 				}

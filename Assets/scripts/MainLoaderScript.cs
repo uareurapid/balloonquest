@@ -44,13 +44,15 @@ public class MainLoaderScript : MonoBehaviour {
 			//translationManager = TextLocalizationManager.Instance;
 			
 		}
+		checkSoundSettings ();
+
 		if (showSwipeIconsInterval > 0.0f) {
 			InvokeRepeating("ChangeIconsVisibility",showSwipeIconsInterval,showSwipeIconsInterval);
 		}
 	}
 
 	void Awake() {
-		checkSoundSettings ();
+		
 	}
 
 	//check if we have sound enabled/disabled
@@ -69,6 +71,35 @@ public class MainLoaderScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
+		//change sound settings?
+		if (!isMobilePlatform) {
+			if (Input.GetButtonDown("Fire1")) {
+				if (soundRect.Contains (Input.mousePosition)) {
+					soundOn = !soundOn;
+					PlayerPrefs.SetInt (GameConstants.SOUND_SETTINGS_KEY, soundOn ? 1 : 0);
+					PlayerPrefs.Save ();
+				}
+			}
+		} 
+		else {
+			if (Input.touches.Length ==1) {
+
+				Touch touch = Input.touches[0];
+
+				if(touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)  {
+
+					Vector2 fingerPos = GetFingerPosition(touch,resolutionHelper.isWidescreen);
+
+					if(soundRect.Contains(fingerPos)) {
+						soundOn = !soundOn;
+						PlayerPrefs.SetInt(GameConstants.SOUND_SETTINGS_KEY,soundOn ? 1 : 0);
+						PlayerPrefs.Save();
+					}
+
+				}
+
+			}  //end if (Input.touches.Length ==1) 
+		}
 
 	}
 
@@ -94,18 +125,18 @@ public class MainLoaderScript : MonoBehaviour {
 		int height = resolutionHelper.screenHeight;
 		
 		Matrix4x4 normalMatrix;
-		Matrix4x4 wideMatrix;
+		//Matrix4x4 wideMatrix;
 		//we use the center matrix for the buttons
-		wideMatrix = Matrix4x4.TRS (new Vector3 ((resolutionHelper.scaleX - scaleVector.y) / 2 * width, 0, 0), Quaternion.identity, scaleVector);
+		//wideMatrix = Matrix4x4.TRS (new Vector3 ((resolutionHelper.scaleX - scaleVector.y) / 2 * width, 0, 0), Quaternion.identity, scaleVector);
 		normalMatrix = Matrix4x4.TRS (Vector3.zero, Quaternion.identity, scaleVector);
 
-		if (isWideScreen) {
-			GUI.matrix = wideMatrix;
-		} 
-		else {
+		//if (isWideScreen) {
+		//	GUI.matrix = wideMatrix;
+		//} 
+		//else {
 			//assign normal matrix by default
 			GUI.matrix = normalMatrix;
-		}
+		//}
 
 		
 		if (Event.current.type == EventType.Repaint) {
@@ -115,49 +146,20 @@ public class MainLoaderScript : MonoBehaviour {
 			if(showSwipeIcons) {
 
 				swipeLeftRect = new Rect( width/2 - 300, height/2-200,100,100);
-				GUI.DrawTexture(swipeLeftRect,swipeLeftIcon,ScaleMode.ScaleToFit);
+				GUI.DrawTexture(swipeLeftRect,swipeLeftIcon);
 				
 				swipeRightRect = new Rect( width/2 + 200, height/2-200,100,100);
-				GUI.DrawTexture(swipeRightRect,swipeRightIcon,ScaleMode.ScaleToFit);
+				GUI.DrawTexture(swipeRightRect,swipeRightIcon);
 				
-				swipeTouchRect = new Rect( width/2 , height/2+200,100,100);
-				GUI.DrawTexture(swipeTouchRect,swipeTouchIcon,ScaleMode.ScaleToFit);
+				//swipeTouchRect = new Rect( width/2 , height/2+200,100,100);
+				//GUI.DrawTexture(swipeTouchRect,swipeTouchIcon,ScaleMode.ScaleToFit);
 			}
 
 			soundRect = new Rect(width-300 ,15,96,96);
-			GUI.DrawTexture(soundRect, soundOn ? soundIcon : muteIcon,ScaleMode.ScaleToFit);
+			GUI.DrawTexture(soundRect, soundOn ? soundIcon : muteIcon);
 
 		}
 
-		//change sound settings?
-		if (!isMobilePlatform) {
-			if (Event.current.type == EventType.MouseUp) {
-				if (soundRect.Contains (Event.current.mousePosition)) {
-					soundOn = !soundOn;
-					PlayerPrefs.SetInt (GameConstants.SOUND_SETTINGS_KEY, soundOn ? 1 : 0);
-					PlayerPrefs.Save ();
-				}
-			}
-		} 
-		else {
-			if (Input.touches.Length ==1) {
-				
-				Touch touch = Input.touches[0];
-				
-				if(touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)  {
-					
-					Vector2 fingerPos = GetFingerPosition(touch,isWideScreen);
-					
-					if(soundRect.Contains(Event.current.mousePosition)) {
-						soundOn = !soundOn;
-						PlayerPrefs.SetInt(GameConstants.SOUND_SETTINGS_KEY,soundOn ? 1 : 0);
-						PlayerPrefs.Save();
-					}
-				
-				}
-				
-			}  //end if (Input.touches.Length ==1) 
-		}
 
 
 		GUI.matrix = svMat;
