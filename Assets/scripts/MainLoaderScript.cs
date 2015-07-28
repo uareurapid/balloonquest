@@ -112,9 +112,9 @@ public class MainLoaderScript : MonoBehaviour {
 		
 		GUI.skin = skin;
 
-		/*if (style == null) {
+		if (style == null) {
 			LoadStyle();
-		}*/
+		}
 		skin.label.normal.textColor = Color.black;
 		
 		Matrix4x4 svMat = GUI.matrix;//save current matrix
@@ -125,7 +125,7 @@ public class MainLoaderScript : MonoBehaviour {
 		int height = resolutionHelper.screenHeight;
 		
 		Matrix4x4 normalMatrix;
-		//Matrix4x4 wideMatrix;
+		Matrix4x4 wideMatrix;
 		//we use the center matrix for the buttons
 		//wideMatrix = Matrix4x4.TRS (new Vector3 ((resolutionHelper.scaleX - scaleVector.y) / 2 * width, 0, 0), Quaternion.identity, scaleVector);
 		normalMatrix = Matrix4x4.TRS (Vector3.zero, Quaternion.identity, scaleVector);
@@ -135,13 +135,13 @@ public class MainLoaderScript : MonoBehaviour {
 		//} 
 		//else {
 			//assign normal matrix by default
-			GUI.matrix = normalMatrix;
+		//GUI.matrix = normalMatrix;
 		//}
 
 		
 		if (Event.current.type == EventType.Repaint) {
 			//style.normal.textColor = Color.black;
-			GUI.Label (new Rect(width/2-120, height/2-300, 400, 50), "Swipe Left or Right to choose level!");//style
+			GUI.Label (new Rect(width/2-120, height/2-300, 500, 50), "Swipe Left or Right to choose level!");//style
 		
 			if(showSwipeIcons) {
 
@@ -154,6 +154,7 @@ public class MainLoaderScript : MonoBehaviour {
 				//swipeTouchRect = new Rect( width/2 , height/2+200,100,100);
 				//GUI.DrawTexture(swipeTouchRect,swipeTouchIcon,ScaleMode.ScaleToFit);
 			}
+
 
 			soundRect = new Rect(width-300 ,15,96,96);
 			GUI.DrawTexture(soundRect, soundOn ? soundIcon : muteIcon);
@@ -184,11 +185,11 @@ public class MainLoaderScript : MonoBehaviour {
 	void OnDestroy() {
 		CancelInvoke ("ChangeIconsVisibility");
 	}
-	/*void LoadStyle() {
+	void LoadStyle() {
 		style = GUI.skin.GetStyle("Label");
 		style.alignment = TextAnchor.MiddleLeft;
-		style.font = freeTextFont;
-		style.fontSize = freeTextFontSize;
+		style.font = skin.label.font;
+		style.fontSize = skin.label.fontSize+10;
 		style.normal.textColor = Color.black;
-	}*/
+	}
 }

@@ -16,13 +16,13 @@ public class LevelChangeListener : MonoBehaviour {
 		platform = Application.platform;
 		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer) || (platform == RuntimePlatform.Android);
 
-		if (level > 1) {
+		/*if (level > 1) {
 			bool hasKey = PlayerPrefs.HasKey(GameConstants.UNLOCKED_LEVEL_KEY + level);
 			levelLocked = !hasKey;
 		} 
-		else {
+		else {*/
 			levelLocked = false;
-		}
+		//}
 	}
 	
 	// Update is called once per frame

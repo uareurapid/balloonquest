@@ -71,8 +71,6 @@ public class PickupCounterScript : MonoBehaviour {
 		
 		if(isWideScreen) {
 			GUI.matrix = Matrix4x4.TRS(new Vector3( (resolutionHelper.scaleX - scaleVector.y) / 2 * width, 0, 0), Quaternion.identity, scaleVector);
-			
-			
 		}
 		else {
 			
@@ -81,7 +79,7 @@ public class PickupCounterScript : MonoBehaviour {
 		
 		if(Event.current.type==EventType.Repaint) {
 
-			DrawText( "X " + numberPickups, fontSize, textureXPosition + textureWidth ,textureYPosition,120,60);
+			DrawText( "X " + numberPickups, fontSize, textureXPosition + textureWidth ,10,120,60);
 			GUI.DrawTexture(new Rect(textureXPosition,textureYPosition,textureWidth,textureHeight),icon);
        
 			
