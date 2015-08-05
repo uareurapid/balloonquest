@@ -5,7 +5,6 @@ using BalloonQuest;
 public class MainLoaderScript : MonoBehaviour {
 	
 	private bool isMobilePlatform = false;
-	private static RuntimePlatform platform;
 	private GUISkin skin;
 	private GUIResolutionHelper resolutionHelper;
 	GUIStyle style;
@@ -28,8 +27,7 @@ public class MainLoaderScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		platform = Application.platform;
-		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer) || (platform == RuntimePlatform.Android);
+		isMobilePlatform = (Application.platform == RuntimePlatform.IPhonePlayer) || (Application.platform == RuntimePlatform.Android);
 		skin = Resources.Load("GUISkin") as GUISkin;
 		
 		//check screen size, this was breaking, probably some place we are calling Instance
@@ -44,6 +42,7 @@ public class MainLoaderScript : MonoBehaviour {
 			//translationManager = TextLocalizationManager.Instance;
 			
 		}
+		resolutionHelper.CheckScreenResolution ();
 		checkSoundSettings ();
 
 		if (showSwipeIconsInterval > 0.0f) {
@@ -112,10 +111,10 @@ public class MainLoaderScript : MonoBehaviour {
 		
 		GUI.skin = skin;
 
-		if (style == null) {
-			LoadStyle();
-		}
-		skin.label.normal.textColor = Color.black;
+		//if (style == null) {
+		//	LoadStyle();
+		//}
+		//skin.label.normal.textColor = Color.black;
 		
 		Matrix4x4 svMat = GUI.matrix;//save current matrix
 		
@@ -126,19 +125,9 @@ public class MainLoaderScript : MonoBehaviour {
 		
 		Matrix4x4 normalMatrix;
 		Matrix4x4 wideMatrix;
-		//we use the center matrix for the buttons
-		//wideMatrix = Matrix4x4.TRS (new Vector3 ((resolutionHelper.scaleX - scaleVector.y) / 2 * width, 0, 0), Quaternion.identity, scaleVector);
-		normalMatrix = Matrix4x4.TRS (Vector3.zero, Quaternion.identity, scaleVector);
+		GUI.matrix = Matrix4x4.TRS (Vector3.zero, Quaternion.identity, scaleVector);
 
-		//if (isWideScreen) {
-		//	GUI.matrix = wideMatrix;
-		//} 
-		//else {
-			//assign normal matrix by default
-		//GUI.matrix = normalMatrix;
-		//}
 
-		
 		if (Event.current.type == EventType.Repaint) {
 			//style.normal.textColor = Color.black;
 			GUI.Label (new Rect(width/2-120, height/2-300, 500, 50), "Swipe Left or Right to choose level!");//style
@@ -186,7 +175,7 @@ public class MainLoaderScript : MonoBehaviour {
 		CancelInvoke ("ChangeIconsVisibility");
 	}
 	void LoadStyle() {
-		style = GUI.skin.GetStyle("Label");
+		style = skin.GetStyle("Label");
 		style.alignment = TextAnchor.MiddleLeft;
 		style.font = skin.label.font;
 		style.fontSize = skin.label.fontSize+10;

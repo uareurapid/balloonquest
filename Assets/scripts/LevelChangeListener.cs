@@ -6,15 +6,13 @@ public class LevelChangeListener : MonoBehaviour {
 
 	public int level = 1;
 	private bool isMobilePlatform = false;
-	private static RuntimePlatform platform;
 	private bool levelLocked = true;
 	private bool loading = false;
 
 	// Use this for initialization
 	void Start () {
 
-		platform = Application.platform;
-		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer) || (platform == RuntimePlatform.Android);
+		isMobilePlatform = (Application.platform == RuntimePlatform.IPhonePlayer) || (Application.platform == RuntimePlatform.Android);
 
 		/*if (level > 1) {
 			bool hasKey = PlayerPrefs.HasKey(GameConstants.UNLOCKED_LEVEL_KEY + level);
