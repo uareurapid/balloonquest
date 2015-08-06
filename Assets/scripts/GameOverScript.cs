@@ -222,7 +222,7 @@ public class GameOverScript : MonoBehaviour
 
 					//*******************************
 
-					homeTextureRect = new Rect( width/2 - 100, height/2+160,160,160);
+					homeTextureRect = new Rect( width/2 - 100, height/2+160,128,64);
 				    //resumeTextureRect = new Rect(width / 2-100,height-500,200,80);
 					//missionsTextureRect = new Rect(width / 2-100,height -400,200,80);
 					//achievementsRect = new Rect(width / 2-100,height -300,200,80);

@@ -111,10 +111,10 @@ public class MainLoaderScript : MonoBehaviour {
 		
 		GUI.skin = skin;
 
-		//if (style == null) {
-		//	LoadStyle();
-		//}
-		//skin.label.normal.textColor = Color.black;
+		if (style == null) {
+			LoadStyle();
+		}
+		GUI.color = Color.black;
 		
 		Matrix4x4 svMat = GUI.matrix;//save current matrix
 		
@@ -122,9 +122,7 @@ public class MainLoaderScript : MonoBehaviour {
 		bool isWideScreen = resolutionHelper.isWidescreen;
 		int width = resolutionHelper.screenWidth;
 		int height = resolutionHelper.screenHeight;
-		
-		Matrix4x4 normalMatrix;
-		Matrix4x4 wideMatrix;
+
 		GUI.matrix = Matrix4x4.TRS (Vector3.zero, Quaternion.identity, scaleVector);
 
 
@@ -135,9 +133,15 @@ public class MainLoaderScript : MonoBehaviour {
 			if(showSwipeIcons) {
 
 				swipeLeftRect = new Rect( width/2 - 300, height/2-200,100,100);
+				if(swipeLeftRect==null) {
+					Debug.Log("swipeLeftRect");
+				}
 				GUI.DrawTexture(swipeLeftRect,swipeLeftIcon);
 				
 				swipeRightRect = new Rect( width/2 + 200, height/2-200,100,100);
+				if(swipeRightRect==null) {
+					Debug.Log("swipeRightRect");
+				}
 				GUI.DrawTexture(swipeRightRect,swipeRightIcon);
 				
 				//swipeTouchRect = new Rect( width/2 , height/2+200,100,100);
@@ -146,6 +150,9 @@ public class MainLoaderScript : MonoBehaviour {
 
 
 			soundRect = new Rect(width-300 ,15,96,96);
+			if(muteIcon==null || soundIcon==null) {
+				Debug.Log("muteIcon && soundIcon");
+			}
 			GUI.DrawTexture(soundRect, soundOn ? soundIcon : muteIcon);
 
 		}
