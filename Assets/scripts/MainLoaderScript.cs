@@ -114,7 +114,7 @@ public class MainLoaderScript : MonoBehaviour {
 		if (style == null) {
 			LoadStyle();
 		}
-		GUI.color = Color.black;
+		style.normal.textColor = Color.black;
 		
 		Matrix4x4 svMat = GUI.matrix;//save current matrix
 		
@@ -128,21 +128,17 @@ public class MainLoaderScript : MonoBehaviour {
 
 		if (Event.current.type == EventType.Repaint) {
 			//style.normal.textColor = Color.black;
-			GUI.Label (new Rect(width/2-120, height/2-300, 500, 50), "Swipe Left or Right to choose level!");//style
+
 		
 			if(showSwipeIcons) {
 
 				swipeLeftRect = new Rect( width/2 - 300, height/2-200,100,100);
-				if(swipeLeftRect==null) {
-					Debug.Log("swipeLeftRect");
-				}
 				GUI.DrawTexture(swipeLeftRect,swipeLeftIcon);
 				
 				swipeRightRect = new Rect( width/2 + 200, height/2-200,100,100);
-				if(swipeRightRect==null) {
-					Debug.Log("swipeRightRect");
-				}
 				GUI.DrawTexture(swipeRightRect,swipeRightIcon);
+
+				GUI.Label (new Rect(width/2-140, height/2-300, 500, 50), "Swipe Left or Right to choose level!");//style
 				
 				//swipeTouchRect = new Rect( width/2 , height/2+200,100,100);
 				//GUI.DrawTexture(swipeTouchRect,swipeTouchIcon,ScaleMode.ScaleToFit);

@@ -450,8 +450,24 @@ public class PlayerScript : MonoBehaviour
 	
 				
 		}
+		else {
+			GemScript gem = collisionObject.GetComponent<GemScript>();
+			if(gem!=null) {
+			  HandleGemCollision(gem);
+			}
+		}
 		
 		
+	}
+
+	void HandleGemCollision(GemScript gem) {
+	 if(hasBalloon) {
+	   Sprite newSprite = gem.GetBalloonGift();
+	   SpriteRenderer renderer = GetComponent<SpriteRenderer> ();
+	   renderer.sprite = newSprite;
+	   renderer.enabled = true;
+	   GetComponent<PolygonCollider2D> ().enabled = true;
+	 }
 	}
 
 
