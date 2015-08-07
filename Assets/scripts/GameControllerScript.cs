@@ -694,15 +694,12 @@ public class GameControllerScript : MonoBehaviour {
 		PlayerPrefs.SetInt (GameConstants.HIGH_SCORE_KEY, metersDone);
 		int bestScore = PlayerPrefs.GetInt (GameConstants.BEST_SCORE_KEY, metersDone);
 
+		//if now i have a better score
 		if (metersDone > bestScore) {
 
-			//save the previous one
-			PlayerPrefs.SetInt (GameConstants.PREVIOUS_BEST_SCORE_KEY, bestScore);
-			//we have a new best score!
 			bestScore = metersDone;
-
+			//we have a new best score!
 		}
-		//now, save the new best score
 		PlayerPrefs.SetInt (GameConstants.BEST_SCORE_KEY, bestScore);
 
 	}

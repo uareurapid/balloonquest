@@ -9,7 +9,8 @@ public class SpecialEffectsHelper : MonoBehaviour
 	/// Singleton
 	/// </summary>
 	private static SpecialEffectsHelper instance;
-	
+
+
 	public ParticleSystem hitEffect;
 	public ParticleSystem landEffect;
 	public ParticleSystem soulEffect;
@@ -61,7 +62,7 @@ public class SpecialEffectsHelper : MonoBehaviour
 	public void PlayBloodSplaterEffect(Vector3 position) {
 		instantiate(bloodSplaterEffect, position);
 	}
-		
+
 	
 	public void PlayJellyLandedEffect(Vector3 position) {
 		instantiate(landEffect, position);

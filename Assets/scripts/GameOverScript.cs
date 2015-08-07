@@ -51,6 +51,8 @@ public class GameOverScript : MonoBehaviour
 
 	private bool showStore = false;
 	private bool blinkOnBestScore = false;
+	private int blinkedTimes = 0;
+	private int showingMessageTimes = 0;
 
 	void Start() {
 	
@@ -118,10 +120,10 @@ public class GameOverScript : MonoBehaviour
 		}
 		
 		//TODO, this should be done on a score script
-		int bestScore = PlayerPrefs.GetInt (GameConstants.BEST_SCORE_KEY, 1);
-		int previousBestScore = PlayerPrefs.GetInt (GameConstants.PREVIOUS_BEST_SCORE_KEY, bestScore);
+		int gameScore = PlayerPrefs.GetInt (GameConstants.HIGH_SCORE_KEY, 1);
+		int previousBestScore = PlayerPrefs.GetInt (GameConstants.BEST_SCORE_KEY, 1);
 		
-		if (bestScore > previousBestScore) {
+		if (gameScore == previousBestScore) {
 			//we have a new best score
 			GameObject newBest = GameObject.FindGameObjectWithTag("NewBestScore");
 			if(newBest!=null) {
@@ -152,7 +154,15 @@ public class GameOverScript : MonoBehaviour
 		if(initialTime >= interval ) {
 			
 			initialTime = 0f;
-			isShowingMessage = !isShowingMessage;
+			if(showingMessageTimes>=3) {
+				//just blink 3 times
+				isShowingMessage = true;//keep showing
+			}
+			else {
+				//just swap
+				isShowingMessage = !isShowingMessage;
+			}
+			showingMessageTimes+=1;
 			
 		}
     
@@ -250,19 +260,11 @@ public class GameOverScript : MonoBehaviour
 
 					//default is not blink, the blink var will only be set to true if we have a best score
 					//
-					if (!blinkOnBestScore) {
-						//SpriteRenderer spr = GetNewBestScoreSprite ();
-						//if (spr != null) {
-						//	spr.enabled = false;
-						//}
+					if (!blinkOnBestScore) { //Just write it there!
+					
 						GUI.Label (new Rect (width / 2 - 45, height / 2 - 95, 300, 50), best < 10 ? " " + best : best.ToString (), style);
 					}//else do not print it
-					else {
-						//SpriteRenderer spr = GetNewBestScoreSprite ();
-						//if (spr != null) {
-						//	spr.enabled = true;
-						//}
-					}
+					
 					
 					    
 
@@ -328,7 +330,14 @@ public class GameOverScript : MonoBehaviour
 	}
 
 	void BlinkBestScore() {
-		blinkOnBestScore = !blinkOnBestScore;
+		//only blink 5 times maximum
+		if (blinkedTimes >= 5) {
+			blinkOnBestScore = false;
+		} 
+		else {
+			blinkOnBestScore = !blinkOnBestScore;
+		}
+		blinkedTimes += 1;
 	}
 
 

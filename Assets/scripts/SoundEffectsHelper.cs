@@ -12,6 +12,7 @@ public class SoundEffectsHelper : MonoBehaviour
 	/// </summary>
 	private static SoundEffectsHelper instance;
 
+	public AudioClip movementWooshSound;
 	public AudioClip pickupCoinSound;
 	public AudioClip hitDeadSound;
 	public AudioClip waterSplashSound;
@@ -51,7 +52,10 @@ public class SoundEffectsHelper : MonoBehaviour
 		MakeSound(hitDeadSound);
 	}
 
-	
+	public void PlayWooshSound() {
+		MakeSound(movementWooshSound);
+	}
+
 	public void PlayWaterSplashSound()
 	{
 		MakeSound(waterSplashSound);

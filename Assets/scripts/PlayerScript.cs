@@ -303,6 +303,12 @@ public class PlayerScript : MonoBehaviour
 				float input =  Input.GetAxis("Horizontal");
 				
 				if(input!=0) {
+
+					if(!moving) {
+						//if i was already moving before, i do not play it again
+						PlayMoveEffect();
+					}
+
 					moving = true;
 				}
 				else {
@@ -310,6 +316,8 @@ public class PlayerScript : MonoBehaviour
 				}
 				
 				if(moving && canMove) {
+
+			
 					// The Speed animator parameter is set to the absolute value of the horizontal input.
 					//anim.SetFloat("Speed", Mathf.Abs(h));
 					
@@ -608,12 +616,30 @@ public class PlayerScript : MonoBehaviour
 	public void MoveBackward() {
 	  moveBackward = true;
 	  moveForward = false;
+	  
+	  if(!moving) {
+		//if i was already moving before, i do not play it again
+		PlayMoveEffect();
+	  }
 	  moving = true;
+	 
 	}
 	public void MoveForward() {
 	  moveForward = true;
 	  moveBackward =  false;
+	  if(!moving) {
+		 //if i was already moving before, i do not play it again
+		PlayMoveEffect();
+	  }
 	  moving = true;
+	
+	}
+
+	void PlayMoveEffect() {
+		SoundEffectsHelper fx = scripts.GetComponentInChildren<SoundEffectsHelper>();
+		if(fx!=null) {
+			fx.PlayWooshSound();
+		}
 	}
 
 	public void Jump(){
