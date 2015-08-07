@@ -232,7 +232,7 @@ public class GameOverScript : MonoBehaviour
 
 					//*******************************
 
-					homeTextureRect = new Rect( width/2 - 100, height/2+160,128,64);
+					homeTextureRect = new Rect( width/2 - 80, height/2+160,128,64);
 				    //resumeTextureRect = new Rect(width / 2-100,height-500,200,80);
 					//missionsTextureRect = new Rect(width / 2-100,height -400,200,80);
 					//achievementsRect = new Rect(width / 2-100,height -300,200,80);
@@ -279,6 +279,7 @@ public class GameOverScript : MonoBehaviour
 
 			    if(homeTextureRect.Contains(mousePosition) )
 				{
+				    PlaySettingsSound();
 					Application.LoadLevel("Main");
 				}
 				else if(resumeTextureRect.Contains(mousePosition) )
@@ -308,6 +309,7 @@ public class GameOverScript : MonoBehaviour
 
 				if(homeTextureRect.Contains(fingerPos) )
 				{
+					PlaySettingsSound();
 					Application.LoadLevel("Main");
 				}
 				else if(resumeTextureRect.Contains(fingerPos) )
@@ -327,6 +329,14 @@ public class GameOverScript : MonoBehaviour
 	  
 		
 
+	}
+
+	void PlaySettingsSound() {
+	  GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
+	  if(scripts!=null) {
+	   SoundEffectsHelper fx = scripts.GetComponentInChildren<SoundEffectsHelper>();
+	   fx.PlaySettingsSound();
+	  }
 	}
 
 	void BlinkBestScore() {

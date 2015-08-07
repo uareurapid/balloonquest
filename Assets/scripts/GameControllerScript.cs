@@ -856,6 +856,7 @@ public class GameControllerScript : MonoBehaviour {
 		if(!isMobilePlatform) { //desktop
 
 			if(DetectReplayTouchesDesktop() || DetectCloseGameOverTouchesDesktop()) {
+			    PlayReplaySound();
 				Application.LoadLevel("Level"+currentLevel);
 			}
 
@@ -921,7 +922,7 @@ public class GameControllerScript : MonoBehaviour {
 		  else {
 
 			if(DetectReplayTouchesMobile() || DetectCloseGameOverTouchesMobile()) {
-
+				PlayReplaySound();
 				Application.LoadLevel("Level"+currentLevel);
 
 			}
@@ -1021,6 +1022,14 @@ public class GameControllerScript : MonoBehaviour {
 		PlayerPrefs.SetString(GameConstants.UNLOCKED_LEVEL_KEY + currentLevel,GameConstants.UNLOCKED_LEVEL_KEY + currentLevel);
 		PlayerPrefs.Save ();
 
+	}
+
+	void PlayReplaySound() {
+	  GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
+	  if(scripts!=null) {
+	    SoundEffectsHelper fx = scripts.GetComponentInChildren<SoundEffectsHelper>();
+	    fx.PlayReplaySound();
+	  }
 	}
 
 	public int GetNextLevel() {

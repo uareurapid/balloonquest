@@ -18,6 +18,8 @@ public class SoundEffectsHelper : MonoBehaviour
 	public AudioClip waterSplashSound;
 	public AudioClip redAlertSound;
 	public AudioClip electricitySound;
+	public AudioClip replaySound;
+	public AudioClip settingsSound;
 
 	public AudioClip flipTimeSound;
 		//todo credit Freesound.org - "Energy Weapon 001.wav" by DJ Chronos
@@ -59,6 +61,16 @@ public class SoundEffectsHelper : MonoBehaviour
 	public void PlayWaterSplashSound()
 	{
 		MakeSound(waterSplashSound);
+	}
+
+	public void PlayReplaySound()
+	{
+		MakeSound(replaySound);
+	}
+
+	public void PlaySettingsSound()
+	{
+		MakeSound(settingsSound);
 	}
 
 	public void PlayRedAlertSound()
