@@ -132,10 +132,10 @@ public class MainLoaderScript : MonoBehaviour {
 		
 			if(showSwipeIcons) {
 
-				swipeLeftRect = new Rect( width/2 - 300, height/2-200,124,96);
+				swipeLeftRect = new Rect( width/2 - 300, height/2-200,132,96);
 				GUI.DrawTexture(swipeLeftRect,swipeLeftIcon);
 				
-				swipeRightRect = new Rect( width/2 + 200, height/2-200,124,96);
+				swipeRightRect = new Rect( width/2 + 200, height/2-200,132,96);
 				GUI.DrawTexture(swipeRightRect,swipeRightIcon);
 
 				GUI.Label (new Rect(width/2-140, height/2-300, 500, 50), "Swipe Left or Right to choose level!");//style
@@ -145,7 +145,7 @@ public class MainLoaderScript : MonoBehaviour {
 			}
 
 
-			soundRect = new Rect(width-300 ,15,124,96);
+			soundRect = new Rect(width-300 ,15,132,96);
 			if(muteIcon==null || soundIcon==null) {
 				Debug.Log("muteIcon && soundIcon");
 			}

@@ -77,6 +77,7 @@ public class GameControllerScript : MonoBehaviour {
 	public int currentWorld = 1;
 	//number of minutes to complete the mission
 
+	private MeshRenderer countDownMesh;
 
 	//display time
 
@@ -88,7 +89,7 @@ public class GameControllerScript : MonoBehaviour {
 	private bool movedGround = false;
 
 
-
+	private int countDown = 3;
 	
 	//Iads only
 //	private ADBannerView banner = null;
@@ -212,7 +213,6 @@ public class GameControllerScript : MonoBehaviour {
 			lastHowToTime = initialHowToTime;
 		}
 
-		//paralaxLevels = GameObject.FindGameObjectsWithTag("Scroller");
 		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer) || (platform == RuntimePlatform.Android);
 
 		
@@ -857,7 +857,10 @@ public class GameControllerScript : MonoBehaviour {
 
 			if(DetectReplayTouchesDesktop() || DetectCloseGameOverTouchesDesktop()) {
 			    PlayReplaySound();
-				Application.LoadLevel("Level"+currentLevel);
+				HideGameOver();
+				Debug.Log("Startcounting");
+				StartCountdown();
+
 			}
 
 			if(Event.current.type == EventType.MouseUp ) {
@@ -923,7 +926,10 @@ public class GameControllerScript : MonoBehaviour {
 
 			if(DetectReplayTouchesMobile() || DetectCloseGameOverTouchesMobile()) {
 				PlayReplaySound();
-				Application.LoadLevel("Level"+currentLevel);
+				HideGameOver();
+				Debug.Log("Startcounting");
+				StartCountdown();
+
 
 			}
 
@@ -1030,6 +1036,30 @@ public class GameControllerScript : MonoBehaviour {
 	    SoundEffectsHelper fx = scripts.GetComponentInChildren<SoundEffectsHelper>();
 	    fx.PlayReplaySound();
 	  }
+	}
+
+	void StartCountdown() {
+	  GameObject countdownTxt = GameObject.FindGameObjectWithTag("Countdown");
+		if(countdownTxt!=null) {
+		  countDownMesh = countdownTxt.GetComponent<MeshRenderer>();
+		  countDownMesh.enabled = true;
+		  countdownTxt.GetComponent<TextMesh>().text = "3";
+		  InvokeRepeating("IncreaseCountdown",1.0f,1.0f);
+	  }
+	}
+
+	void IncreaseCountdown() {
+		TextMesh txt = countDownMesh.GetComponentInParent<TextMesh>();
+		int value = int.Parse(txt.text);
+		if(value>0) {
+		  value-=1;
+		}
+		else {
+		 CancelInvoke("IncreaseCountdown");
+		 countDownMesh.enabled = false;
+		 Application.LoadLevel("Level"+currentLevel);
+		}
+
 	}
 
 	public int GetNextLevel() {
@@ -1180,12 +1210,14 @@ public class GameControllerScript : MonoBehaviour {
 		
 		
 		if(Input.GetMouseButtonDown(0)){
+		Debug.Log("postion is " + Input.mousePosition);
 			Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			Collider2D hitCollider = Physics2D.OverlapPoint(mousePosition);
 			
 			if(hitCollider){
+				Debug.Log("here feroe");
 				return hitCollider.transform.gameObject.tag.Equals("GameOver") ;
-				
+				Debug.Log("here");
 			}
 		}
 		return false;

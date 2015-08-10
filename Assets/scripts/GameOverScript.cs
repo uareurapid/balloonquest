@@ -193,15 +193,15 @@ public class GameOverScript : MonoBehaviour
 		
 		bool isWideScreen = GUIResolutionHelper.Instance.isWidescreen;
 		
-		if(isWideScreen) {
+		/*if(isWideScreen) {
 			GUI.matrix = Matrix4x4.TRS(new Vector3( (GUIResolutionHelper.Instance.scaleX - scaleVector.y) / 2 * width, 0, 0), Quaternion.identity, scaleVector);
 			
 			
 		}
-		else {
+		else {*/
 			GUI.matrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,scaleVector);
 			
-		}
+		//}
 
 
 		   // bool showNextLevel = false;
@@ -232,7 +232,7 @@ public class GameOverScript : MonoBehaviour
 
 					//*******************************
 
-					homeTextureRect = new Rect( width/2 - 80, height/2+160,128,64);
+					homeTextureRect = new Rect( width/2 - 80, height/2+160,128,72);
 				    //resumeTextureRect = new Rect(width / 2-100,height-500,200,80);
 					//missionsTextureRect = new Rect(width / 2-100,height -400,200,80);
 					//achievementsRect = new Rect(width / 2-100,height -300,200,80);
