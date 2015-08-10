@@ -77,7 +77,7 @@ public class GameControllerScript : MonoBehaviour {
 	public int currentWorld = 1;
 	//number of minutes to complete the mission
 
-	private MeshRenderer countDownMesh;
+
 
 	//display time
 
@@ -89,7 +89,6 @@ public class GameControllerScript : MonoBehaviour {
 	private bool movedGround = false;
 
 
-	private int countDown = 3;
 	
 	//Iads only
 //	private ADBannerView banner = null;
@@ -650,8 +649,7 @@ public class GameControllerScript : MonoBehaviour {
 			StartMusic();
 		}
 
-		//hide the board
-		HideGameOver ();
+
 
 		if(currentLevel==1) {
 		  //if we are on level 1, clear the history
@@ -666,13 +664,6 @@ public class GameControllerScript : MonoBehaviour {
 			
 	 }
 
-	void HideGameOver() {
-		GameOverScript script = FindObjectOfType<GameOverScript>();
-		if (script != null) {
-			Destroy(script.gameObject);
-		}
-	}
-	
 
 	//i shoul stop the scroll of the level
 	public void EndGame(bool showUnlockNextLevel) {
@@ -855,13 +846,7 @@ public class GameControllerScript : MonoBehaviour {
 
 		if(!isMobilePlatform) { //desktop
 
-			if(DetectReplayTouchesDesktop() || DetectCloseGameOverTouchesDesktop()) {
-			    PlayReplaySound();
-				HideGameOver();
-				Debug.Log("Startcounting");
-				StartCountdown();
 
-			}
 
 			if(Event.current.type == EventType.MouseUp ) {
 				
@@ -923,16 +908,6 @@ public class GameControllerScript : MonoBehaviour {
 		  }
 		  //if mobile platform
 		  else {
-
-			if(DetectReplayTouchesMobile() || DetectCloseGameOverTouchesMobile()) {
-				PlayReplaySound();
-				HideGameOver();
-				Debug.Log("Startcounting");
-				StartCountdown();
-
-
-			}
-
 
 
 		   //----------------------------------------------------------------
@@ -1030,37 +1005,9 @@ public class GameControllerScript : MonoBehaviour {
 
 	}
 
-	void PlayReplaySound() {
-	  GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
-	  if(scripts!=null) {
-	    SoundEffectsHelper fx = scripts.GetComponentInChildren<SoundEffectsHelper>();
-	    fx.PlayReplaySound();
-	  }
-	}
 
-	void StartCountdown() {
-	  GameObject countdownTxt = GameObject.FindGameObjectWithTag("Countdown");
-		if(countdownTxt!=null) {
-		  countDownMesh = countdownTxt.GetComponent<MeshRenderer>();
-		  countDownMesh.enabled = true;
-		  countdownTxt.GetComponent<TextMesh>().text = "3";
-		  InvokeRepeating("IncreaseCountdown",1.0f,1.0f);
-	  }
-	}
 
-	void IncreaseCountdown() {
-		TextMesh txt = countDownMesh.GetComponentInParent<TextMesh>();
-		int value = int.Parse(txt.text);
-		if(value>0) {
-		  value-=1;
-		}
-		else {
-		 CancelInvoke("IncreaseCountdown");
-		 countDownMesh.enabled = false;
-		 Application.LoadLevel("Level"+currentLevel);
-		}
 
-	}
 
 	public int GetNextLevel() {
 		if (currentLevel < numberOfLevels) {
@@ -1204,76 +1151,6 @@ public class GameControllerScript : MonoBehaviour {
 		bool checkPlayerVisible = (player==null) ? false : player.GetComponent<Renderer>().IsVisibleFrom(Camera.main);
 		return checkPlayerVisible;
 	}
-	
 
-	private bool DetectReplayTouchesDesktop() {
-		
-		
-		if(Input.GetMouseButtonDown(0)){
-		Debug.Log("postion is " + Input.mousePosition);
-			Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-			Collider2D hitCollider = Physics2D.OverlapPoint(mousePosition);
-			
-			if(hitCollider){
-				Debug.Log("here feroe");
-				return hitCollider.transform.gameObject.tag.Equals("GameOver") ;
-				Debug.Log("here");
-			}
-		}
-		return false;
-	}
-	
-	private bool DetectReplayTouchesMobile() {
-		
-		
-		for (int i = 0; i < Input.touchCount; ++i) {
-			if (Input.GetTouch(i).phase == TouchPhase.Began) {
-				Vector3 touchPosition = Camera.main.ScreenToWorldPoint(Input.GetTouch(i).position);
-				RaycastHit2D hitInfo = Physics2D.Raycast(touchPosition, Vector2.zero);
-				// RaycastHit2D can be either true or null, but has an implicit conversion to bool, so we can use it like this
-				if(hitInfo)
-				{
-					return hitInfo.transform.gameObject.tag.Equals("GameOver") ;
-					
-					// Here you can check hitInfo to see which collider has been hit, and act appropriately.
-				}
-			}
-		}
-		return false;
-	}
-
-	private bool DetectCloseGameOverTouchesDesktop() {
-		
-		
-		if(Input.GetMouseButtonDown(0)){
-			Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-			Collider2D hitCollider = Physics2D.OverlapPoint(mousePosition);
-			
-			if(hitCollider){
-				return hitCollider.transform.gameObject.tag.Equals("GameOverClose") ;
-				
-			}
-		}
-		return false;
-	}
-	
-	private bool DetectCloseGameOverTouchesMobile() {
-		
-		
-		for (int i = 0; i < Input.touchCount; ++i) {
-			if (Input.GetTouch(i).phase == TouchPhase.Began) {
-				Vector3 touchPosition = Camera.main.ScreenToWorldPoint(Input.GetTouch(i).position);
-				RaycastHit2D hitInfo = Physics2D.Raycast(touchPosition, Vector2.zero);
-				// RaycastHit2D can be either true or null, but has an implicit conversion to bool, so we can use it like this
-				if(hitInfo)
-				{
-					return hitInfo.transform.gameObject.tag.Equals("GameOverClose") ;
-					
-					// Here you can check hitInfo to see which collider has been hit, and act appropriately.
-				}
-			}
-		}
-		return false;
-	}
 	
 }

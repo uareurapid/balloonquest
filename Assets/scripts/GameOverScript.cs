@@ -54,6 +54,10 @@ public class GameOverScript : MonoBehaviour
 	private int blinkedTimes = 0;
 	private int showingMessageTimes = 0;
 
+
+	private MeshRenderer countDownMesh;
+	private int countDown = 3;
+
 	void Start() {
 	
 		// Load a skin for the buttons
@@ -279,18 +283,35 @@ public class GameOverScript : MonoBehaviour
 
 			    if(homeTextureRect.Contains(mousePosition) )
 				{
-				    PlaySettingsSound();
-					Application.LoadLevel("Main");
+					PlaySettingsSoundAndLoadMain ();
 				}
-				else if(resumeTextureRect.Contains(mousePosition) )
+
+			if(DetectReplayTouchesDesktop(mousePosition) || DetectCloseGameOverTouchesDesktop(mousePosition)) {
+					PlayReplaySound();
+					HideGameOver();
+					Debug.Log("Startcounting");
+					StartCountdown();
+					
+				}
+				/*else if(resumeTextureRect.Contains(mousePosition) )
 				{
 					Application.LoadLevel("Main");
-				}
+				}*/
 
 		}
 		//mobile checks
 		else if(isMobilePlatform && Input.touchCount == 1 )
 		{
+
+			if(DetectReplayTouchesMobile() || DetectCloseGameOverTouchesMobile()) {
+				PlayReplaySound();
+				HideGameOver();
+				Debug.Log("Startcounting");
+				StartCountdown();
+				
+				
+			}
+
 
 			Touch touch = Input.touches[0];
 			if(touch.phase == TouchPhase.Began) {
@@ -309,14 +330,13 @@ public class GameOverScript : MonoBehaviour
 
 				if(homeTextureRect.Contains(fingerPos) )
 				{
-					PlaySettingsSound();
-					Application.LoadLevel("Main");
+					PlaySettingsSoundAndLoadMain();
 				}
-				else if(resumeTextureRect.Contains(fingerPos) )
-				{
+				//else if(resumeTextureRect.Contains(fingerPos) )
+				//{
 				   //just resume the world, not the level
 					Application.LoadLevel("Main");
-				}
+				//}
 
 			}
 		}
@@ -330,13 +350,164 @@ public class GameOverScript : MonoBehaviour
 		
 
 	}
+	void PlaySettingsSoundAndLoadMain() {
+	
+		//we need a hack for PlayClipAtPoint(...)
+		if (Time.timeScale == 0f) {
+			//already paused the app
+			Time.timeScale = 1;
+			PlaySettingsSound();
+			Time.timeScale = 0f;
+		} 
+		else {
+			//still running, can play immediatelly
+			PlaySettingsSound();
+
+		}
+
+		Application.LoadLevel ("Main");
+	}
+	//hide it and disable touches
+	void HideGameOver() {
+		GameObject gameOver = GameObject.FindGameObjectWithTag ("GameOver");
+		if (gameOver != null) {
+			SpriteRenderer spr = gameOver.GetComponent<SpriteRenderer>();
+			if(spr!=null) {
+				Debug.Log("HIDE GAME OVER");
+				spr.enabled = false;
+			}
+			
+			CircleCollider2D collider = gameOver.GetComponent<CircleCollider2D>();
+			if(collider!=null) {
+				collider.enabled = false;
+			}
+		}
+		/*GameOverScript script = FindObjectOfType<GameOverScript>();
+		if (script != null) {
+			Destroy(script.gameObject);
+		}*/
+	}
+	//buttons and sounds related stuff
+	void PlayReplaySound() {
+		GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
+		if(scripts!=null) {
+			SoundEffectsHelper fx = scripts.GetComponentInChildren<SoundEffectsHelper>();
+			if(Time.timeScale==0) { //need this hack if game is already paused
+				Time.timeScale = 1;
+				fx.PlayReplaySound();
+				Time.timeScale = 0;
+			}
+			else {
+				//just play normally
+				fx.PlayReplaySound();
+			}
+
+
+		}
+	}
+	
+	void StartCountdown() {
+		GameObject countdownTxt = GameObject.FindGameObjectWithTag("Countdown");
+		if(countdownTxt!=null) {
+			countDownMesh = countdownTxt.GetComponent<MeshRenderer>();
+			countDownMesh.enabled = true;
+			countdownTxt.GetComponent<TextMesh>().text = "3";
+			InvokeRepeating("IncreaseCountdown",1.0f,1.0f);
+		}
+	}
+
+	void IncreaseCountdown() {
+		TextMesh txt = countDownMesh.GetComponentInParent<TextMesh>();
+		int value = int.Parse(txt.text);
+		if(value>0) {
+			value-=1;
+		}
+		else {
+			CancelInvoke("IncreaseCountdown");
+			countDownMesh.enabled = false;
+			GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
+			GameControllerScript controller = scripts.GetComponent<GameControllerScript>();
+			currentLevel = controller.GetCurrentLevel();
+			Application.LoadLevel("Level"+currentLevel);
+		}
+		
+	}
 
 	void PlaySettingsSound() {
+
 	  GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
-	  if(scripts!=null) {
-	   SoundEffectsHelper fx = scripts.GetComponentInChildren<SoundEffectsHelper>();
-	   fx.PlaySettingsSound();
-	  }
+	  if (scripts != null) {
+			SoundEffectsHelper fx = scripts.GetComponentInChildren<SoundEffectsHelper> ();
+			fx.PlaySettingsSound ();
+	  } 
+	}
+
+	private bool DetectReplayTouchesDesktop(Vector2 mousePosition) {
+		
+		
+		//if(Input.GetMouseButtonDown(0)){
+			Debug.Log("postion is " + Input.mousePosition);
+		   //Vector2 mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
+			Collider2D hitCollider = Physics2D.OverlapPoint(mousePosition);
+			
+			if(hitCollider){
+				return hitCollider.transform.gameObject.tag.Equals("GameOver") ;
+			}
+		//}
+		return false;
+	}
+	
+	private bool DetectReplayTouchesMobile() {
+		
+		
+		for (int i = 0; i < Input.touchCount; ++i) {
+			if (Input.GetTouch(i).phase == TouchPhase.Began) {
+				Vector3 touchPosition = Camera.main.ScreenToWorldPoint(Input.GetTouch(i).position);
+				RaycastHit2D hitInfo = Physics2D.Raycast(touchPosition, Vector2.zero);
+				// RaycastHit2D can be either true or null, but has an implicit conversion to bool, so we can use it like this
+				if(hitInfo)
+				{
+					return hitInfo.transform.gameObject.tag.Equals("GameOver") ;
+					
+					// Here you can check hitInfo to see which collider has been hit, and act appropriately.
+				}
+			}
+		}
+		return false;
+	}
+	
+	private bool DetectCloseGameOverTouchesDesktop(Vector2 mousePosition) {
+		
+		
+		//if(Input.GetMouseButtonDown(0)){
+			//Vector2 mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
+			Collider2D hitCollider = Physics2D.OverlapPoint(mousePosition);
+			
+			if(hitCollider){
+				return hitCollider.transform.gameObject.tag.Equals("GameOverClose") ;
+				
+			}
+		//}
+		return false;
+	}
+	
+	private bool DetectCloseGameOverTouchesMobile() {
+		
+		
+		for (int i = 0; i < Input.touchCount; ++i) {
+			if (Input.GetTouch(i).phase == TouchPhase.Began) {
+				Vector3 touchPosition = Camera.main.ScreenToWorldPoint(Input.GetTouch(i).position);
+				RaycastHit2D hitInfo = Physics2D.Raycast(touchPosition, Vector2.zero);
+				// RaycastHit2D can be either true or null, but has an implicit conversion to bool, so we can use it like this
+				if(hitInfo)
+				{
+					return hitInfo.transform.gameObject.tag.Equals("GameOverClose") ;
+					
+					// Here you can check hitInfo to see which collider has been hit, and act appropriately.
+				}
+			}
+		}
+		return false;
 	}
 
 	void BlinkBestScore() {
