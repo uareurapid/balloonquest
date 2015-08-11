@@ -57,6 +57,7 @@ public class GameOverScript : MonoBehaviour
 
 	private MeshRenderer countDownMesh;
 	private int countDown = 3;
+	private bool scoresHidden = false; 
 
 	void Start() {
 	
@@ -73,6 +74,7 @@ public class GameOverScript : MonoBehaviour
 		
 		initialTime = 0f;
 		isShowingMessage = true;
+		scoresHidden = false;
 
 				//handle translation language
 		//translationManager = TextLocalizationManager.Instance;
@@ -169,6 +171,29 @@ public class GameOverScript : MonoBehaviour
 			showingMessageTimes+=1;
 			
 		}
+
+		//desktop?
+		if(!isMobilePlatform) {
+
+			if(!scoresHidden && (DetectReplayTouchesDesktop() || DetectCloseGameOverTouchesDesktop()) ) {
+					HideScores();
+					PlayReplaySound();
+					HideGameOver();
+					StartCountdown();
+					
+			}
+		}
+		else {
+		//mobile
+			if(!scoresHidden && (DetectReplayTouchesMobile() || DetectCloseGameOverTouchesMobile()) ) {
+				HideScores();
+				PlayReplaySound();
+				HideGameOver();
+				StartCountdown();
+				
+				
+			}
+		}
     
     }
     //Load next scene, showing an activity indicator
@@ -196,16 +221,19 @@ public class GameOverScript : MonoBehaviour
 		Vector3 scaleVector = GUIResolutionHelper.Instance.scaleVector;
 		
 		bool isWideScreen = GUIResolutionHelper.Instance.isWidescreen;
+
+		Matrix4x4 wideMatrix = Matrix4x4.TRS(new Vector3( (GUIResolutionHelper.Instance.scaleX - scaleVector.y) / 2 * width, 0, 0), Quaternion.identity, scaleVector);
+		Matrix4x4 normalMatrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,scaleVector);
 		
-		/*if(isWideScreen) {
-			GUI.matrix = Matrix4x4.TRS(new Vector3( (GUIResolutionHelper.Instance.scaleX - scaleVector.y) / 2 * width, 0, 0), Quaternion.identity, scaleVector);
+		if(isWideScreen) {
+			GUI.matrix =  wideMatrix;
 			
 			
 		}
-		else {*/
-			GUI.matrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,scaleVector);
+		else {
+			GUI.matrix = normalMatrix;
 			
-		//}
+		}
 
 
 		   // bool showNextLevel = false;
@@ -237,35 +265,20 @@ public class GameOverScript : MonoBehaviour
 					//*******************************
 
 					homeTextureRect = new Rect( width/2 - 80, height/2+160,128,72);
-				    //resumeTextureRect = new Rect(width / 2-100,height-500,200,80);
-					//missionsTextureRect = new Rect(width / 2-100,height -400,200,80);
-					//achievementsRect = new Rect(width / 2-100,height -300,200,80);
-					//creditsTextureRect = new Rect(width / 2-100,height-200,200,80);
-
-
-					//}
-
 					GUI.DrawTexture(homeTextureRect,homeTexture);
-					//GUI.DrawTexture(missionsTextureRect,missionsTexture);
-					//GUI.DrawTexture(achievementsRect,achievementsTexture);
-					//GUI.DrawTexture(creditsTextureRect,creditsTexture);
-
-					//GUI.DrawTexture(resumeTextureRect,resumeTexture);
-
-					//if(!settingsScene && showStore) {
-					//	storeTextureRect = new Rect(width -110,30,96,96);
-					//    GUI.DrawTexture(storeTextureRect,storeTexture);
-					//}
-
+				
 					int score = PlayerPrefs.GetInt (GameConstants.HIGH_SCORE_KEY,1);
 					int best = PlayerPrefs.GetInt (GameConstants.BEST_SCORE_KEY,1);
 					//try to keep the scores aligned
-					GUI.Label (new Rect(width/2-45, height/2-160, 300, 50), score < 10 ? " "+ score : score.ToString(),style);
+					if(!scoresHidden) {
+						GUI.Label (new Rect(width/2-45, height/2-160, 300, 50), score < 10 ? " "+ score : score.ToString(),style);
+					}
+
 
 					//default is not blink, the blink var will only be set to true if we have a best score
 					//
-					if (!blinkOnBestScore) { //Just write it there!
-					
+					if (!blinkOnBestScore && !scoresHidden) { 
+						//Just write it there!
 						GUI.Label (new Rect (width / 2 - 45, height / 2 - 95, 300, 50), best < 10 ? " " + best : best.ToString (), style);
 					}//else do not print it
 					
@@ -276,7 +289,8 @@ public class GameOverScript : MonoBehaviour
 			
 			
 		//********************* CLICK / TOUCH CHECKS *******************
-				//desktop checks
+
+	
 		if(Event.current.type == EventType.MouseUp && !isMobilePlatform) {
 
 			Vector2 mousePosition = Event.current.mousePosition;
@@ -286,32 +300,13 @@ public class GameOverScript : MonoBehaviour
 					PlaySettingsSoundAndLoadMain ();
 				}
 
-			if(DetectReplayTouchesDesktop(mousePosition) || DetectCloseGameOverTouchesDesktop(mousePosition)) {
-					PlayReplaySound();
-					HideGameOver();
-					Debug.Log("Startcounting");
-					StartCountdown();
-					
-				}
-				/*else if(resumeTextureRect.Contains(mousePosition) )
-				{
-					Application.LoadLevel("Main");
-				}*/
+			
+
 
 		}
 		//mobile checks
 		else if(isMobilePlatform && Input.touchCount == 1 )
 		{
-
-			if(DetectReplayTouchesMobile() || DetectCloseGameOverTouchesMobile()) {
-				PlayReplaySound();
-				HideGameOver();
-				Debug.Log("Startcounting");
-				StartCountdown();
-				
-				
-			}
-
 
 			Touch touch = Input.touches[0];
 			if(touch.phase == TouchPhase.Began) {
@@ -416,13 +411,30 @@ public class GameOverScript : MonoBehaviour
 		}
 	}
 
+	void HideScores() {
+
+	  scoresHidden = true;
+
+	  GameObject currentScore = GameObject.FindGameObjectWithTag("NewBestScore");
+	  if(currentScore!=null) {
+		currentScore.GetComponent<SpriteRenderer>().enabled = false;
+	  }
+	  GameObject bestScore = GameObject.FindGameObjectWithTag("NewBestScore2");
+	  if(bestScore!=null) {
+	    bestScore.GetComponent<SpriteRenderer>().enabled = false;
+	  }
+
+	}
+
 	void IncreaseCountdown() {
 		TextMesh txt = countDownMesh.GetComponentInParent<TextMesh>();
 		int value = int.Parse(txt.text);
 		if(value>0) {
 			value-=1;
+			txt.text = "" + value;
 		}
 		else {
+			Debug.Log("Canceling invoke");
 			CancelInvoke("IncreaseCountdown");
 			countDownMesh.enabled = false;
 			GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
@@ -442,18 +454,19 @@ public class GameOverScript : MonoBehaviour
 	  } 
 	}
 
-	private bool DetectReplayTouchesDesktop(Vector2 mousePosition) {
+	private bool DetectReplayTouchesDesktop() {
 		
 		
-		//if(Input.GetMouseButtonDown(0)){
-			Debug.Log("postion is " + Input.mousePosition);
-		   //Vector2 mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
-			Collider2D hitCollider = Physics2D.OverlapPoint(mousePosition);
+		if(Input.GetMouseButtonDown(0)){
+
+		    Vector2 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			Collider2D hitCollider = Physics2D.OverlapPoint(worldPosition);
 			
 			if(hitCollider){
+			Debug.Log("YES!!!! " + hitCollider.transform.gameObject.tag);
 				return hitCollider.transform.gameObject.tag.Equals("GameOver") ;
 			}
-		//}
+		}
 		return false;
 	}
 	
@@ -476,18 +489,18 @@ public class GameOverScript : MonoBehaviour
 		return false;
 	}
 	
-	private bool DetectCloseGameOverTouchesDesktop(Vector2 mousePosition) {
+	private bool DetectCloseGameOverTouchesDesktop() {
 		
 		
-		//if(Input.GetMouseButtonDown(0)){
-			//Vector2 mousePosition = Camera.main.ScreenToWorldPoint(mousePosition);
-			Collider2D hitCollider = Physics2D.OverlapPoint(mousePosition);
+		if(Input.GetMouseButtonDown(0)){
+			Vector2 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			Collider2D hitCollider = Physics2D.OverlapPoint(worldPosition);
 			
 			if(hitCollider){
 				return hitCollider.transform.gameObject.tag.Equals("GameOverClose") ;
 				
 			}
-		//}
+		}
 		return false;
 	}
 	
@@ -579,9 +592,10 @@ public class GameOverScript : MonoBehaviour
 
 	
 	void OnDestroy() {
-		blinkOnBestScore = false;
+	    Debug.Log("destroy it now!!!");
+		/*blinkOnBestScore = false;
 		CancelInvoke("BlinkBestScore");
-		HideGameOverBoard ();
+		HideGameOverBoard ();*/
 	}
 
 	void HideGameOverBoard() {

@@ -445,11 +445,9 @@ public class PlayerScript : MonoBehaviour
 		if (enemy != null) {
 				
 			if (PlayerHasBalloon ()) {
-				Debug.Log ("burst ballon");
 				BurstBallon ();
 			}
 			else if (PlayerHasParachute ()) {
-				Debug.Log ("burst patrachute");
 				BurstParachute ();
 			}
 			else {
@@ -616,26 +614,17 @@ public class PlayerScript : MonoBehaviour
 	public void MoveBackward() {
 	  moveBackward = true;
 	  moveForward = false;
-	  
-	  if(!moving) {
-		//if i was already moving before, i do not play it again
-		PlayMoveEffect();
-	  }
 	  moving = true;
 	 
 	}
 	public void MoveForward() {
 	  moveForward = true;
 	  moveBackward =  false;
-	  if(!moving) {
-		 //if i was already moving before, i do not play it again
-		PlayMoveEffect();
-	  }
 	  moving = true;
 	
 	}
 
-	void PlayMoveEffect() {
+	public void PlayMoveEffect() {
 		SoundEffectsHelper fx = scripts.GetComponentInChildren<SoundEffectsHelper>();
 		if(fx!=null) {
 			fx.PlayWooshSound();
@@ -682,7 +671,6 @@ public class PlayerScript : MonoBehaviour
 	//disables balloon
 	public void BurstBallon() {
 		//TODO play effects/sound
-		Debug.Log ("BURST BALLON");
 		hasBalloon = false;
 		//play effects
 		SpecialEffectsHelper fx = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
@@ -696,12 +684,10 @@ public class PlayerScript : MonoBehaviour
 
 		if (hasParachute) {
 			//enable parachute sprite
-			Debug.Log("ENABLE PARACHUTE");
 			EnableParachute ();
 		} 
 		else {
 			//make him fall to the ground
-			Debug.Log("EnableGravityScale");
 			EnableGravityScale ();
 		}
 	}

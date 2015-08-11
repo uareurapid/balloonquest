@@ -30,13 +30,11 @@ public class HeroScript : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D collision)
 	{
-		Debug.Log ("HERO TRIGGER " + collision.gameObject.tag);
 		PerformUpdate(collision.gameObject);
 	}
 	
 	void OnCollisionEnter2D(Collision2D collision)
 	{
-		Debug.Log ("HERO COLLISION " + collision.gameObject.tag);
 		PerformUpdate(collision.gameObject);
 	}
 	

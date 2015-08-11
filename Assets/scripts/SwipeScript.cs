@@ -131,6 +131,7 @@ public class SwipeScript : MonoBehaviour {
 								player.MoveBackward();
 								Debug.Log("GO LEFT 2");
 							}
+							player.PlayMoveEffect();
 						}
 						/*else {
 						  player.PlayerStationary();
