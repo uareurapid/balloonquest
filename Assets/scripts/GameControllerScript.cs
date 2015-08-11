@@ -20,14 +20,14 @@ public class GameControllerScript : MonoBehaviour {
 	public Texture2D JumpButton;
 
 	private Texture2D rateTexture;
-	private Texture2D exitTexture;
+	//private Texture2D exitTexture;
 
 	
 	public int screenWidth;
 	public int screenHeight;
 	
 	Rect pausePlayRect;
-	Rect exitTextureRect;
+	//Rect exitTextureRect;
 	Rect leaderboardsRect;
 	Rect rateRect;
 	Rect forwardRect;
@@ -78,7 +78,8 @@ public class GameControllerScript : MonoBehaviour {
 	//number of minutes to complete the mission
 
 
-
+	private MeshRenderer countDownMesh;
+	private int countDown = 3;
 	//display time
 
 	public int elapsedMissionMeters = GameConstants.STARTING_POINT_IN_METERS;
@@ -125,6 +126,8 @@ public class GameControllerScript : MonoBehaviour {
 
 	Texture2D leaderBoardTexture;
 
+	//when the level is loaded, starts counting on StartCountdown
+	private float timeOnLoad = 0f;
 
 	private GameObject[] paralaxLevels;
 	void Awake()
@@ -194,7 +197,7 @@ public class GameControllerScript : MonoBehaviour {
 	void Start () {
 	
 		skin = Resources.Load("GUISkin") as GUISkin;
-		exitTexture	= Resources.Load("button_playstart") as Texture2D;
+		//exitTexture	= Resources.Load("button_playstart") as Texture2D;
 		rateTexture	= Resources.Load("button_rate") as Texture2D;
 		//		exitTexture	= Resources.Load("button_playstart") as Texture2D;
 
@@ -213,8 +216,8 @@ public class GameControllerScript : MonoBehaviour {
 		}
 
 		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer) || (platform == RuntimePlatform.Android);
-
-		
+		//start game play countdown
+		StartCountdown ();
 	}
 
 	//check if we have sound enabled/disabled
@@ -382,7 +385,7 @@ public class GameControllerScript : MonoBehaviour {
 	//#########  music handling ################
 
 	public void StartMusic() {
-    
+		Debug.Log ("START MUSIC");
 	   AudioSource source = GetGameMusic();
 	   if(source!=null) {
 		  source.Play();
@@ -410,7 +413,7 @@ public class GameControllerScript : MonoBehaviour {
     }
     
 	public void StopMusic() {		
-	
+		Debug.Log ("STOP MUSIC");
 		AudioSource source = GetGameMusic();
 		if(source!=null) {
 			source.Stop();
@@ -446,7 +449,7 @@ public class GameControllerScript : MonoBehaviour {
 	
 	void FixedUpdate()
 	{
-		
+
 	}
 		
 	
@@ -454,9 +457,24 @@ public class GameControllerScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		if(isGameStarted && player!=null && player.IsPlayerAlive() && !isGameComplete) {
-		
+		if (!isGameStarted) {
+			float realTimeSinceLoad = Time.realtimeSinceStartup;
+			float diff = realTimeSinceLoad - timeOnLoad;
+			if(diff > 4f && countDown==0) {
+				countDown = 3;//need to reset it here, otherwise it will start game again
+				countDownMesh.enabled = false;
+				StartGame();
+			}else if(diff > 3f && diff < 4f && countDown==1) {
+				DecreaseCountdown();
+			}
+			else if( diff > 2f && diff < 3f && countDown==2) { 
+				DecreaseCountdown();
+			}
+			else if(diff > 1f && diff < 2f && countDown==3) {
+				DecreaseCountdown();
+			}
 		}
+
 
 	}
 
@@ -793,8 +811,8 @@ public class GameControllerScript : MonoBehaviour {
 					}
 
 
-					exitTextureRect = new Rect( width/2 - 100, screenHeight/2,200,80);
-					GUI.DrawTexture(exitTextureRect, exitTexture);
+					//exitTextureRect = new Rect( width/2 - 100, screenHeight/2,200,80);
+					//GUI.DrawTexture(exitTextureRect, exitTexture);
 
 
 
@@ -857,9 +875,9 @@ public class GameControllerScript : MonoBehaviour {
 					    }
 					    #endif
 
-						if(exitTextureRect.Contains(Event.current.mousePosition) ) {
-							StartGame();
-						}
+						//if(exitTextureRect.Contains(Event.current.mousePosition) ) {
+						//	StartGame();
+						//}
 						/*else if(leaderboardsRect!=null && player!=null && leaderboardsRect.Contains(Event.current.mousePosition) ) {
 						  if(socialAPIInstance.isAuthenticated) {
 							socialAPIInstance.ShowLeaderBoards();
@@ -942,9 +960,9 @@ public class GameControllerScript : MonoBehaviour {
 						#endif*/
 
 							//is game over, maybe not started yet?
-							if(exitTextureRect.Contains(fingerPos) ) {
-								StartGame();
-							}
+							//if(exitTextureRect.Contains(fingerPos) ) {
+							//	StartGame();
+							//}
 						    
 						    #if UNITY_ANDROID && !UNITY_EDITOR
 						    if(rateRect.Contains(fingerPos) && player!=null) {
@@ -1150,6 +1168,61 @@ public class GameControllerScript : MonoBehaviour {
 	public bool IsPlayerVisible() {
 		bool checkPlayerVisible = (player==null) ? false : player.GetComponent<Renderer>().IsVisibleFrom(Camera.main);
 		return checkPlayerVisible;
+	}
+
+	void StartCountdown() {
+		countDown = 3;
+		GameObject countdownTxt = GameObject.FindGameObjectWithTag("Countdown");
+
+		if(countdownTxt!=null) {
+			CenterObjectOnScreen(countdownTxt);
+			countDownMesh = countdownTxt.GetComponent<MeshRenderer>();
+			countDownMesh.enabled = true;
+			countdownTxt.GetComponent<TextMesh>().text = "" + countDown;
+			//Time.timeScale = 1f;
+			timeOnLoad = Time.realtimeSinceStartup;
+
+		}
+	}
+
+	void DecreaseCountdown() {
+		TextMesh txt = countDownMesh.GetComponentInParent<TextMesh>();
+		int value = int.Parse(txt.text);
+		if(value>0) {
+			value-=1;
+			countDown = value;
+			if(countDown==0) {
+				txt.text = "GO!";
+			}
+			else {
+				txt.text = "" + countDown;
+			}
+
+			//play countdown sound
+			GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
+			if (scripts != null) {
+				SoundEffectsHelper fx = scripts.GetComponentInChildren<SoundEffectsHelper> ();
+				Time.timeScale = 1f;
+				fx.PlayCountdownSound();
+				Time.timeScale = 0f;
+			} 
+
+
+		}
+		else {
+			countDown = 0;
+			txt.text = "GO!";
+			countDownMesh.enabled = false;
+			//WILL START THE GAME
+		}
+		
+	}
+
+	void CenterObjectOnScreen(GameObject obj) {
+		float z = obj.transform.position.z;
+		Vector3 newPosition = Camera.main.ScreenToWorldPoint (new Vector3 (Screen.width / 2, Screen.height / 2, Camera.main.nearClipPlane));
+		newPosition.z = z;
+		obj.transform.position = newPosition;
 	}
 
 	

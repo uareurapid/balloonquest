@@ -23,7 +23,7 @@ public class HeroScript : MonoBehaviour {
 	
 	void OnBecameInvisible() {
 		isVisible = false;
-		if (!player.CanPlayerMove()) {
+		if (!player.CanPlayerMove() && player.IsPlayerAlive()) {
 			player.KillPlayer();
 		}
 	}
@@ -43,7 +43,7 @@ public class HeroScript : MonoBehaviour {
 		
 		EnemyScript enemy = collisionObject.GetComponent<EnemyScript> ();
 		//collided with enemy
-		if (enemy != null && player != null) {
+		if (enemy != null && player != null && player.IsPlayerAlive()) {
 
 			player.KillPlayer ();
 

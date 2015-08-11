@@ -55,8 +55,7 @@ public class GameOverScript : MonoBehaviour
 	private int showingMessageTimes = 0;
 
 
-	private MeshRenderer countDownMesh;
-	private int countDown = 3;
+
 	private bool scoresHidden = false; 
 
 	void Start() {
@@ -179,7 +178,8 @@ public class GameOverScript : MonoBehaviour
 					HideScores();
 					PlayReplaySound();
 					HideGameOver();
-					StartCountdown();
+					ReloadCurrentLevel();
+					
 					
 			}
 		}
@@ -189,8 +189,7 @@ public class GameOverScript : MonoBehaviour
 				HideScores();
 				PlayReplaySound();
 				HideGameOver();
-				StartCountdown();
-				
+				ReloadCurrentLevel();
 				
 			}
 		}
@@ -381,6 +380,7 @@ public class GameOverScript : MonoBehaviour
 		if (script != null) {
 			Destroy(script.gameObject);
 		}*/
+
 	}
 	//buttons and sounds related stuff
 	void PlayReplaySound() {
@@ -401,15 +401,7 @@ public class GameOverScript : MonoBehaviour
 		}
 	}
 	
-	void StartCountdown() {
-		GameObject countdownTxt = GameObject.FindGameObjectWithTag("Countdown");
-		if(countdownTxt!=null) {
-			countDownMesh = countdownTxt.GetComponent<MeshRenderer>();
-			countDownMesh.enabled = true;
-			countdownTxt.GetComponent<TextMesh>().text = "3";
-			InvokeRepeating("IncreaseCountdown",1.0f,1.0f);
-		}
-	}
+
 
 	void HideScores() {
 
@@ -426,24 +418,7 @@ public class GameOverScript : MonoBehaviour
 
 	}
 
-	void IncreaseCountdown() {
-		TextMesh txt = countDownMesh.GetComponentInParent<TextMesh>();
-		int value = int.Parse(txt.text);
-		if(value>0) {
-			value-=1;
-			txt.text = "" + value;
-		}
-		else {
-			Debug.Log("Canceling invoke");
-			CancelInvoke("IncreaseCountdown");
-			countDownMesh.enabled = false;
-			GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
-			GameControllerScript controller = scripts.GetComponent<GameControllerScript>();
-			currentLevel = controller.GetCurrentLevel();
-			Application.LoadLevel("Level"+currentLevel);
-		}
-		
-	}
+
 
 	void PlaySettingsSound() {
 
@@ -593,9 +568,16 @@ public class GameOverScript : MonoBehaviour
 	
 	void OnDestroy() {
 	    Debug.Log("destroy it now!!!");
-		/*blinkOnBestScore = false;
+		blinkOnBestScore = false;
 		CancelInvoke("BlinkBestScore");
-		HideGameOverBoard ();*/
+		//HideGameOverBoard ();
+	}
+
+	void ReloadCurrentLevel() {
+		GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
+		GameControllerScript controller = scripts.GetComponent<GameControllerScript>();
+		currentLevel = controller.GetCurrentLevel();
+		Application.LoadLevel("Level"+currentLevel);
 	}
 
 	void HideGameOverBoard() {

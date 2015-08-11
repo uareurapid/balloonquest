@@ -20,6 +20,8 @@ public class SoundEffectsHelper : MonoBehaviour
 	public AudioClip electricitySound;
 	public AudioClip replaySound;
 	public AudioClip settingsSound;
+	public AudioClip countdownSound;
+	public AudioClip powerupSound;
 
 	public AudioClip flipTimeSound;
 		//todo credit Freesound.org - "Energy Weapon 001.wav" by DJ Chronos
@@ -47,6 +49,16 @@ public class SoundEffectsHelper : MonoBehaviour
 	public void PlayPickupCoinSound()
 	{
 		MakeSound(pickupCoinSound);
+	}
+
+	public void PlayCountdownSound()
+	{
+		MakeSound(countdownSound);
+	}
+
+	public void PlayPowerupSound()
+	{
+		MakeSound(powerupSound);
 	}
 
 	public void PlayHitDeadSound()

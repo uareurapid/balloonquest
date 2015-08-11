@@ -450,7 +450,7 @@ public class PlayerScript : MonoBehaviour
 			else if (PlayerHasParachute ()) {
 				BurstParachute ();
 			}
-			else {
+			else if(IsPlayerAlive()) {
 				KillPlayer();
 			}
 	
@@ -473,6 +473,13 @@ public class PlayerScript : MonoBehaviour
 	   renderer.sprite = newSprite;
 	   renderer.enabled = true;
 	   GetComponent<PolygonCollider2D> ().enabled = true;
+
+	   SoundEffectsHelper sfx = scripts.GetComponentInChildren<SoundEffectsHelper> ();
+	   if (sfx != null) {
+		 sfx.PlayPowerupSound();
+	   }
+
+
 	 }
 	}
 
@@ -556,6 +563,7 @@ public class PlayerScript : MonoBehaviour
 	
 	void ShowGameOver(bool showNextlevel) {
 	
+		Debug.Log("END GAME!!!!!");
 	    controller.EndGame(showNextlevel);
 		// Game Over.
 		// Add the script to the parent because the current game
