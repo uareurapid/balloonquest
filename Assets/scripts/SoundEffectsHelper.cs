@@ -22,8 +22,9 @@ public class SoundEffectsHelper : MonoBehaviour
 	public AudioClip settingsSound;
 	public AudioClip countdownSound;
 	public AudioClip powerupSound;
-
+	public AudioClip landingSound;
 	public AudioClip flipTimeSound;
+	public AudioClip successSound;
 		//todo credit Freesound.org - "Energy Weapon 001.wav" by DJ Chronos
 		//Freesound.org - "Medium Explosion.wav" by ryansnook
 		//Freesound.org - "Distant explosion.wav" by juskiddink
@@ -51,6 +52,11 @@ public class SoundEffectsHelper : MonoBehaviour
 		MakeSound(pickupCoinSound);
 	}
 
+	public void PlaySuccessSound()
+	{
+		MakeSound(successSound);
+	}
+
 	public void PlayCountdownSound()
 	{
 		MakeSound(countdownSound);
@@ -68,6 +74,10 @@ public class SoundEffectsHelper : MonoBehaviour
 
 	public void PlayWooshSound() {
 		MakeSound(movementWooshSound);
+	}
+
+	public void PlayLandingSound() {
+		MakeSound(landingSound);
 	}
 
 	public void PlayWaterSplashSound()

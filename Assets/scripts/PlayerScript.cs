@@ -64,6 +64,7 @@ public class PlayerScript : MonoBehaviour
 
 	private GameObject scripts;
 	private static RuntimePlatform platform;
+	SoundEffectsHelper soundEffects;
 
 	void Start() {
 
@@ -86,6 +87,7 @@ public class PlayerScript : MonoBehaviour
 		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer) || (platform == RuntimePlatform.Android);
 		hasLanded = false;
 
+		soundEffects = GetSoundEffects ();
 		
 	}
 	
@@ -449,20 +451,15 @@ public class PlayerScript : MonoBehaviour
 		
 	}
 
-	void HandleGemCollision(GemScript gem) {
+	public void HandleGemCollision(GemScript gem) {
 	 if(hasBalloon) {
 	   Sprite newSprite = gem.GetBalloonGift();
 	   SpriteRenderer renderer = GetComponent<SpriteRenderer> ();
 	   renderer.sprite = newSprite;
 	   renderer.enabled = true;
 	   GetComponent<PolygonCollider2D> ().enabled = true;
-
-	   SoundEffectsHelper sfx = scripts.GetComponentInChildren<SoundEffectsHelper> ();
-	   if (sfx != null) {
-		 sfx.PlayPowerupSound();
-	   }
-
-
+	   soundEffects.PlayPowerupSound();
+	   
 	 }
 	}
 
@@ -477,19 +474,58 @@ public class PlayerScript : MonoBehaviour
 		if (fx != null) {
 			fx.PlayJellyLandedEffect(transform.position);
 		}
+		PlayLandingSound();
+
+		PlayFireworks ();
+
 		//finish level
 			
 		int level = controller.currentLevel;
 		int max = controller.numberOfLevels;
+
+		PlaySuccessSound ();
+
 		if(level < max) {
 			//Go to next level in 2 seconds!
 
 			//Play some animation
 			controller.FinishLevel();
-			Invoke("LoadNextLevel",2.0f);
+			Invoke("LoadNextLevel",3.0f);
 		}
 			
 
+	}
+//todo also play some nice sounds
+	void PlayFireworks() {
+		Debug.Log ("PlayFireworks now!!");
+		GameObject fireworks = GameObject.FindGameObjectWithTag ("Fireworks");
+		if (fireworks != null) {
+			Debug.Log ("ACTIVATE Fireworks now!!");
+			//fireworks.SetActive(true);
+			ActivateScript script = fireworks.GetComponent<ActivateScript>();
+			if(script!=null) {
+				Debug.Log ("CALLING ACTIVATE Fireworks now!!");
+				script.Activate();
+			}
+		}
+	}
+
+	void PlaySuccessSound() {
+		
+		soundEffects.PlaySuccessSound ();
+
+	}
+	//landed
+	void PlayLandingSound() {
+
+		soundEffects.PlayLandingSound ();
+
+	}
+
+	private SoundEffectsHelper GetSoundEffects() {
+
+		SoundEffectsHelper fx = scripts.GetComponentInChildren<SoundEffectsHelper> ();
+		return fx;
 	}
 
     void LoadNextLevel() {

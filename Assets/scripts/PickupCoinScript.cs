@@ -8,7 +8,7 @@ public class PickupCoinScript : MonoBehaviour {
 	void Start () {
 	  GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
 	  if(scripts!=null) {
-	    sfx = scripts.GetComponent<SoundEffectsHelper>();
+		sfx = scripts.GetComponentInChildren<SoundEffectsHelper>();
 	  }
 	}
 	

@@ -335,6 +335,15 @@ public class GameControllerScript : MonoBehaviour {
 
 	  
 	}
+
+	void PlaySettingsSound() {
+		
+		GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
+		if (scripts != null) {
+			SoundEffectsHelper fx = scripts.GetComponentInChildren<SoundEffectsHelper> ();
+			fx.PlaySettingsSound ();
+		} 
+	}
 	
 	public int GetCurrentLevel() {
 	  return currentLevel;
@@ -629,6 +638,7 @@ public class GameControllerScript : MonoBehaviour {
 		  screenshot.EnableScreenshots();
 	   }*/
 	   isGamePaused = true;
+	   PlaySettingsSound ();
 	   CheckPause();
 	   PauseMusic();
 
@@ -647,6 +657,8 @@ public class GameControllerScript : MonoBehaviour {
 		isGameStarted = true;
 		showUnlockLevel = false;
 		CheckPause();
+		PlaySettingsSound ();
+		//this call must be done either after/before considering the Time.timeScale of the moment
 		ResumeMusic();
 	}
 	
@@ -749,7 +761,8 @@ public class GameControllerScript : MonoBehaviour {
 				}
 
 			    if(isLevelComplete) {
-					DrawText("Congratulations! Level " + currentLevel + " Complete."  , messagesFontSizeLarger, width/2-200, height/2,450,50);
+				    //unlock some achievement here maybe
+					DrawText("Congratulations! Level " + currentLevel + " Complete."  , messagesFontSizeLarger, width/2-200, height/2-200,450,50);
 				}
 
 			}
@@ -1178,7 +1191,7 @@ public class GameControllerScript : MonoBehaviour {
 			CenterObjectOnScreen(countdownTxt);
 			countDownMesh = countdownTxt.GetComponent<MeshRenderer>();
 			countDownMesh.enabled = true;
-			countdownTxt.GetComponent<TextMesh>().text = "" + countDown;
+			countdownTxt.GetComponent<TextMesh>().text = "0" + countDown;
 			//Time.timeScale = 1f;
 			timeOnLoad = Time.realtimeSinceStartup;
 
@@ -1195,7 +1208,7 @@ public class GameControllerScript : MonoBehaviour {
 				txt.text = "GO!";
 			}
 			else {
-				txt.text = "" + countDown;
+				txt.text = "0" + countDown;
 			}
 
 			//play countdown sound

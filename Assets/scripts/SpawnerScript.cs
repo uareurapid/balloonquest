@@ -92,14 +92,17 @@ public class SpawnerScript : MonoBehaviour
 	  //stop spawining if we are stopped
 	  if(canSpawn ) { //controller.SpawnAllowed() check the number of jellies
 	  
-
+			int spawnedIndex = 0;
+			if(enemies.Length>1) {
+				spawnedIndex = Random.Range(0,enemies.Length);
+			}
 	        //Added random position (-40,+40) for the spawn position
 				  float randomX = Random.Range(transform.position.x - marginLeft, transform.position.x + marginRight);
 					newPosition.x = randomX;
 					newPosition.y = transform.position.y;
 					newPosition.z = transform.position.z;
-	        //already have a next thumbnail
-					nextPlatform = (GameObject)Instantiate(enemies[0], newPosition, transform.rotation);
+	        //the spawned object will have the same rotation of the spawner object itself
+				nextPlatform = (GameObject)Instantiate(enemies[spawnedIndex], newPosition, transform.rotation);
 					
 				
 				    spawnCount+=1;

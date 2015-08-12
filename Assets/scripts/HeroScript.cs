@@ -43,10 +43,17 @@ public class HeroScript : MonoBehaviour {
 		
 		EnemyScript enemy = collisionObject.GetComponent<EnemyScript> ();
 		//collided with enemy
-		if (enemy != null && player != null && player.IsPlayerAlive()) {
+		if (enemy != null && player != null && player.IsPlayerAlive ()) {
 
 			player.KillPlayer ();
 
+		} 
+		else {
+			//is a gem?
+			GemScript gem = collisionObject.GetComponent<GemScript>();
+			if(gem!=null && player!=null) {
+				player.HandleGemCollision(gem);
+			}
 		}
 		
 		
