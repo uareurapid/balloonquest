@@ -23,7 +23,7 @@ public class HeroScript : MonoBehaviour {
 	
 	void OnBecameInvisible() {
 		isVisible = false;
-		if (!player.CanPlayerMove() && player.IsPlayerAlive()) {
+		if (!player.CanPlayerMove() && player.IsPlayerAlive() && !player.PlayerTouchedGround()) {
 			player.KillPlayer();
 		}
 	}

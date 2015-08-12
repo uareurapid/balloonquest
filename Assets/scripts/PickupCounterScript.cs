@@ -79,7 +79,7 @@ public class PickupCounterScript : MonoBehaviour {
 		
 		if(Event.current.type==EventType.Repaint) {
 
-			DrawText( "X " + numberPickups, fontSize, textureXPosition + textureWidth ,10,120,60);
+			DrawText( "X " + numberPickups, fontSize, textureXPosition + textureWidth ,0,120,60);
 			GUI.DrawTexture(new Rect(textureXPosition,textureYPosition,textureWidth,textureHeight),icon);
        
 			

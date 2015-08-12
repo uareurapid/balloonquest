@@ -744,7 +744,7 @@ public class GameControllerScript : MonoBehaviour {
 					//	+ " " + currentLevel, messagesFontSizeSmaller +10, 20, 10,200,50);
 	
 				if(elapsedMissionMeters>=1 && !isLevelComplete) {
-					  DrawText(elapsedMissionMeters +" meters!"  , messagesFontSizeSmaller +10, 280, 10,200,50);
+					  DrawText(elapsedMissionMeters +" meters!"  , messagesFontSizeLarger, width/2-100, 10,300,50);
 					
 				}
 

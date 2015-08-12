@@ -50,7 +50,7 @@ public class PlayerScript : MonoBehaviour
 	private TextLocalizationManager translationManager;
 
 	private bool facingRight = true;
-
+	private bool hasLanded = false;
 	private bool buyedInfiniteLifes = false;
 	private bool moveBackward = true;
 	private bool moveForward = false;
@@ -84,7 +84,7 @@ public class PlayerScript : MonoBehaviour
 
 		platform = Application.platform;
 		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer) || (platform == RuntimePlatform.Android);
-
+		hasLanded = false;
 
 		
 	}
@@ -145,32 +145,11 @@ public class PlayerScript : MonoBehaviour
 			
 			Matrix4x4 svMat = GUI.matrix;//save current matrix
 			GUI.matrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,resolutionHelper.scaleVector);
-			
-			/*int num = buyedInfiniteLifes ? 1 : playerHealth.hitPoints;
-			
-			DrawText(GetTranslationKey(GameConstants.MSG_LIFES) + " ",20,20,45,120,40);
 
-		    int x = 70; int y=50;
-			//just draw 1 x N
-			if(buyedInfiniteLifes) {
-				  Rect life = new Rect(x,y,48,48);
-				  GUI.DrawTexture(life, lifeIcon);
-				  DrawText(" X " + GetTranslationKey(GameConstants.MSG_INFINITE_LIFES),20,120,50,140,40);
-			}
-			else {
-				for(int i=0; i < num; i++) {
-				  Rect life = new Rect(x,y,48,48);
-				  GUI.DrawTexture(life, lifeIcon);
-				  x+=48;
-			    }
-			}
-
-
-			*/
 			if(failSafeIcon!=null && hasParachute && !failSafeUsed) {
-			  failSafeRect = new Rect(40, 40,48,48);
+			  failSafeRect = new Rect(10,50,56,48);
 			  GUI.DrawTexture(failSafeRect,failSafeIcon);
-			  DrawText("failsafe",20,35,53,120,40);
+			  DrawText("failsafe",10,85,53,120,40);
 			}
 
 
@@ -186,6 +165,10 @@ public class PlayerScript : MonoBehaviour
 
 	public void KillPlayer() {
 	  HandleLooseAllLifes();
+	}
+
+	public bool PlayerTouchedGround(){
+	  return hasLanded;
 	}
 	
 	GUIStyle BuildSmallerLabelStyle() {
@@ -488,6 +471,7 @@ public class PlayerScript : MonoBehaviour
 	//handle collision with ground
 	void HandleGroundCollision() {
 
+	    hasLanded = true;
 		//play effects
 		SpecialEffectsHelper fx = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
 		if (fx != null) {
