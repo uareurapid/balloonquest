@@ -5,6 +5,8 @@ public class HeroScript : MonoBehaviour {
 
 	private bool isVisible = true;
 	PlayerScript player;
+	private bool startedMovingTowards = false;
+
 	// Use this for initialization
 	void Start () {
 	
@@ -14,7 +16,7 @@ public class HeroScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+	  
 	}
 
 	void OnBecameVisible() {
@@ -23,9 +25,13 @@ public class HeroScript : MonoBehaviour {
 	
 	void OnBecameInvisible() {
 		isVisible = false;
-		if (!player.CanPlayerMove() && player.IsPlayerAlive() && !player.PlayerTouchedGround()) {
+		player.setVisible(false);
+		if (!player.CanPlayerMove() && player.IsPlayerAlive() && !player.PlayerReleasedBalloon()) {
 			player.KillPlayer();
 		}
+		//else {
+		//  moveTowardsSign = true;
+		//}
 	}
 
 	void OnTriggerEnter2D(Collider2D collision)
@@ -58,6 +64,26 @@ public class HeroScript : MonoBehaviour {
 		
 		
 	}	
+
+	//start moving towards the level sign
+	public void StartMovingTowardsSign() {
+		MoveTowardsScript moveTowards =  GetComponent<MoveTowardsScript>();
+		if(moveTowards!=null) {
+		  moveTowards.StartMovingTowards(player,true);
+		  startedMovingTowards = true;
+		}
+	}
+
+	public bool HasStartedMovingTowards() {
+	 return startedMovingTowards;
+	}
+
+	public bool HasHeroReachedTarget() {
+	  MoveTowardsScript moveTowards =  GetComponent<MoveTowardsScript>();
+	  return startedMovingTowards && moveTowards.HasReachedTarget();
+	}
+
+
 		
 
 }

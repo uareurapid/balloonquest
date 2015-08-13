@@ -28,6 +28,8 @@ public class PlayerScript : MonoBehaviour
 	public Sprite balloonThree;
 	public Sprite balloonFour;
 
+	private bool isVisible = true;
+
 	//this is needed for the pickup speed
 	//the jelly must inherit player speed
 	//at every new level the value is reset to deafut speed (1)
@@ -66,6 +68,8 @@ public class PlayerScript : MonoBehaviour
 	private static RuntimePlatform platform;
 	SoundEffectsHelper soundEffects;
 
+	private HeroScript hero;
+
 	void Start() {
 
 		skin = Resources.Load("GUISkin") as GUISkin;
@@ -88,6 +92,8 @@ public class PlayerScript : MonoBehaviour
 		hasLanded = false;
 
 		soundEffects = GetSoundEffects ();
+
+		hero = GetHero();
 		
 	}
 	
@@ -133,6 +139,13 @@ public class PlayerScript : MonoBehaviour
 		}
 	}
 
+	public void DisableGravityScale() {
+		Rigidbody2D rig = GetComponent<Rigidbody2D>();
+		if(rig!=null) {
+			rig.gravityScale =0.0f;//don´t let him continue to fall
+		}
+	}
+
 	void CheckInAppPurchases() {
 	   //infinite lifes
 	   //buyedInfiniteLifes = PlayerPrefs.HasKey(Soomla.MyStore.JellyTrooperAssets.JELLY_TROOPERS_INFINITE_LIFES_PRODUCT_ID);
@@ -171,6 +184,11 @@ public class PlayerScript : MonoBehaviour
 
 	public bool PlayerTouchedGround(){
 	  return hasLanded;
+	}
+
+	//either landed or the ground already moved
+	public bool PlayerReleasedBalloon(){
+	  return hasLanded || !canMove;
 	}
 	
 	GUIStyle BuildSmallerLabelStyle() {
@@ -275,6 +293,11 @@ public class PlayerScript : MonoBehaviour
 
 		}
 
+		if(hasLanded && hero.HasHeroReachedTarget()) {
+
+			Invoke("LoadNextLevel",3.0f);
+		}
+
 
 	}
 	
@@ -372,13 +395,17 @@ public class PlayerScript : MonoBehaviour
 		return Vector3.Min(max,Vector3.Max(min,vec));
 	}
 
-	void Flip() {
+	public void Flip() {
 		// Switch the way the player is labelled as facing.
 		facingRight = !facingRight;
 		// Multiply the player's x local scale by -1.
 		Vector3 theScale = transform.localScale;
 		theScale.x *= -1;
 		transform.localScale = theScale;
+	}
+
+	public bool IsPlayerFacingRight() {
+	  return facingRight;
 	}
 
 
@@ -412,7 +439,7 @@ public class PlayerScript : MonoBehaviour
 	{
 		GameObject collisionObject = collision.gameObject;
 		GroundScript ground = collisionObject.GetComponentInChildren<GroundScript> ();
-		if (ground != null) {
+		if (ground != null && !hasLanded) {
 			HandleGroundCollision ();
 		} 
 		else {
@@ -468,6 +495,8 @@ public class PlayerScript : MonoBehaviour
 	//handle collision with ground
 	void HandleGroundCollision() {
 
+		DisableGravityScale();
+
 	    hasLanded = true;
 		//play effects
 		SpecialEffectsHelper fx = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
@@ -488,13 +517,23 @@ public class PlayerScript : MonoBehaviour
 		if(level < max) {
 			//Go to next level in 2 seconds!
 
+			hero.StartMovingTowardsSign();
 			//Play some animation
 			controller.FinishLevel();
-			Invoke("LoadNextLevel",3.0f);
+
 		}
 			
 
 	}
+
+
+	//get the reference for the Hero obj
+	private HeroScript GetHero() {
+
+	 GameObject heroObj = GameObject.FindGameObjectWithTag("Hero");
+	 return heroObj.GetComponent<HeroScript>();
+	}
+
 //todo also play some nice sounds
 	void PlayFireworks() {
 		Debug.Log ("PlayFireworks now!!");
@@ -726,6 +765,13 @@ public class PlayerScript : MonoBehaviour
 
 	public bool PlayerHasParachute() {
 		return hasParachute;
+	}
+
+	//this is here, because the idea is:
+	//if player touched ground out of camera, he would come walking to the center of the screen
+	//of the camera before passing to next level
+	public void setVisible(bool visible) {
+	  	isVisible = visible;
 	}
 
 	//check if parachute is enabled/rendered

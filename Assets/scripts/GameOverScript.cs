@@ -256,7 +256,7 @@ public class GameOverScript : MonoBehaviour
 			       if(isShowingMessage) {
 
 						style.normal.textColor = Color.black;
-						GUI.Label (new Rect(width/2-120, height/2-300, 300, 50), "Game Over!!!",style);
+						GUI.Label (new Rect(width/2-140, height/2-300, 300, 50), "Game Over!!!",style);
 			       }
 
 
