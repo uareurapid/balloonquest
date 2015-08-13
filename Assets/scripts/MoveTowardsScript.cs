@@ -7,11 +7,13 @@ public class MoveTowardsScript : MonoBehaviour {
 	private bool moveTowards = false;
 	public float moveTowardsSpeed = 1.2f;
 	private bool reachedTarget = false;
-	private Vector3 targetPosition;
+	public bool adjustYOnStart = false;
+	public bool adjustXOnStart =  false;
+	public bool adjustZOnStart =  true;
 
 	// Use this for initialization
 	void Start () {
-	  targetPosition = target.position;
+
 	}
 	
 	// Update is called once per frame
@@ -23,7 +25,9 @@ public class MoveTowardsScript : MonoBehaviour {
 		 // Move our position a step closer to the target.
 		 transform.position = Vector3.MoveTowards(transform.position, target.position, step);
 
-			if( (Vector3.Distance(transform.position, target.position) < 0.1f) || transform.position.Equals(targetPosition) ){
+			Debug.Log("transform position" + transform.position);
+			Debug.Log("target position" + target.position);
+			if( Mathf.Abs(transform.position.x - target.position.x) < 0.1f ){
  				//It is within ~0.1f range, do stuff
 				reachedTarget = true;
 				Debug.Log("Reached position");
@@ -34,6 +38,24 @@ public class MoveTowardsScript : MonoBehaviour {
 
 	public void StartMovingTowards(PlayerScript player, bool start) {
 		moveTowards = start;
+		//*********************************************************
+		Vector3 aux = new Vector3 (transform.position.x, transform.position.y, transform.position.z);
+		//maybe adjust to make smoother transitions, and avoid jumps if in top of platform collider...
+		if (adjustYOnStart) {
+			aux.y = target.position.y;
+		}
+		
+		if (adjustZOnStart) {
+			aux.z = target.position.z;
+		}
+		
+		if (adjustXOnStart) {
+			aux.x = target.position.x;
+		}
+		
+		transform.position = aux;
+		//*********************************************************
+
 		bool isOnLeft = transform.position.x < target.position.x;
 		if(isOnLeft && !player.IsPlayerFacingRight()) {
 		  player.Flip();

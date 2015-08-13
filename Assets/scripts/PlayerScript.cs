@@ -431,6 +431,7 @@ public class PlayerScript : MonoBehaviour
 	
 	void OnTriggerEnter2D(Collider2D otherCollider)
 	{
+		Debug.Log ("collided with: " + otherCollider.gameObject.tag);
 		PerformUpdate(otherCollider.gameObject);
 	}
 

@@ -83,7 +83,4 @@ public class HeroScript : MonoBehaviour {
 	  return startedMovingTowards && moveTowards.HasReachedTarget();
 	}
 
-
-		
-
 }
