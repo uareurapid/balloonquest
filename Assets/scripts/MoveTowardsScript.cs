@@ -25,8 +25,6 @@ public class MoveTowardsScript : MonoBehaviour {
 		 // Move our position a step closer to the target.
 		 transform.position = Vector3.MoveTowards(transform.position, target.position, step);
 
-			Debug.Log("transform position" + transform.position);
-			Debug.Log("target position" + target.position);
 			if( Mathf.Abs(transform.position.x - target.position.x) < 0.1f ){
  				//It is within ~0.1f range, do stuff
 				reachedTarget = true;

@@ -198,9 +198,9 @@ public class MyBasicLaser : MonoBehaviour {
 				
 					    
 			    //check if player
-				//if(hit.collider.gameObject.tag.Equals("Player") && LaserOn) {
+				if(hit.collider.gameObject.tag.Equals("Player") && LaserOn) {
 				
-				//Debug.Log("PLAYER HIT BY LASER!!!!!!!!!");
+				Debug.Log("PLAYER HIT BY LASER!!!!!!!!!");
 
 					//SpecialEffectsHelper.Instance.PlayLaserExplosionEffect(hit.collider.transform.position);
 					//SoundEffectsHelper.Instance.MakeExplosionSound();
@@ -209,7 +209,7 @@ public class MyBasicLaser : MonoBehaviour {
 					//SpecialEffectsHelper.Instance.PlaySmokeTrailEffect(hit.collider.transform.position);
 					Destroy(hit.collider.gameObject);
 					
-				//}
+				}
 				GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
 				if(playerObj!=null) {
 					PlayerScript script = playerObj.GetComponent<PlayerScript>();

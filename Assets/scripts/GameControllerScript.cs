@@ -309,7 +309,7 @@ public class GameControllerScript : MonoBehaviour {
 
 		if(!isGamePaused && player!=null && player.IsPlayerAlive()) {
 
-		  elapsedMissionMeters-=5;
+		  elapsedMissionMeters-=GameConstants.METERS_STEP;
 													
 		}//if !gamePaused
 

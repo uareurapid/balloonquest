@@ -67,6 +67,7 @@ public class PlayerScript : MonoBehaviour
 	private GameObject scripts;
 	private static RuntimePlatform platform;
 	SoundEffectsHelper soundEffects;
+	private bool isStandingOnPlatform = false;
 
 	private HeroScript hero;
 
@@ -95,6 +96,16 @@ public class PlayerScript : MonoBehaviour
 
 		hero = GetHero();
 		
+	}
+
+	//check if we are on a platform
+	public bool IsPlayerStandingOnPlatform() {
+
+		return isStandingOnPlatform;
+	}
+
+	public void PlayerLandedOnPlatform(bool landed) {
+		isStandingOnPlatform = landed;
 	}
 	
 	void Awake() {
@@ -145,6 +156,21 @@ public class PlayerScript : MonoBehaviour
 			rig.gravityScale =0.0f;//don´t let him continue to fall
 		}
 	}
+
+	public bool IsPlayerFalling() {
+	   //if i don´t have balloon, for sure is falling
+	   if(!hasBalloon) {
+	     return true;
+	   }
+
+	   Rigidbody2D rig = GetComponent<Rigidbody2D>();
+	   if(rig!=null) {
+		 return rig.gravityScale == 1.0f && !hasBalloon;
+	   }
+
+	   return false;
+	}
+
 
 	void CheckInAppPurchases() {
 	   //infinite lifes
@@ -264,7 +290,8 @@ public class PlayerScript : MonoBehaviour
 		  HandleLooseAllLifes();
 		}
 
-		if (canMove) {
+		//if is standing on a landing platform we do not clamp, and let him die
+		if (canMove && !isStandingOnPlatform) {
 
 			//only clamp if can move otherwise let him go outside screen and kill it
 			var dist = (transform.position - Camera.main.transform.position).z;

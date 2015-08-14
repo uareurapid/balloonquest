@@ -80,7 +80,16 @@ public class HeroScript : MonoBehaviour {
 
 	public bool HasHeroReachedTarget() {
 	  MoveTowardsScript moveTowards =  GetComponent<MoveTowardsScript>();
-	  return startedMovingTowards && moveTowards.HasReachedTarget();
+	  bool reached = startedMovingTowards && moveTowards.HasReachedTarget();
+
+	  if(reached) {
+	   //play the teleportation effect
+	   ParticleSystem part = GetComponentInChildren<ParticleSystem>();
+	   if(part!=null) {
+	     part.Play(true);
+	   }
+	  }
+	  return reached ;
 	}
 
 }
