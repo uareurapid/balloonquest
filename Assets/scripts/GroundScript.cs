@@ -3,22 +3,37 @@ using System.Collections;
 
 public class GroundScript : MonoBehaviour {
 
-	private bool isVisible = false;
+	public bool isVisible = false;
 	private MovingPlatformScript platformScript;
 	// Use this for initialization
 	void Start () {
 	
 		GameObject ground = GameObject.FindGameObjectWithTag("Ground");
 		platformScript = ground.GetComponent<MovingPlatformScript>();
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
 	}
+
+	void OnBecameInvisible() {
+	  if(!isVisible) {
+	   return;
+	  }
+	  isVisible = false;
+	}
 	
 	void OnBecameVisible() {
-		Debug.Log ("ON VISIBLE");
+
+	if(isVisible) {
+	 return; //UNITY BUG
+	}
+
+	//isVisible = true;
+
+	Debug.Log("VISIBLE NOW: " + gameObject.tag);
 		//disable movement when collider becames visible
 		isVisible = true;
 		if (platformScript != null) {
@@ -40,6 +55,7 @@ public class GroundScript : MonoBehaviour {
 
 	//disables movement and set gravity scale to 1.0f
 	void MakePlayerFall() {
+
 		GameObject player = GameObject.FindGameObjectWithTag("Player");
 		if(player!=null) {
 			PlayerScript script = player.GetComponent<PlayerScript>();
@@ -70,11 +86,8 @@ public class GroundScript : MonoBehaviour {
 
 	
 	void StopMovement() {
-		Debug.Log ("STOP MOVEMENT");
 		platformScript.enabled = false;
 	}
 	
-	void OnBecameInvisible() {
-		Debug.Log ("ON INVISIBLE");
-	}
+
 }
