@@ -6,12 +6,14 @@ public class HeroScript : MonoBehaviour {
 	private bool isVisible = true;
 	PlayerScript player;
 	private bool startedMovingTowards = false;
+	private bool isBlinkingHit = false;
 
 	// Use this for initialization
 	void Start () {
 	
 		GameObject playerObj = GameObject.FindGameObjectWithTag ("Player");
 		player = playerObj.GetComponent<PlayerScript> ();
+		isBlinkingHit = false;
 	}
 	
 	// Update is called once per frame
@@ -26,7 +28,7 @@ public class HeroScript : MonoBehaviour {
 	void OnBecameInvisible() {
 		isVisible = false;
 		player.setVisible(false);
-		if (player.IsPlayerAlive() && !player.PlayerTouchedGround()) {
+		if (!isBlinkingHit && player.IsPlayerAlive() && !player.PlayerTouchedGround()) {
 			player.KillPlayer();
 		}
 		//else {
@@ -67,6 +69,7 @@ public class HeroScript : MonoBehaviour {
 
 	//start moving towards the level sign
 	public void StartMovingTowardsSign() {
+
 		MoveTowardsScript moveTowards =  GetComponent<MoveTowardsScript>();
 		if(moveTowards!=null) {
 		  moveTowards.StartMovingTowards(player,true);
@@ -86,10 +89,48 @@ public class HeroScript : MonoBehaviour {
 	   //play the teleportation effect
 	   ParticleSystem part = GetComponentInChildren<ParticleSystem>();
 	   if(part!=null) {
+	     Debug.Log("PLAYING PARTICLE AURA");
 	     part.Play(true);
 	   }
+	   else Debug.Log("IS NULL!!!!!!");
 	  }
 	  return reached ;
 	}
+
+	public void BlinkWhenHit() { 
+	 isBlinkingHit = true; //i need to know this otherwise OnBecameInvisble is called and the gameobject will get destroyed
+	 //Player invisible for some Time 
+	 StartCoroutine(HideSprite(0.5f));
+	 StartCoroutine(MyWaitMethod(2.2f));
+	 StartCoroutine(ShowSprite(0.5f));
+	  //Player visible again
+	 
+
+	}
+
+	IEnumerator HideSprite(float length) {
+
+		for (float i = 0.0f; i < 1.0f; i += Time.deltaTime*(1/length)) {
+			GetComponent<SpriteRenderer>().enabled = false; 
+			yield return null;
+		}
+
+	}
+
+	IEnumerator ShowSprite(float length) {
+
+		for (float i = 0.0f; i < 1.0f; i += Time.deltaTime*(1/length)) {
+			GetComponent<SpriteRenderer>().enabled = true; 
+
+			yield return null;
+		
+
+		}isBlinkingHit = false;
+
+	}
+
+	IEnumerator MyWaitMethod(float seconds) {
+		yield return new WaitForSeconds(seconds);
+	} 
 
 }

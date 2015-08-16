@@ -5,11 +5,14 @@ public class MoveTowardsScript : MonoBehaviour {
 
 	public Transform target;//where to move after landing... center marker, near the wood sign
 	private bool moveTowards = false;
-	public float moveTowardsSpeed = 1.2f;
+	public float moveTowardsSpeed = 1.3f;
 	private bool reachedTarget = false;
 	public bool adjustYOnStart = false;
 	public bool adjustXOnStart =  false;
 	public bool adjustZOnStart =  true;
+
+	//in this case the movement is not automatic, but manual
+	public bool allowManualMovement = true;
 
 	// Use this for initialization
 	void Start () {
@@ -19,18 +22,25 @@ public class MoveTowardsScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		if(moveTowards && !reachedTarget) {
-		 // The step size is equal to speed times frame time.
-		 var step = moveTowardsSpeed * Time.deltaTime;
-		 // Move our position a step closer to the target.
-		 transform.position = Vector3.MoveTowards(transform.position, target.position, step);
+	 if(moveTowards && !reachedTarget) {
 
-			if( Mathf.Abs(transform.position.x - target.position.x) < 0.1f ){
- 				//It is within ~0.1f range, do stuff
-				reachedTarget = true;
-				Debug.Log("Reached position");
- 			}
-	  }
+		 if(!allowManualMovement) {
+
+			// The step size is equal to speed times frame time.
+		 	var step = moveTowardsSpeed * Time.deltaTime;
+		 	// Move our position a step closer to the target.
+		 	transform.position = Vector3.MoveTowards(transform.position, target.position, step);
+
+
+		 }
+
+
+		if( Mathf.Abs(transform.position.x - target.position.x) < 0.1f ){
+ 			//It is within ~0.1f range, do stuff
+			reachedTarget = true;
+			Debug.Log("Reached position");
+ 		}
+	 }
 
 	}
 

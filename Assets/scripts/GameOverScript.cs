@@ -55,6 +55,9 @@ public class GameOverScript : MonoBehaviour
 	private int showingMessageTimes = 0;
 
 
+	private GUIResolutionHelper resolutionHelper;
+
+
 
 	private bool scoresHidden = false; 
 
@@ -70,7 +73,19 @@ public class GameOverScript : MonoBehaviour
 		//creditsTexture = Resources.Load("button_credits") as Texture2D;
 		//missionsTexture = Resources.Load("button_missions") as Texture2D;
 		//storeTexture = Resources.Load("store") as Texture2D;
-		
+
+		GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
+		if(scripts!=null) {
+			resolutionHelper = scripts.GetComponent<GUIResolutionHelper>();
+			//translationManager = scripts.GetComponent<TextLocalizationManager>();
+		}
+		else {
+			resolutionHelper = GUIResolutionHelper.Instance;
+			//handle translation language
+		    //translationManager = TextLocalizationManager.Instance;
+		}
+		resolutionHelper.CheckScreenResolution();
+
 		initialTime = 0f;
 		isShowingMessage = true;
 		scoresHidden = false;
@@ -215,24 +230,24 @@ public class GameOverScript : MonoBehaviour
 		
 		Matrix4x4 svMat = GUI.matrix;//save current matrix
 		
-	    int width = GUIResolutionHelper.Instance.screenWidth;
-		int height = GUIResolutionHelper.Instance.screenHeight;
-		Vector3 scaleVector = GUIResolutionHelper.Instance.scaleVector;
+	    int width = resolutionHelper.screenWidth;
+		int height = resolutionHelper.screenHeight;
+		Vector3 scaleVector = resolutionHelper.scaleVector;
 		
-		bool isWideScreen = GUIResolutionHelper.Instance.isWidescreen;
+		bool isWideScreen = resolutionHelper.isWidescreen;
 
-		Matrix4x4 wideMatrix = Matrix4x4.TRS(new Vector3( (GUIResolutionHelper.Instance.scaleX - scaleVector.y) / 2 * width, 0, 0), Quaternion.identity, scaleVector);
+		//Matrix4x4 wideMatrix = Matrix4x4.TRS(new Vector3( (resolutionHelper.scaleX - scaleVector.y) / 2 * width, 0, 0), Quaternion.identity, scaleVector);
 		Matrix4x4 normalMatrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,scaleVector);
 		
-		if(isWideScreen) {
-			GUI.matrix =  wideMatrix;
+		//if(isWideScreen) {
+		//	GUI.matrix =  wideMatrix;
 			
 			
-		}
-		else {
+		//}
+		//else {
 			GUI.matrix = normalMatrix;
 			
-		}
+		//}
 
 
 		   // bool showNextLevel = false;
@@ -263,7 +278,7 @@ public class GameOverScript : MonoBehaviour
 
 					//*******************************
 
-					homeTextureRect = new Rect( width/2 - 80, height/2+160,128,72);
+					homeTextureRect = new Rect( width/2 - 80, height/2+160,96,96);
 					GUI.DrawTexture(homeTextureRect,homeTexture);
 				
 					int score = PlayerPrefs.GetInt (GameConstants.HIGH_SCORE_KEY,1);
@@ -317,9 +332,9 @@ public class GameOverScript : MonoBehaviour
 				fingerPos.x = (touch.position.x / Screen.width) * width;
 
 
-				if(GUIResolutionHelper.Instance.isWidescreen) {
+				if(resolutionHelper.isWidescreen) {
 				//do extra computation
-					fingerPos.x = fingerPos.x + (GUIResolutionHelper.Instance.scaleX - GUIResolutionHelper.Instance.scaleVector.y) / 2 * width;
+					fingerPos.x = fingerPos.x + (resolutionHelper.scaleX - resolutionHelper.scaleVector.y) / 2 * width;
 				}
 
 				if(homeTextureRect.Contains(fingerPos) )
@@ -567,7 +582,7 @@ public class GameOverScript : MonoBehaviour
 
 	
 	void OnDestroy() {
-	    Debug.Log("destroy it now!!!");
+
 		blinkOnBestScore = false;
 		CancelInvoke("BlinkBestScore");
 		//HideGameOverBoard ();

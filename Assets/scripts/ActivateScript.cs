@@ -17,9 +17,7 @@ public class ActivateScript : MonoBehaviour {
 
 
 		ParticleSystem[] systems = GetComponentsInChildren<ParticleSystem>();
-		Debug.Log("Activate CALLED: "+ systems.Length);
 		foreach (ParticleSystem ps in systems) {
-			Debug.Log("PLAYING PARTICLE");
 			ps.Play(true);
 		}
 	}

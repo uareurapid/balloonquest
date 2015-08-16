@@ -85,7 +85,7 @@ public class MainLoaderScript : MonoBehaviour {
 
 				Touch touch = Input.touches[0];
 
-				if(touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)  {
+				if(touch.phase == TouchPhase.Ended && touch.phase != TouchPhase.Canceled)  {
 
 					Vector2 fingerPos = GetFingerPosition(touch,resolutionHelper.isWidescreen);
 
@@ -123,8 +123,8 @@ public class MainLoaderScript : MonoBehaviour {
 		int width = resolutionHelper.screenWidth;
 		int height = resolutionHelper.screenHeight;
 
-		GUI.matrix = Matrix4x4.TRS (Vector3.zero, Quaternion.identity, scaleVector);
 
+		GUI.matrix = Matrix4x4.TRS (Vector3.zero, Quaternion.identity, scaleVector);
 
 		if (Event.current.type == EventType.Repaint) {
 			//style.normal.textColor = Color.black;
@@ -132,10 +132,10 @@ public class MainLoaderScript : MonoBehaviour {
 		
 			if(showSwipeIcons) {
 
-				swipeLeftRect = new Rect( width/2 - 300, height/2-200,132,96);
+				swipeLeftRect = new Rect( width/2 - 300, height/2-200,96,96);
 				GUI.DrawTexture(swipeLeftRect,swipeLeftIcon);
 				
-				swipeRightRect = new Rect( width/2 + 200, height/2-200,132,96);
+				swipeRightRect = new Rect( width/2 + 200, height/2-200,96,96);
 				GUI.DrawTexture(swipeRightRect,swipeRightIcon);
 
 				GUI.Label (new Rect(width/2-140, height/2-300, 500, 50), "Swipe Left or Right to choose level!");//style
@@ -145,7 +145,7 @@ public class MainLoaderScript : MonoBehaviour {
 			}
 
 
-			soundRect = new Rect(width-300 ,15,132,96);
+			soundRect = new Rect(width-300 ,15,96,96);
 			if(muteIcon==null || soundIcon==null) {
 				Debug.Log("muteIcon && soundIcon");
 			}

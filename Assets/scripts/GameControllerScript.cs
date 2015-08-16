@@ -43,7 +43,7 @@ public class GameControllerScript : MonoBehaviour {
 
 	private GUITexture redTexture;
 	
-	//public bool isRestart = false;
+	public bool isDebug = false;
 	
 	public Font messagesFont;
 	public int messagesFontSizeSmaller;
@@ -82,7 +82,7 @@ public class GameControllerScript : MonoBehaviour {
 	private int countDown = 3;
 	//display time
 
-	public int elapsedMissionMeters = GameConstants.STARTING_POINT_IN_METERS;
+	public int elapsedMissionMeters;
 	
 	//show in app for level xxx?
 	private bool showUnlockLevel = true;
@@ -181,7 +181,7 @@ public class GameControllerScript : MonoBehaviour {
 
 
 		//seconds to display
-	    //elapsedMissionMeters = 5000;
+	    elapsedMissionMeters = isDebug ? GameConstants.DEBUG_STARTING_POINT_IN_METERS : GameConstants.STARTING_POINT_IN_METERS;
 
 		CheckPause();
 
@@ -394,7 +394,7 @@ public class GameControllerScript : MonoBehaviour {
 	//#########  music handling ################
 
 	public void StartMusic() {
-		Debug.Log ("START MUSIC");
+
 	   AudioSource source = GetGameMusic();
 	   if(source!=null) {
 		  source.Play();

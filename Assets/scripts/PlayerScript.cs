@@ -71,6 +71,8 @@ public class PlayerScript : MonoBehaviour
 
 	private HeroScript hero;
 
+	private bool isJumping = false;
+
 	void Start() {
 
 		skin = Resources.Load("GUISkin") as GUISkin;
@@ -106,6 +108,9 @@ public class PlayerScript : MonoBehaviour
 
 	public void PlayerLandedOnPlatform(bool landed) {
 		isStandingOnPlatform = landed;
+		if(isStandingOnPlatform && !hasParachute && !hasBalloon) {
+		  canMove = true;
+		}
 	}
 	
 	void Awake() {
@@ -321,7 +326,7 @@ public class PlayerScript : MonoBehaviour
 		}
 
 		if(hasLanded && hero.HasHeroReachedTarget()) {
-
+		    canMove = false;
 			Invoke("LoadNextLevel",3.0f);
 		}
 
@@ -336,6 +341,8 @@ public class PlayerScript : MonoBehaviour
 		if(!isMobilePlatform) {
 
 				float input =  Input.GetAxis("Horizontal");
+
+			    float jumpingInput = Input.GetAxis("Vertical");
 				
 				if(input!=0) {
 
@@ -349,8 +356,15 @@ public class PlayerScript : MonoBehaviour
 				else {
 					moving = false;
 				}
+
+
+				if(hasLanded && jumpingInput>0 && !isJumping ) {
+				  
+				  Jump();
+				}
+
 				
-				if(moving && canMove) {
+				if( (isJumping && canMove) || (moving && canMove) ) {
 
 			
 					// The Speed animator parameter is set to the absolute value of the horizontal input.
@@ -374,6 +388,11 @@ public class PlayerScript : MonoBehaviour
 					else if(input < 0 && facingRight)
 						// ... flip the player.
 						Flip();
+
+					if(isJumping) {
+						if(jumpingInput * GetComponent<Rigidbody2D>().velocity.y < maxSpeed)
+							GetComponent<Rigidbody2D>().AddForce(Vector2.up * jumpingInput * moveForce);
+					}
 				}
 				
 				
@@ -447,7 +466,7 @@ public class PlayerScript : MonoBehaviour
 	}
 
 	public void AddFailsafeParachute() {
-		Debug.Log ("ADDING PARACHUTE");
+		
 		hasParachute = true;
 		SpecialEffectsHelper effects = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
 		if (effects != null) {
@@ -458,7 +477,7 @@ public class PlayerScript : MonoBehaviour
 	
 	void OnTriggerEnter2D(Collider2D otherCollider)
 	{
-		Debug.Log ("collided with: " + otherCollider.gameObject.tag);
+
 		PerformUpdate(otherCollider.gameObject);
 	}
 
@@ -467,10 +486,12 @@ public class PlayerScript : MonoBehaviour
 	{
 		GameObject collisionObject = collision.gameObject;
 		GroundScript ground = collisionObject.GetComponentInChildren<GroundScript> ();
-		if (ground != null && !hasLanded) {
+		if (ground != null) {
+
 			HandleGroundCollision ();
 		} 
-		else {
+		else if(!hasLanded) {
+		   //ignore collisions when already landed
 			PerformUpdate(collision.gameObject);
 		}
 
@@ -486,9 +507,11 @@ public class PlayerScript : MonoBehaviour
 				
 			if (PlayerHasBalloon ()) {
 				BurstBallon ();
+				GetHero().BlinkWhenHit();
 			}
 			else if (PlayerHasParachute ()) {
 				BurstParachute ();
+				GetHero().BlinkWhenHit();
 			}
 			else if(IsPlayerAlive()) {
 				KillPlayer();
@@ -523,33 +546,51 @@ public class PlayerScript : MonoBehaviour
 	//handle collision with ground
 	void HandleGroundCollision() {
 
-		DisableGravityScale();
+		//DisableGravityScale();
+		//Normal landing stuff
+		if(!hasLanded) {
 
-	    hasLanded = true;
-		//play effects
-		SpecialEffectsHelper fx = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
-		if (fx != null) {
-			fx.PlayJellyLandedEffect(transform.position);
+			hasLanded = true;
+		    canMove = true;
+		    //slow down movement
+		    maxSpeed = maxSpeed / 2;
+		    moveForce = moveForce / 2;
+
+		    if(hasBalloon || hasParachute) {
+		     ReleaseBalloon();
+		    }
+
+			//play effects
+			SpecialEffectsHelper fx = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
+			if (fx != null) {
+				fx.PlayJellyLandedEffect(transform.position);
+			}
+			PlayLandingSound();
+
+			PlayFireworks ();
+
+			//finish level
+				
+			int level = controller.currentLevel;
+			int max = controller.numberOfLevels;
+
+			PlaySuccessSound ();
+
+			if(level < max) {
+				//Go to next level in 2 seconds!
+
+				hero.StartMovingTowardsSign();
+				//Play some animation
+				controller.FinishLevel();
+
+			}
+
+		}//has landed && isJumping
+		else if(isJumping) {
+		  isJumping = false;
 		}
-		PlayLandingSound();
 
-		PlayFireworks ();
-
-		//finish level
-			
-		int level = controller.currentLevel;
-		int max = controller.numberOfLevels;
-
-		PlaySuccessSound ();
-
-		if(level < max) {
-			//Go to next level in 2 seconds!
-
-			hero.StartMovingTowardsSign();
-			//Play some animation
-			controller.FinishLevel();
-
-		}
+	    
 			
 
 	}
@@ -649,8 +690,7 @@ public class PlayerScript : MonoBehaviour
 	}
 	
 	void ShowGameOver(bool showNextlevel) {
-	
-		Debug.Log("END GAME!!!!!");
+
 	    controller.EndGame(showNextlevel);
 		// Game Over.
 		// Add the script to the parent because the current game
@@ -727,7 +767,8 @@ public class PlayerScript : MonoBehaviour
 	}
 
 	public void Jump(){
-
+	  isJumping = true;
+	  EnableGravityScale();
 	}
 
 	//disable player movement
@@ -774,8 +815,7 @@ public class PlayerScript : MonoBehaviour
 		}
 
 		//disable colliders and renderers
-		gameObject.GetComponent<SpriteRenderer> ().enabled = false;
-		gameObject.GetComponent<PolygonCollider2D> ().enabled = false;
+		ReleaseBalloon();
 
 		if (hasParachute) {
 			//enable parachute sprite
@@ -793,6 +833,12 @@ public class PlayerScript : MonoBehaviour
 
 	public bool PlayerHasParachute() {
 		return hasParachute;
+	}
+
+	//disable the render and the collider
+	void ReleaseBalloon() {
+		gameObject.GetComponent<SpriteRenderer> ().enabled = false;
+		gameObject.GetComponent<PolygonCollider2D> ().enabled = false;
 	}
 
 	//this is here, because the idea is:

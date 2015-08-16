@@ -112,10 +112,7 @@ public bool destroyOnMax = false;
 	 }
 
 	}
-		
-	 
-	 
-	 
+		 
 	}
 
 	public void UnlockMovement() {
