@@ -17,17 +17,30 @@ public class CameraShake : MonoBehaviour
 	public bool shakeEnabled = false;
 	public float shakeInterval = 0f;//interval between sakes
 	private float lastShakeTime = 0f;//last saved shake time
-	private float startShakeTime = 0f;//when it started shaking
 	public float shakeDelay = 0f;//if greater than 0, start delayed
 
 	public bool autoStartShakeOnVisible = false;
+	private float initialShakeDuration = 0f;
 	
 	Vector3 originalPos;
 
 	void Start() {
-	  if(shakeDelay > 0) {
-	    Invoke("EnableShake",shakeDelay);
-	  }
+
+	  initialShakeDuration = shakeDuration;
+	  
+	  if (shakeDelay > 0f) {
+		 if (shakeInterval <= 0f) {
+			//do not repeat
+			Invoke ("EnableShake", shakeDelay);
+		 } 
+		 else {
+			InvokeRepeating ("EnableShake", shakeDelay, shakeInterval);
+		 }
+	 } 
+	 else if (shakeInterval > 0f) {
+		InvokeRepeating ("EnableShake", 0f, shakeInterval);
+	 }
+	  
 	}
 	
 	void Awake()
@@ -46,16 +59,11 @@ public class CameraShake : MonoBehaviour
 	void Update()
 	{
 
-	  float currentTime = Time.deltaTime;
+	  //float currentTime = Time.deltaTime;
 
 	  if(shakeEnabled){
 		if (shakeDuration > 0)
 		{
-		//only get time if is zero 
-			if(startShakeTime==0f) {
-				startShakeTime = Time.deltaTime;
-			}
-		    
 			camTransform.localPosition = originalPos + Random.insideUnitSphere * shakeAmount;
 			shakeDuration -= Time.deltaTime * decreaseFactor;
 		}
@@ -64,21 +72,10 @@ public class CameraShake : MonoBehaviour
 			shakeDuration = 0f;
 			camTransform.localPosition = originalPos;
 			shakeEnabled = false;
-			//re-schedule next shake, as soon as this one finishes
-			lastShakeTime = Time.deltaTime;
-			startShakeTime = 0f;
+	
 		}
 	  }
-	  else {
-	   //not enabled
-			Debug.Log("CurrenTime: " + currentTime);
-				Debug.Log("lastShakeTime: " + lastShakeTime);
-				Debug.Log("shakeInterval: " + shakeInterval);
-		if(shakeInterval > 0f && (currentTime - lastShakeTime > shakeInterval / 1000)  ) {
-				Debug.Log("AGAIN!!!!!: " );
-	      EnableShake();
-	   }
-	  }
+	  
 
 		
 	}
@@ -89,9 +86,25 @@ public class CameraShake : MonoBehaviour
 	 }
 	}
 
+	private void PlayEarthQuakeSound() {
+		/*GameObject music = GameObject.FindGameObjectWithTag("GameMusic");
+		AudioSource source = music.GetComponent<AudioSource> ();
+		source.mute = true;*/
+		//private SoundEffectsHelper GetSoundEffects() {
+		GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
+		SoundEffectsHelper fx = scripts.GetComponentInChildren<SoundEffectsHelper> ();
+	    fx.PlayEarthQuakeSound();
+		//}
+	}
+
+
+
 	public void EnableShake() {
 	  shakeEnabled = true;
+	  lastShakeTime = 0f;
+	  shakeDuration = initialShakeDuration;
 	  OnEnable();
+	  PlayEarthQuakeSound ();
 
 	  if(gameObject.tag!=null && gameObject.CompareTag("MainCamera")) {
 	  //now shake also the other objects with same script, at the same time we shake the camera

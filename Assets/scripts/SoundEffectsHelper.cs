@@ -25,6 +25,7 @@ public class SoundEffectsHelper : MonoBehaviour
 	public AudioClip landingSound;
 	public AudioClip flipTimeSound;
 	public AudioClip successSound;
+	public AudioClip earthQuakeSound;
 		//todo credit Freesound.org - "Energy Weapon 001.wav" by DJ Chronos
 		//Freesound.org - "Medium Explosion.wav" by ryansnook
 		//Freesound.org - "Distant explosion.wav" by juskiddink
@@ -50,6 +51,11 @@ public class SoundEffectsHelper : MonoBehaviour
 	public void PlayPickupCoinSound()
 	{
 		MakeSound(pickupCoinSound);
+	}
+
+	public void PlayEarthQuakeSound()
+	{
+		MakeSound(earthQuakeSound);
 	}
 
 	public void PlaySuccessSound()
