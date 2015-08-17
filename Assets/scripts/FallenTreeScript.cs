@@ -16,7 +16,7 @@ public class FallenTreeScript : MonoBehaviour {
 	void Start () {
 		isFalling = false;
 		if (applyDelayOnlyVisible == false) {//if false apply delay immediatelly
-			Invoke ("FallTree", fallDelay);
+			Invoke ("StartFalling", fallDelay);
 		}
 
 	}
@@ -33,7 +33,15 @@ public class FallenTreeScript : MonoBehaviour {
 
 	}
 
-	void FallTree() {
+	//could be invoked from outside, on camera shake for instance
+	public void StartFallingAfterDelay() {
+	 if(!isFalling && fallDelay>0f) {
+		Invoke ("StartFalling", fallDelay);
+	 }
+	}
+
+	//also public to allow calls from other objects
+	public void StartFalling() {
 		isFalling = true;
 		AudioSource audio = GetComponent<AudioSource> ();
 		if (audio != null && !audio.isPlaying ) {
@@ -50,7 +58,7 @@ public class FallenTreeScript : MonoBehaviour {
 		if (!isVisible) {
 			isVisible = true;
 			if(applyDelayOnlyVisible) {//start counting
-				Invoke ("FallTree", fallDelay);
+				Invoke ("StartFalling", fallDelay);
 			}
 		}
 

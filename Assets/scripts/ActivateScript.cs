@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class ActivateScript : MonoBehaviour {
-	
+
 	// Use this for initialization
 	void Start () {
 
@@ -21,6 +21,7 @@ public class ActivateScript : MonoBehaviour {
 			ps.Play(true);
 		}
 	}
+
 	public void DeActivate() {
 		gameObject.SetActive (false);
 	}
