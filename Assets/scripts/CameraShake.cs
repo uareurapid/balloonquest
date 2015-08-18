@@ -121,7 +121,7 @@ public class CameraShake : MonoBehaviour
 		   if(tag!=null && tag.Equals("MainCamera")) {
 		     continue;//ignore the camera, since we are dealing already with it
 		   }
-		   else {
+		   else if(obj.GetComponent<SpriteRenderer>().isVisible) {
 		    obj.EnableShake();//enable shake on th eother object as well
 		    if(obj.gameObject.GetComponent<FallenTreeScript>()!=null) {
 				obj.gameObject.GetComponent<FallenTreeScript>().enabled = true;
