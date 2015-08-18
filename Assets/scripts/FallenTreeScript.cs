@@ -16,7 +16,12 @@ public class FallenTreeScript : MonoBehaviour {
 	void Start () {
 		isFalling = false;
 		if (applyDelayOnlyVisible == false) {//if false apply delay immediatelly
-			Invoke ("StartFalling", fallDelay);
+			if(fallDelay>0f){
+				Invoke ("StartFalling", fallDelay);
+			}
+			else {
+			    StartFalling();
+			}
 		}
 
 	}
@@ -57,8 +62,9 @@ public class FallenTreeScript : MonoBehaviour {
 	void OnBecameVisible() {
 		if (!isVisible) {
 			isVisible = true;
+			isFalling = false;
 			if(applyDelayOnlyVisible) {//start counting
-				Invoke ("StartFalling", fallDelay);
+				StartFallingAfterDelay();
 			}
 		}
 

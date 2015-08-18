@@ -87,9 +87,10 @@ public class CameraShake : MonoBehaviour
 	}
 
 	private void PlayEarthQuakeSound() {
-		/*GameObject music = GameObject.FindGameObjectWithTag("GameMusic");
+		GameObject music = GameObject.FindGameObjectWithTag("GameMusic");
 		AudioSource source = music.GetComponent<AudioSource> ();
-		source.mute = true;*/
+		source.volume = 0.3f;
+		Invoke("RestoreVolume",3.0f);
 		//private SoundEffectsHelper GetSoundEffects() {
 		GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
 		SoundEffectsHelper fx = scripts.GetComponentInChildren<SoundEffectsHelper> ();
@@ -97,7 +98,12 @@ public class CameraShake : MonoBehaviour
 		//}
 	}
 
+	void RestoreVolume() {
 
+		GameObject music = GameObject.FindGameObjectWithTag("GameMusic");
+		AudioSource source = music.GetComponent<AudioSource> ();
+		source.volume = 0.7f;
+	}
 
 	public void EnableShake() {
 	  shakeEnabled = true;
@@ -109,6 +115,7 @@ public class CameraShake : MonoBehaviour
 	  if(gameObject.tag!=null && gameObject.CompareTag("MainCamera")) {
 	  //now shake also the other objects with same script, at the same time we shake the camera
 		 CameraShake[] otherObjects = GameObject.FindObjectsOfType<CameraShake>();
+		 Debug.Log("ENCONTREI NUM: " + otherObjects.Length);
 		 foreach(CameraShake obj in otherObjects) {
 		   string tag = obj.gameObject.tag;
 		   if(tag!=null && tag.Equals("MainCamera")) {
