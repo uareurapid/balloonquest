@@ -278,7 +278,7 @@ public class GameOverScript : MonoBehaviour
 
 					//*******************************
 
-					homeTextureRect = new Rect( width/2 - 80, height/2+160,96,96);
+					homeTextureRect = new Rect( width/2 - 80, height/2+160,128,64);
 					GUI.DrawTexture(homeTextureRect,homeTexture);
 				
 					int score = PlayerPrefs.GetInt (GameConstants.HIGH_SCORE_KEY,1);

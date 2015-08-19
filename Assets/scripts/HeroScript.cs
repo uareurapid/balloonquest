@@ -57,13 +57,13 @@ public class HeroScript : MonoBehaviour {
 		EnemyScript enemy = collisionObject.GetComponent<EnemyScript> ();
 		//collided with enemy
 		if (enemy != null && player != null && player.IsPlayerAlive ()) {
-
+			Debug.Log("COLLIDED HERO");
 		    if(enemy.isBurner && skull!=null) {
 		     //TODO
 		     Debug.Log("start burn");
 			 if(burnedCount == 0) {
 				InvokeRepeating("SwapBurnedSprite",0f,0.2f);
-		     	StartCoroutine(StartBurnAnimation());
+		     	StartCoroutine(StartBurnAndDieAnimation());
 			 }
 		     
 		    }
@@ -97,9 +97,9 @@ public class HeroScript : MonoBehaviour {
 		}
 	}
 
-	IEnumerator StartBurnAnimation()
+	IEnumerator StartBurnAndDieAnimation()
 	{
-		yield return new WaitForSeconds(3);
+		yield return new WaitForSeconds(2);
 		player.KillPlayer ();
 	}
 
@@ -142,6 +142,22 @@ public class HeroScript : MonoBehaviour {
 	  //Player visible again
 	 
 
+	}
+
+	public void BurnHero(bool dieAfterBurn) {
+		Debug.Log ("BURNING NOW");
+		if(skull!=null) {
+			//TODO
+			Debug.Log("start burn");
+			if(burnedCount == 0) {
+				InvokeRepeating("SwapBurnedSprite",0f,0.3f);
+				if(dieAfterBurn) {
+					StartCoroutine(StartBurnAndDieAnimation());
+				}
+
+			}
+			
+		}
 	}
 
 	IEnumerator HideSprite(float length) {

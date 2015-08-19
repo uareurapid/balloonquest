@@ -509,14 +509,33 @@ public class PlayerScript : MonoBehaviour
 				
 			if (PlayerHasBalloon ()) {
 				BurstBallon ();
-				GetHero().BlinkWhenHit();
+				if(enemy.isBurner) {
+					GetHero().BurnHero(false);
+				}
+				else {
+					GetHero().BlinkWhenHit();
+				}
+
 			}
 			else if (PlayerHasParachute ()) {
 				BurstParachute ();
-				GetHero().BlinkWhenHit();
+				if(enemy.isBurner) {
+					GetHero().BurnHero(false);
+				}
+				else {
+					GetHero().BlinkWhenHit();
+				}
 			}
 			else if(IsPlayerAlive()) {
-				KillPlayer();
+				if(enemy.isBurner) {
+					GetHero().BurnHero(true);
+					//will die after the animation
+				}
+				else {
+					GetHero().BlinkWhenHit();
+					KillPlayer();
+				}
+
 			}
 	
 				
