@@ -33,7 +33,6 @@ public class GroundScript : MonoBehaviour {
 
 	//isVisible = true;
 
-	Debug.Log("VISIBLE NOW: " + gameObject.tag);
 		//disable movement when collider becames visible
 		isVisible = true;
 		if (platformScript != null) {
@@ -60,7 +59,7 @@ public class GroundScript : MonoBehaviour {
 		if(player!=null) {
 			PlayerScript script = player.GetComponent<PlayerScript>();
 			script.EnableGravityScale();
-			script.DisableMovement();
+			//script.DisableMovement();
 		}
 	}
 
@@ -72,18 +71,13 @@ public class GroundScript : MonoBehaviour {
 	}
 
 	void DisableSpawning() {
-		GameObject [] spawners = GameObject.FindGameObjectsWithTag ("Spawner");
+		SpawnerScript [] spawners = GameObject.FindObjectsOfType<SpawnerScript>();
 		if (spawners != null && spawners.Length > 0) {
-			foreach(GameObject spawner in spawners) {
-				SpawnerScript script = spawner.GetComponent<SpawnerScript>();
-				if(script!=null) {
-					script.canSpawn = false;
-				}
+			foreach(SpawnerScript spawner in spawners) {
+				spawner.canSpawn = false;
 			}
 		}
 	}
-
-
 	
 	void StopMovement() {
 		platformScript.enabled = false;

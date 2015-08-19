@@ -70,6 +70,10 @@ public class FallenTreeScript : MonoBehaviour {
 
 	}
 
+	public bool IsVisible() {
+	 return isVisible;
+	}
+
 	void OnBecameInvisible() {
 		if (isVisible) {
 			AudioSource audio = GetComponent<AudioSource> ();

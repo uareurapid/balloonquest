@@ -8,10 +8,15 @@ public class HeroScript : MonoBehaviour {
 	private bool startedMovingTowards = false;
 	private bool isBlinkingHit = false;
 
+	private int burnedCount = 0;
+
+	private GameObject skull;
+
 	// Use this for initialization
 	void Start () {
 	
 		GameObject playerObj = GameObject.FindGameObjectWithTag ("Player");
+		skull = GameObject.FindGameObjectWithTag("Skull");
 		player = playerObj.GetComponent<PlayerScript> ();
 		isBlinkingHit = false;
 	}
@@ -53,7 +58,18 @@ public class HeroScript : MonoBehaviour {
 		//collided with enemy
 		if (enemy != null && player != null && player.IsPlayerAlive ()) {
 
-			player.KillPlayer ();
+		    if(enemy.isBurner && skull!=null) {
+		     //TODO
+		     Debug.Log("start burn");
+			 if(burnedCount == 0) {
+				InvokeRepeating("SwapBurnedSprite",0f,0.2f);
+		     	StartCoroutine(StartBurnAnimation());
+			 }
+		     
+		    }
+		    else {
+				player.KillPlayer ();
+		    }
 
 		} 
 		else {
@@ -66,6 +82,26 @@ public class HeroScript : MonoBehaviour {
 		
 		
 	}	
+
+	void SwapBurnedSprite() {
+	  burnedCount+=1;
+		SpriteRenderer skullRenderer = skull.GetComponent<SpriteRenderer>();
+		skullRenderer.enabled = !skullRenderer.enabled;
+
+		GetComponent<SpriteRenderer>().enabled = !skullRenderer.enabled;
+
+		if(burnedCount>=5) {
+			GetComponent<SpriteRenderer>().enabled = true;
+			skullRenderer.enabled = false;
+			CancelInvoke("SwapBurnedSprite");
+		}
+	}
+
+	IEnumerator StartBurnAnimation()
+	{
+		yield return new WaitForSeconds(3);
+		player.KillPlayer ();
+	}
 
 	//start moving towards the level sign
 	public void StartMovingTowardsSign() {

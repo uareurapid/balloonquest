@@ -84,7 +84,7 @@ public class GameOverScript : MonoBehaviour
 			//handle translation language
 		    //translationManager = TextLocalizationManager.Instance;
 		}
-		resolutionHelper.CheckScreenResolution();
+		//resolutionHelper.CheckScreenResolution();
 
 		initialTime = 0f;
 		isShowingMessage = true;

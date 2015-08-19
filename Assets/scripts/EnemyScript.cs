@@ -13,7 +13,8 @@ public class EnemyScript : MonoBehaviour
 	private bool isVisible = false;
 	public bool takeAllLifes = false;
 
-	private bool isBloody = false;
+	public bool isBloody = false; //releases blood splatter
+	public bool isBurner = false; //burns the enemy
 
 	public bool isBoss = false;
 

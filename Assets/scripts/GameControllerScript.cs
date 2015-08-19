@@ -20,7 +20,7 @@ public class GameControllerScript : MonoBehaviour {
 	public Texture2D JumpButton;
 
 	private Texture2D rateTexture;
-	//private Texture2D exitTexture;
+	private Texture2D screenshotTexture;
 
 	
 	public int screenWidth;
@@ -89,7 +89,7 @@ public class GameControllerScript : MonoBehaviour {
 	//to control if we already released the Ground
 	private bool movedGround = false;
 
-
+	private bool touchedScreenshotTexture = false;
 	
 	//Iads only
 //	private ADBannerView banner = null;
@@ -762,7 +762,7 @@ public class GameControllerScript : MonoBehaviour {
 
 			    if(isLevelComplete) {
 				    //unlock some achievement here maybe
-					DrawText("Congratulations! Level " + currentLevel + " Complete."  , messagesFontSizeLarger, width/2-200, height/2-200,450,50);
+					DrawText("Congratulations! Level " + currentLevel + " Complete."  , messagesFontSizeLarger, width/2-200, height/2-200,600,50);
 				}
 
 			}
@@ -773,6 +773,29 @@ public class GameControllerScript : MonoBehaviour {
 		  //}
 		    			
 			if(Event.current.type==EventType.Repaint) {
+
+
+				//draw any screenshot if available
+			    if(screenshotTexture!=null) {
+
+					if(!touchedScreenshotTexture) {
+						//rotate the matrix to draw the texture
+						float rotAngle = 45f;
+						Vector2 pivotPoint = new Vector2(Screen.width / 2, Screen.height / 2);
+	        			GUIUtility.RotateAroundPivot(rotAngle, pivotPoint);
+	        			
+				     	Rect text = new Rect(width/2,height/2,256,128);
+				     	GUI.DrawTexture(text,screenshotTexture);
+
+						//restore the matrix rotation afterdraw the texture
+						rotAngle = -45f;
+	        			GUIUtility.RotateAroundPivot(rotAngle, pivotPoint);
+					}
+					else {
+					//draw it bigger, but it will cover other things, no???
+					}
+			    	
+			    }
 
 				if(isGameStarted) {
 			
@@ -1038,8 +1061,6 @@ public class GameControllerScript : MonoBehaviour {
 
 
 
-
-
 	public int GetNextLevel() {
 		if (currentLevel < numberOfLevels) {
 			return currentLevel + 1;
@@ -1237,6 +1258,19 @@ public class GameControllerScript : MonoBehaviour {
 		newPosition.z = z;
 		obj.transform.position = newPosition;
 	}
+
+	public void TakeScreenShot() {
+		ScreenShotScript screenshot = GameObject.FindGameObjectWithTag("Scripts").GetComponent<ScreenShotScript>();
+		if(screenshot!=null) {
+		 screenshot.TakeScreenshotBeforeGameOver(this);
+		}
+	}
+
+	//callback for the screenshot script
+	public void SetScreenshotTexture(Texture2D texture) {
+	  screenshotTexture = texture;
+	}
+
 
 	
 }

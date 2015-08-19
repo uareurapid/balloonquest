@@ -42,7 +42,7 @@ public class MainLoaderScript : MonoBehaviour {
 			//translationManager = TextLocalizationManager.Instance;
 			
 		}
-		resolutionHelper.CheckScreenResolution ();
+		//resolutionHelper.CheckScreenResolution ();
 		checkSoundSettings ();
 
 		if (showSwipeIconsInterval > 0.0f) {
@@ -132,10 +132,10 @@ public class MainLoaderScript : MonoBehaviour {
 		
 			if(showSwipeIcons) {
 
-				swipeLeftRect = new Rect( width/2 - 300, height/2-200,96,96);
+				swipeLeftRect = new Rect( width/2 - 300, height/2-200,128,64);
 				GUI.DrawTexture(swipeLeftRect,swipeLeftIcon);
 				
-				swipeRightRect = new Rect( width/2 + 200, height/2-200,96,96);
+				swipeRightRect = new Rect( width/2 + 200, height/2-200,128,64);
 				GUI.DrawTexture(swipeRightRect,swipeRightIcon);
 
 				GUI.Label (new Rect(width/2-140, height/2-300, 500, 50), "Swipe Left or Right to choose level!");//style
@@ -145,7 +145,7 @@ public class MainLoaderScript : MonoBehaviour {
 			}
 
 
-			soundRect = new Rect(width-300 ,15,96,96);
+			soundRect = new Rect(width-160 ,15,128,64);
 			if(muteIcon==null || soundIcon==null) {
 				Debug.Log("muteIcon && soundIcon");
 			}

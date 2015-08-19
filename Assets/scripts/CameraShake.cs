@@ -119,12 +119,16 @@ public class CameraShake : MonoBehaviour
 		 foreach(CameraShake obj in otherObjects) {
 		   string tag = obj.gameObject.tag;
 		   if(tag!=null && tag.Equals("MainCamera")) {
+		     Debug.Log("This is the camera itself, ignoring...");
 		     continue;//ignore the camera, since we are dealing already with it
 		   }
-		   else if(obj.GetComponent<SpriteRenderer>().isVisible) {
+		   else {
+		    
 		    obj.EnableShake();//enable shake on th eother object as well
-		    if(obj.gameObject.GetComponent<FallenTreeScript>()!=null) {
-				obj.gameObject.GetComponent<FallenTreeScript>().enabled = true;
+			FallenTreeScript fall =	obj.gameObject.GetComponent<FallenTreeScript>();
+		    if(fall!=null && fall.IsVisible()) {
+		        Debug.Log("enable fallen tree on another one");
+				fall.enabled = true;
 		    }
 		   }
 		 }

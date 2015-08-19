@@ -210,7 +210,9 @@ public class PlayerScript : MonoBehaviour
 	}
 
 	public void KillPlayer() {
-	  HandleLooseAllLifes();
+	  if(!isDead) {
+		HandleLooseAllLifes();
+	  }
 	}
 
 	public bool PlayerTouchedGround(){
@@ -291,7 +293,7 @@ public class PlayerScript : MonoBehaviour
 	 }
 		
 
-		if(playerHealth.hitPoints==0) {
+		if(playerHealth.hitPoints==0 && !isDead) {
 		  HandleLooseAllLifes();
 		}
 
@@ -676,7 +678,13 @@ public class PlayerScript : MonoBehaviour
 		ShowGameOver(true);
 	}
 
-
+	void ShowGameOverAndDestroy()
+	{
+		
+		//yield return new WaitForSeconds(3);
+		ShowGameOver(false);
+		Destroy(gameObject);
+	}
 
 	//called by the engine when player dies
 	void OnDestroy()
@@ -710,7 +718,9 @@ public class PlayerScript : MonoBehaviour
 		isDead = true;
 
 		playerHealth.hitPoints=0;
-		ShowGameOver (false);
+
+		//take a screenshot of the level (and allow touch on this)
+		controller.TakeScreenShot();
 
 		SoundEffectsHelper sfx = scripts.GetComponentInChildren<SoundEffectsHelper> ();
 		if (sfx != null) {
@@ -722,7 +732,9 @@ public class PlayerScript : MonoBehaviour
 		if (fx != null) {
 			fx.PlayJellySoulEffect(transform.position);
 		}
-		Destroy(gameObject);
+
+		Invoke("ShowGameOverAndDestroy",1.2f);
+
 
 	}
 
@@ -885,6 +897,8 @@ public class PlayerScript : MonoBehaviour
 	public bool CanPlayerMove() {
 		return canMove;
 	}
+
+
 
 
 }
