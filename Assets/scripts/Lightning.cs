@@ -90,7 +90,7 @@ public class Lightning : MonoBehaviour {
 			  hit = Physics2D.Raycast(transform.localPosition, direction); 
 				//ray = new Ray2D(StartPoint.position, LaserDir);
 
-				if (hit && hit.collider.gameObject.tag.Equals("Jelly") ){
+				if (hit && hit.collider.gameObject.tag.Equals("Player") ){
 				    GameObject obj = GameObject.FindGameObjectWithTag("Player");
 				    if(obj!=null) {
 				      PlayerScript s = obj.GetComponent<PlayerScript>(); 

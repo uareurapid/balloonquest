@@ -18,7 +18,6 @@ public bool startGoingDown = false;
 public bool resetPositionOnMax = false;
 public float startDelay = 0;
 public bool lockMovement = false;
-public bool destroyOnMax = false;
 
 	// Use this for initialization
 	void Start () {
@@ -31,7 +30,7 @@ public bool destroyOnMax = false;
 	}
 	
 	// Update is called once per frame
-	void FixedUpdate () {
+	void Update () {
 
 	if(!lockMovement) {
 
@@ -72,10 +71,6 @@ public bool destroyOnMax = false;
 	 if(max && stopOnMax) {
 	    stopMovement = true;
 	 }
-     else if(max && destroyOnMax) {
-	   Destroy(gameObject);
-	   return;
-	 }
 
 	 Vector2 currentPosition;
 
@@ -112,7 +107,10 @@ public bool destroyOnMax = false;
 	 }
 
 	}
-		 
+		
+	 
+	 
+	 
 	}
 
 	public void UnlockMovement() {

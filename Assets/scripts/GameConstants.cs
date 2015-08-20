@@ -13,6 +13,12 @@ namespace BalloonQuest
 
 				public const string SPIKES_LINE_BARRIER = "SpikesLine";
 
+				public const float MAX_SCREENSHOT_ROTATION = 45f;
+				public const float MAX_SCREENSHOT_WIDTH = 512f;
+				public const float MAX_SCREENSHOT_HEIGHT = 384f;
+				public const float MIN_SCREENSHOT_WIDTH = 256f;
+				public const float MIN_SCREENSHOT_HEIGHT = 128f;
+
 				//the normal hitpoints for a player
 				public const int NUM_LIFES_PER_LEVEL = 4;
 

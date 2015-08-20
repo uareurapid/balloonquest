@@ -214,6 +214,11 @@ public class GameControllerScript : MonoBehaviour {
 		
 		appliedHurryUpFactor = false;
 		
+		rotationAngle = GameConstants.MAX_SCREENSHOT_ROTATION;
+		maxTextureWidth = GameConstants.MAX_SCREENSHOT_WIDTH;
+		maxTextureHeight = GameConstants.MAX_SCREENSHOT_HEIGHT;
+		minTextureWidth = GameConstants.MIN_SCREENSHOT_WIDTH;
+		minTextureHeight = GameConstants.MIN_SCREENSHOT_HEIGHT;
 
 		isGameOver = true;
 		if(isGameOver && currentWorld==1 && currentLevel==1) {
@@ -787,34 +792,45 @@ public class GameControllerScript : MonoBehaviour {
 
 					Vector2 pivotPoint = new Vector2(Screen.width / 2, Screen.height / 2);
 
-					if(!touchedScreenshotTexture) {
+					//if not touhced or already hit max
+					if(!touchedScreenshotTexture || minTextureWidth == GameConstants.MAX_SCREENSHOT_WIDTH) {
 						//rotate the matrix to draw the texture
 						//float rotAngle = 45f;
-	        			GUIUtility.RotateAroundPivot(rotationAngle, pivotPoint);
+						GUIUtility.RotateAroundPivot(GameConstants.MAX_SCREENSHOT_ROTATION, pivotPoint);
 	        			
-				     	screenshotTextureRect = new Rect(width/2,height/2,minTextureWidth,minTextureHeight);
+				     	screenshotTextureRect = new Rect(width/2,height/2,GameConstants.MIN_SCREENSHOT_WIDTH,GameConstants.MIN_SCREENSHOT_HEIGHT);
 						GUI.DrawTexture(screenshotTextureRect,screenshotTexture);
 
 						//restore the matrix rotation afterdraw the texture
-						float rotAngle = -rotationAngle;
+						float rotAngle = GameConstants.MAX_SCREENSHOT_ROTATION * -1;
 	        			GUIUtility.RotateAroundPivot(rotAngle, pivotPoint);
 					}
 					else {
 					   //draw it bigger, but it will cover other things, no???
 						
-						float angle = rotationAngle-1;
-					    if(angle>0f) {
+						rotationAngle-=1;
+						if(rotationAngle>0f) {
+							rotationAngle = 0f;
+						}
+					        Debug.Log("Angle is: " + rotationAngle);
+							GUIUtility.RotateAroundPivot(rotationAngle, pivotPoint);
 
-							GUIUtility.RotateAroundPivot(angle, pivotPoint);
+							minTextureWidth +=1;
+							minTextureHeight +=1;
 
+							if(minTextureWidth > GameConstants.MAX_SCREENSHOT_WIDTH) {
+								minTextureWidth = GameConstants.MAX_SCREENSHOT_WIDTH;
+							}
+							if(minTextureHeight > GameConstants.MAX_SCREENSHOT_HEIGHT) {
+								minTextureHeight = GameConstants.MAX_SCREENSHOT_HEIGHT;
+							}
+
+							Debug.Log("Size is: w: " + minTextureWidth + " h: " + minTextureHeight);
 							screenshotTextureRect = new Rect(width/2,height/2,minTextureWidth,minTextureHeight);
 							GUI.DrawTexture(screenshotTextureRect,screenshotTexture);
 
-							GUIUtility.RotateAroundPivot(-angle, pivotPoint);
-						}
-					    else {
-							angle = 0f;
-						}
+							GUIUtility.RotateAroundPivot(-rotationAngle, pivotPoint);
+					  
 						
 					}
 			    	
@@ -1006,7 +1022,7 @@ public class GameControllerScript : MonoBehaviour {
 					Vector2 fingerPos = GetFingerPosition(touch,isWideScreen);
 
 						if(isGameOver) {
-
+							//avoid multiple touches
 							if(!touchedScreenshotTexture && screenshotTextureRect.Contains(fingerPos)) {
 								touchedScreenshotTexture = true;
 							}

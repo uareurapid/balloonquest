@@ -8,7 +8,7 @@ public class ScreenShotScript : MonoBehaviour
 	private int count = 0;
 	string fileName;
 	
-	public Texture2D takeScreenshot;
+	//public Texture2D takeScreenshot;
 	private Texture2D resultScreenshot;
 	private Rect screenshotRect;
 	GUISkin skin;
@@ -52,7 +52,7 @@ public class ScreenShotScript : MonoBehaviour
 	}
 	
 	void Update()
-	{
+	{/*
 		#if !UNITY_BLACKBERRY
 		if (Input.touchCount == 1 && takeScreenshot!=null && textureEnabled)
 		{
@@ -82,10 +82,11 @@ public class ScreenShotScript : MonoBehaviour
 			}
 		}
 		#endif
-			
+			*/
 	}
 	
 	void OnGUI() {
+	/*
 	  #if !UNITY_BLACKBERRY
 	  GUI.skin = skin;
 	  
@@ -104,7 +105,7 @@ public class ScreenShotScript : MonoBehaviour
 		}
 
 		GUI.matrix = svMat;
-	  #endif
+	  #endif*/
 	}
 	
 	GUIStyle BuildGUIStyle() {
