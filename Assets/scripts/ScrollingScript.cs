@@ -61,6 +61,14 @@ public class ScrollingScript : MonoBehaviour
 				{
 					backgroundPart.Add(r);
 				}
+				else {
+				 //TODO, added this extra check, because of bee hive
+					 /*r = child.GetComponentInChildren<SpriteRenderer>();
+					if (r != null)
+					{
+						backgroundPart.Add(r);
+					}*/
+				}
 			}
 			
 			if (backgroundPart.Count == 0)
@@ -178,7 +186,7 @@ public class ScrollingScript : MonoBehaviour
 					// -- And we physically moves him to the further position possible
 					//---------------------------------------------------------------------------------
 					
-					if (firstChild.IsVisibleFrom(Camera.main) == false)
+					if (firstChild.isVisible == false) //IsVisibleFrom(Camera.main)
 					{
 						// Set position in the end
 						firstChild.transform.position = new Vector3(

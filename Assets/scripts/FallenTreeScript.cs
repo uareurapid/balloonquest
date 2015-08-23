@@ -11,6 +11,11 @@ public class FallenTreeScript : MonoBehaviour {
 	public float fallRotationSpeed = 10.0f;
 	public int fallRotationDirection = 1;//either 1 (left) or -1 (right)
 
+	//if this is greater than 0 and apply delay only if visible is set to true..
+	//we count (decrease) vivibility counter and only apply the delay when reach 0
+	public int visibilityCounter = 0;
+
+	public bool autoDestroy = true;
 	private bool isFalling = false;
 	// Use this for initialization
 	void Start () {
@@ -64,7 +69,17 @@ public class FallenTreeScript : MonoBehaviour {
 			isVisible = true;
 			isFalling = false;
 			if(applyDelayOnlyVisible) {//start counting
-				StartFallingAfterDelay();
+
+			    if(visibilityCounter==0) {
+					StartFallingAfterDelay();
+			    }
+			    else {
+			      	visibilityCounter-=1;
+					if(visibilityCounter==0) {
+						StartFallingAfterDelay();
+			    	}
+			    }
+				
 			}
 		}
 
@@ -81,7 +96,9 @@ public class FallenTreeScript : MonoBehaviour {
 				audio.Stop();
 			}
 			isVisible = false;
-			Destroy(gameObject);
+			if(autoDestroy) {
+				Destroy(gameObject);
+			}
 		}
 	}
 }
