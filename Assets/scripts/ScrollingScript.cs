@@ -54,21 +54,26 @@ public class ScrollingScript : MonoBehaviour
 			for (int i = 0; i < transform.childCount; i++)
 			{
 				Transform child = transform.GetChild(i);
-				SpriteRenderer r = child.GetComponent<SpriteRenderer>();
+				SpriteRenderer r = child.GetComponent <SpriteRenderer>();
 				
 				// Only visible children
 				if (r != null)
 				{
 					backgroundPart.Add(r);
 				}
-				else {
-				 //TODO, added this extra check, because of bee hive
-					 /*r = child.GetComponentInChildren<SpriteRenderer>();
-					if (r != null)
-					{
-						backgroundPart.Add(r);
-					}*/
-				}
+				//if this child has more childs, check their sprite renderers too
+				/*if(child.childCount > 0) {
+					for (int j = 0; j < child.childCount; j++) {
+						Transform innerChild = child.GetChild(j);
+						SpriteRenderer r2 = innerChild.GetComponent <SpriteRenderer>();
+						if (r2 != null)
+						{
+							backgroundPart.Add(r2);
+						}
+					}
+
+				}*/
+				
 			}
 			
 			if (backgroundPart.Count == 0)
@@ -203,5 +208,24 @@ public class ScrollingScript : MonoBehaviour
 			}
 			
 		}
+	}
+
+	List<SpriteRenderer> AddChildsToList(Transform transform) {
+
+		List<SpriteRenderer> backgrounds = new List<SpriteRenderer>();
+			
+			for (int i = 0; i < transform.childCount; i++)
+			{
+				Transform child = transform.GetChild(i);
+				SpriteRenderer r = child.GetComponent<SpriteRenderer>();
+				
+				// Only visible children
+				if (r != null)
+				{
+					backgrounds.Add(r);
+				}
+		
+	        }
+       return backgrounds;
 	}
 }
