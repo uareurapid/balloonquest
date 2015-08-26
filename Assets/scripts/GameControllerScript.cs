@@ -228,6 +228,8 @@ public class GameControllerScript : MonoBehaviour {
 		}
 
 		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer) || (platform == RuntimePlatform.Android);
+
+		paralaxLevels = GetParalaxLevels ();
 		//start game play countdown
 		StartCountdown ();
 	}
@@ -687,6 +689,7 @@ public class GameControllerScript : MonoBehaviour {
 		}*/
 
 		CheckPause();
+		EnableLevelsScroll ();
 		if (soundOn) {
 			StartMusic();
 		}
@@ -717,6 +720,7 @@ public class GameControllerScript : MonoBehaviour {
 		showUnlockLevel = showUnlockNextLevel;
 		//EnableScreenshots();
 		SaveScores ();
+		DisableLevelsScroll ();
 		CheckPause();
 				
 		
@@ -1069,7 +1073,7 @@ public class GameControllerScript : MonoBehaviour {
 
 					  }
 
-					  if(backRect.Contains(fingerPos)) {
+					  /*if(backRect.Contains(fingerPos)) {
 					  	//move player back
 					  	EnableLevelsScroll();
 					  	player.MoveBackward();
@@ -1088,7 +1092,7 @@ public class GameControllerScript : MonoBehaviour {
 					  else {
 					    player.PlayerStationary();
 					    DisableLevelsScroll();
-					  }
+					  }*/
 				 }
 					
 			  }  //end if (Input.touches.Length ==1) 
@@ -1124,6 +1128,11 @@ public class GameControllerScript : MonoBehaviour {
 	    }
 	  }
     }
+
+	GameObject[] GetParalaxLevels() {
+		return GameObject.FindGameObjectsWithTag ("Scroller");
+	}
+
 	void ScrollLevelsForward() {
 	  InvertParalaxScrollingDirection(1);
 	}

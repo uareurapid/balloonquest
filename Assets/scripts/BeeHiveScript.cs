@@ -13,17 +13,29 @@ public class BeeHiveScript : MonoBehaviour {
 	
 	}
 
+	void OnTriggerEnter2D(Collider2D otherCollider)
+	{
+		CheckIfPlayer(otherCollider.gameObject);
+	}
+
 	//
 	void OnCollisionEnter2D(Collision2D collision)
 	{
-		GameObject collisionObject = collision.gameObject;
+		CheckIfPlayer(collision.gameObject);
+
+
+	}
+
+	void CheckIfPlayer(GameObject collisionObject){
+
 		PlayerScript player = collisionObject.GetComponent<PlayerScript>();
 		if(player!=null) {
-		  FallenTreeScript fall = GetComponent<FallenTreeScript>();
-		  if(!fall.enabled) {
-			fall.enabled = true;
-		  }
+			FallenTreeScript fall = GetComponent<FallenTreeScript>();
+			if(!fall.enabled) {
+				Debug.Log("Enable Fallen tree script on bee hive!!!");
+				fall.enabled = true;
+				fall.StartFallingAfterDelay();
+			}
 		}
-
 	}
 }
