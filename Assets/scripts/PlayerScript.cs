@@ -490,7 +490,7 @@ public class PlayerScript : MonoBehaviour
 		GroundScript ground = collisionObject.GetComponentInChildren<GroundScript> ();
 		if (ground != null) {
 
-			HandleGroundCollision ();
+			HandleGroundCollision (ground.isVisible);
 		} 
 		else if(!hasLanded) {
 		   //ignore collisions when already landed
@@ -565,8 +565,13 @@ public class PlayerScript : MonoBehaviour
 
 
 	//handle collision with ground
-	void HandleGroundCollision() {
+	void HandleGroundCollision(bool groundVisible) {
 
+		//HUGE FALL; WERE DEAD ANYWAY!!
+		if (!groundVisible && IsPlayerAlive()) {
+			KillPlayer();
+			return;
+		}
 		//DisableGravityScale();
 		//Normal landing stuff
 		if(!hasLanded) {

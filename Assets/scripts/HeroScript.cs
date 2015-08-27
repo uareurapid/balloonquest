@@ -125,10 +125,8 @@ public class HeroScript : MonoBehaviour {
 	   //play the teleportation effect
 	   ParticleSystem part = GetComponentInChildren<ParticleSystem>();
 	   if(part!=null) {
-	     Debug.Log("PLAYING PARTICLE AURA");
 	     part.Play(true);
 	   }
-	   else Debug.Log("IS NULL!!!!!!");
 	  }
 	  return reached ;
 	}

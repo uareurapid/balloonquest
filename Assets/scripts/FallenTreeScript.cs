@@ -45,16 +45,16 @@ public class FallenTreeScript : MonoBehaviour {
 
 	//could be invoked from outside, on camera shake for instance
 	public void StartFallingAfterDelay() {
-		Debug.Log ("callled....");
+	
 	 if (!isFalling && fallDelay > 0f) {
 		Invoke ("StartFalling", fallDelay);
-	 } else
-			Debug.Log ("do nothing ");
+	 } 
+
 	}
 
 	//also public to allow calls from other objects
 	public void StartFalling() {
-		Debug.Log ("start falling");
+
 		isFalling = true;
 		AudioSource audio = GetComponent<AudioSource> ();
 		if (audio != null && !audio.isPlaying ) {
