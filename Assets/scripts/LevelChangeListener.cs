@@ -36,7 +36,6 @@ public class LevelChangeListener : MonoBehaviour {
 
 		if ( (levelTouched > 0 && levelTouched==level) && !loading && !levelLocked) {
 
-			Debug.Log("LOADING level " + levelTouched + " locked?"  + levelLocked);
 			loading = true;
 			Application.LoadLevel ("Level" + levelTouched);
 		

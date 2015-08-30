@@ -30,6 +30,13 @@ public class BeeHiveScript : MonoBehaviour {
 
 		PlayerScript player = collisionObject.GetComponent<PlayerScript>();
 		if(player!=null) {
+
+		    ShakeScript shake = GetComponent<ShakeScript>();
+		    if(shake!=null) {
+		      shake.enabled = true;
+		      shake.StartShaking(1.5f);
+		    }
+
 			FallenTreeScript fall = GetComponent<FallenTreeScript>();
 			if(!fall.enabled) {
 				Debug.Log("Enable Fallen tree script on bee hive!!!");

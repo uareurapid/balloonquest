@@ -341,11 +341,6 @@ public class GameOverScript : MonoBehaviour
 				{
 					PlaySettingsSoundAndLoadMain();
 				}
-				//else if(resumeTextureRect.Contains(fingerPos) )
-				//{
-				   //just resume the world, not the level
-					Application.LoadLevel("Main");
-				//}
 
 			}
 		}
@@ -453,7 +448,6 @@ public class GameOverScript : MonoBehaviour
 			Collider2D hitCollider = Physics2D.OverlapPoint(worldPosition);
 			
 			if(hitCollider){
-			Debug.Log("YES!!!! " + hitCollider.transform.gameObject.tag);
 				return hitCollider.transform.gameObject.tag.Equals("GameOver") ;
 			}
 		}
