@@ -57,15 +57,19 @@ public class BombScript : MonoBehaviour
 			
 			if(rb != null )
 			{
-			Debug.Log("FOUND ONE!!!!");
+			
+				//TODO apply force only left /right
+				//put them in the same y
+				Vector3 bombPosition = transform.position;
+				bombPosition.y = rb.transform.position.y;
 
 				// Find a vector from the bomb to the player.
-				Vector3 deltaPos = rb.transform.position - transform.position;
-					
+				Vector3 deltaPos = rb.transform.position - bombPosition;
+
 				// Apply a force in this direction with a magnitude of bombForce.
 				Vector3 force = deltaPos.normalized * bombForce;
 				rb.AddForce(force);
-				
+
 			}
 		}
 

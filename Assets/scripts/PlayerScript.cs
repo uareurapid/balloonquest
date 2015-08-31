@@ -33,7 +33,7 @@ public class PlayerScript : MonoBehaviour
 	//this is needed for the pickup speed
 	//the jelly must inherit player speed
 	//at every new level the value is reset to deafut speed (1)
-
+	GroundScript ground;
 
 	public float speedX = 1;
 
@@ -95,6 +95,7 @@ public class PlayerScript : MonoBehaviour
 		hasLanded = false;
 
 		soundEffects = GetSoundEffects ();
+		ground = GetGround ();
 
 		hero = GetHero();
 		
@@ -174,6 +175,14 @@ public class PlayerScript : MonoBehaviour
 	   }
 
 	   return false;
+	}
+
+	GroundScript GetGround() {
+		return GameObject.FindGameObjectWithTag("Ground").GetComponent<GroundScript>();
+	}
+
+	public bool IsGroundVisible() {
+		return ground!=null && ground.isVisible;
 	}
 
 
@@ -298,7 +307,7 @@ public class PlayerScript : MonoBehaviour
 		}
 
 		//if is standing on a landing platform we do not clamp, and let him die
-		if (canMove && !isStandingOnPlatform) {
+		if ( (canMove && !isStandingOnPlatform) || ( IsPlayerFalling() && IsGroundVisible()) ) {
 
 			//only clamp if can move otherwise let him go outside screen and kill it
 			var dist = (transform.position - Camera.main.transform.position).z;
@@ -713,7 +722,7 @@ public class PlayerScript : MonoBehaviour
 	//called by the engine when player dies
 	void OnDestroy()
 	{
-	  
+		Debug.Log ("player died");
 		/*if(controller.IsGameStarted()) {
 			ShowGameOver(false);
 		}*/

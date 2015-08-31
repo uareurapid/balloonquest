@@ -89,6 +89,10 @@ public class FallenTreeScript : MonoBehaviour {
 
 	}
 
+	public bool IsFalling() {
+		return isFalling;
+	}
+
 	public bool IsVisible() {
 	 return isVisible;
 	}

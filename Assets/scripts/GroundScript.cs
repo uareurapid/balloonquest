@@ -71,7 +71,7 @@ public class GroundScript : MonoBehaviour {
 	}
 
 	void DisableSpawning() {
-		SpawnerScript [] spawners = GameObject.FindObjectsOfType<SpawnerScript>();
+		SpawnerScript [] spawners = GameObject.FindObjectsOfType(typeof(SpawnerScript)) as SpawnerScript[];
 		if (spawners != null && spawners.Length > 0) {
 			foreach(SpawnerScript spawner in spawners) {
 				spawner.canSpawn = false;

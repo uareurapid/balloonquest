@@ -4,6 +4,7 @@ using System.Collections;
 public class BeeScript : MonoBehaviour {
 
     public bool isAttacking = false;
+	public float attackDuration = 4.0f; //4 seconds
 	// Use this for initialization
 	void Start () {
 	
@@ -15,15 +16,26 @@ public class BeeScript : MonoBehaviour {
 	  
 	}
 
+	//start attacking (or stop it too)
 	public void Attack(bool attack) {
 
 		isAttacking = attack;
-		/*if(isAttacking) {
-		  GetComponent<Animator>();
+		if(isAttacking) {
+		    GetComponent<Animator>().enabled = true;//show blinking
+			GetComponent<EnemyScript>().enabled = true;//behave as enemy
+			GetComponent<CircleCollider2D>().enabled = true;
+			Invoke("StopAttack",attackDuration);
 		}
 		else {
-		  GetComponent<Animation>().Stop();
-		}*/
+			GetComponent<Animator>().enabled = false;
+			GetComponent<EnemyScript>().enabled = false;
+			GetComponent<CircleCollider2D>().enabled = false;
+		}
+	}
+
+	//stop attacking
+	void StopAttack() {
+		Attack(false);
 	}
 
 

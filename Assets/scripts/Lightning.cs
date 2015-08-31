@@ -93,6 +93,7 @@ public class Lightning : MonoBehaviour {
 				if (hit && hit.collider.gameObject.tag.Equals("Player") ){
 				    GameObject obj = GameObject.FindGameObjectWithTag("Player");
 				    if(obj!=null) {
+					Debug.Log("KILL PLAYER NOW!!");
 				      PlayerScript s = obj.GetComponent<PlayerScript>(); 
 				      s.TakeLife();
 					  Destroy(hit.collider.gameObject);

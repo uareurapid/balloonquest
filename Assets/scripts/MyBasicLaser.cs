@@ -44,9 +44,12 @@ public class MyBasicLaser : MonoBehaviour {
 	private GameObject EndLight ;
 	private float ViewAngle;
 	private Vector3 LaserDir ;
+
+	public bool isAutomatic = true;
 	
-	
+	public float autoSwitchInterval = 0.0f;//auto turn off, only applies if !automatic
 	private BoxCollider2D rayCollider;
+
 	
 	// Use this for initialization
 	void Start () {
@@ -96,17 +99,21 @@ public class MyBasicLaser : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		lastSwitchTime +=Time.deltaTime;
-		
-		if(lastSwitchTime >= switchInterval) {
-			LaserOn=!LaserOn;
-			lastSwitchTime = 0.0f;
+
+		if (isAutomatic) {
+			lastSwitchTime +=Time.deltaTime;
+			
+			if(lastSwitchTime >= switchInterval) {
+				LaserOn=!LaserOn;
+				lastSwitchTime = 0.0f;
+
+				if(LaserOn && laserAudio.enabled) {
+					//make the sound
+					AudioSource.PlayClipAtPoint(laserAudio.clip, StartPoint.position,0.03f);
+				}
+			}
 		}
-		if(LaserOn && laserAudio.enabled) {
-			//make the sound
-			AudioSource.PlayClipAtPoint(laserAudio.clip, StartPoint.position,0.03f);
-		}
-		
+
 		
 		float CamDistSource = Vector3.Distance(StartPoint.position, Camera.main.transform.position);
 		float CamDistEnd = Vector3.Distance(EndPos, Camera.main.transform.position);		
@@ -177,7 +184,7 @@ public class MyBasicLaser : MonoBehaviour {
 			//and for 2D
 			hit = Physics2D.Raycast(StartPoint.position, LaserDir); 
 			ray = new Ray2D(StartPoint.position, LaserDir);
-			if (hit && hit.collider.gameObject.tag.Equals("Jelly") ){	//why not player?
+			//if (hit && hit.collider.gameObject.tag.Equals("Jelly") ){	//why not player?
 				      
 				//EndPos = hit.point;	 		    
 				
@@ -198,7 +205,7 @@ public class MyBasicLaser : MonoBehaviour {
 				
 					    
 			    //check if player
-				if(hit.collider.gameObject.tag.Equals("Player") && LaserOn) {
+				if(hit && hit.collider.gameObject.tag.Equals("Player") && LaserOn) {
 				
 				Debug.Log("PLAYER HIT BY LASER!!!!!!!!!");
 
@@ -216,7 +223,7 @@ public class MyBasicLaser : MonoBehaviour {
 					script.TakeAllLifes();
 				}
 					    	    	    	    
-			}
+			//}
 			
 			/**
 			if (Physics.Raycast(ray, out hit, LaserDist)){	   
@@ -304,6 +311,17 @@ public class MyBasicLaser : MonoBehaviour {
 	void OnDrawGizmos () {
 		Gizmos.DrawIcon(transform.position, "LaserIcon.psd", true);
 	}
+
+	public void EnableLaser() {
+		LaserOn = true;
+	}
+
+	public void DisableLaser() {
+
+		LaserOn = false;
+
+	}
+	                         
 	
 	/**
 	/////////////////////Ray Hit

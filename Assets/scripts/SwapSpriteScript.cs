@@ -8,35 +8,56 @@ public class SwapSpriteScript : MonoBehaviour {
 	private int lastUsedSprite = 0;
 	public bool canSwap = true;
 	private float lastSwapTime=0;
+	public float swapDelay = 0f;
+
+	public bool isController = false; 
+	public float controllerSwitchDelay = 0.5f;//only applies if is controller
 	
 	// Use this for initialization
 	void Start () {
 		lastUsedSprite = 0;
 		lastSwapTime=0;
+		if (swapDelay > 0f) {
+			Invoke ("AllowSwap", swapDelay);
+		}
+		else {
+			canSwap = true;
+		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
 	
-		lastSwapTime += Time.deltaTime;
-		
-		if( canSwap && (lastSwapTime >= swapInterval) ) {
-			//time to swap images
-			
-			lastUsedSprite+=1;
-			if(lastUsedSprite==sprites.Length) {
-			  lastUsedSprite = 0;
-			}
+		if (canSwap) {
 
-			SwapSprites();
-			lastSwapTime = 0f;
+			lastSwapTime += Time.deltaTime;
+
+			if( lastSwapTime >= swapInterval ) {
+				//time to swap images
+				
+				lastUsedSprite+=1;
+				if(lastUsedSprite==sprites.Length) {
+					lastUsedSprite = 0;
+				}
+				
+				SwapSprites();
+				lastSwapTime = 0f;
+			}
 		}
+	  
+
+		
+
 	}
-	
+	//swap time
 	void SwapSprites() {
 		
 		SpriteRenderer renderer = gameObject.GetComponent<SpriteRenderer>();
 		renderer.sprite = sprites[lastUsedSprite];
+		//if is controller, swicth it at the same time of the sprite swap
+		if (isController) {
+			Invoke("SwitchController",controllerSwitchDelay);
+		}
 		
 	}
 	
@@ -50,6 +71,11 @@ public class SwapSpriteScript : MonoBehaviour {
 		
 		
 	}
+
+	void SwitchController() {
+		ControllerScript controller = gameObject.GetComponent<ControllerScript>();
+		controller.Switch();
+	}
 	
 	public bool CanSwap() {
 	
@@ -59,5 +85,10 @@ public class SwapSpriteScript : MonoBehaviour {
 	public void BlockSwap(bool block) {
 		
 		canSwap = block;
+	}
+
+	public void AllowSwap() {
+		
+		canSwap = true;
 	}
 }
