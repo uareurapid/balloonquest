@@ -5,11 +5,13 @@ public class GroundScript : MonoBehaviour {
 
 	public bool isVisible = false;
 	private MovingPlatformScript platformScript;
+	private GameControllerScript controller;
 	// Use this for initialization
 	void Start () {
 	
 		GameObject ground = GameObject.FindGameObjectWithTag("Ground");
 		platformScript = ground.GetComponent<MovingPlatformScript>();
+		controller = GameObject.FindGameObjectWithTag("Scripts").GetComponent<GameControllerScript> ();
 
 	}
 	
@@ -64,19 +66,11 @@ public class GroundScript : MonoBehaviour {
 	}
 
 	void DisableScrolling() {
-		ScrollingScript[] scrolls= FindObjectsOfType(typeof(ScrollingScript)) as ScrollingScript[];
-		foreach (ScrollingScript scroll in scrolls) {
-			scroll.enabled = false;
-		}
+		controller.DisableScrolling();
 	}
 
 	void DisableSpawning() {
-		SpawnerScript [] spawners = GameObject.FindObjectsOfType(typeof(SpawnerScript)) as SpawnerScript[];
-		if (spawners != null && spawners.Length > 0) {
-			foreach(SpawnerScript spawner in spawners) {
-				spawner.canSpawn = false;
-			}
-		}
+		controller.DisableSpawning();
 	}
 	
 	void StopMovement() {

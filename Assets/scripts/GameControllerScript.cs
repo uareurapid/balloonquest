@@ -1329,6 +1329,21 @@ public class GameControllerScript : MonoBehaviour {
 	  screenshotTexture = texture;
 	}
 
+	public void DisableScrolling() {
+		ScrollingScript[] scrolls= FindObjectsOfType(typeof(ScrollingScript)) as ScrollingScript[];
+		foreach (ScrollingScript scroll in scrolls) {
+			scroll.enabled = false;
+		}
+	}
+
+	public void DisableSpawning() {
+		SpawnerScript [] spawners = GameObject.FindObjectsOfType(typeof(SpawnerScript)) as SpawnerScript[];
+		if (spawners != null && spawners.Length > 0) {
+			foreach(SpawnerScript spawner in spawners) {
+				spawner.canSpawn = false;
+			}
+		}
+	}
 
 	
 }

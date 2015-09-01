@@ -722,12 +722,17 @@ public class PlayerScript : MonoBehaviour
 	//called by the engine when player dies
 	void OnDestroy()
 	{
-		Debug.Log ("player died");
-		/*if(controller.IsGameStarted()) {
-			ShowGameOver(false);
-		}*/
-		//else just ignore this stuff
+		DisableScrolling();
+		DisableSpawning();
 		
+	}
+
+	void DisableScrolling() {
+		controller.DisableScrolling();
+	}
+
+	void DisableSpawning() {
+		controller.DisableSpawning();
 	}
 	
 	void ShowGameOver(bool showNextlevel) {

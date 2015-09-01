@@ -4,9 +4,10 @@ using System.Collections;
 public class ShakeScript : MonoBehaviour {
 
 
-	public float shakeSpeed = 1.0f; //how fast it shakes
-	public float shakeAmount = 1.0f; //how much it shakes
+	//public float shakeSpeed = 1.0f; //how fast it shakes
+	public float shakeAmount = 0.055f; //how much it shakes
 	public bool shake = false;
+	public bool fallAfterShake = false;
 
 
 	// Use this for initialization
@@ -22,12 +23,8 @@ public class ShakeScript : MonoBehaviour {
 		// with radius 5 and the center at zero.
 
 		Vector3 position = new Vector3(transform.position.x,transform.position.y,transform.position.z);
-
-		Vector2 newPosition = Random.insideUnitCircle * 0.055f;
-		position.x = newPosition.x;
-		position.y = newPosition.y;
-
-		transform.position = position;
+		Vector3 newPosition = Random.insideUnitCircle * 0.055f;
+		transform.position = position + newPosition;
 
 	  }
 		
@@ -47,5 +44,11 @@ public class ShakeScript : MonoBehaviour {
 	public void StopShaking() {
 
       shake = false;
+      if(fallAfterShake) {
+
+			FallenTreeScript fall = GetComponent<FallenTreeScript>();
+			fall.enabled = true;
+			fall.StartFalling();
+      }
 	}
 }
