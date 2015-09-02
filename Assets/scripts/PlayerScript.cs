@@ -542,7 +542,12 @@ public class PlayerScript : MonoBehaviour
 				}
 				else {
 					GetHero().BlinkWhenHit();
-					KillPlayer();
+					if(!IsGroundVisible() && !IsPlayerFalling()) {
+						KillPlayer();
+					}
+					  
+					
+
 				}
 
 			}

@@ -41,7 +41,8 @@ public class CameraZoomInOutScript : MonoBehaviour {
 
 
 	void Start () {
-		Time.timeScale = 1.0f;
+
+	  Time.timeScale = 1.0f;
 	  // save the current values
 	  cameraOriginalOrthographicSize = Camera.main.orthographicSize;
 	  cameraOriginalPosition = Camera.main.transform.position; //or local position??
@@ -132,23 +133,7 @@ public class CameraZoomInOutScript : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-	//OK
-
-	 /*Vector3 transformPosition = transform.position;
-
-	 if (canMove) {
-
-			Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, cameraOriginalOrthographicSize, Time.deltaTime * speed);
-			if( Mathf.Abs(Camera.main.orthographicSize - cameraOriginalOrthographicSize) < 0.00015 ){
-				Debug.Log("COMPLETE??????");
-				isMovementComplete = true;
-				canMove = true;
-				
-			}
-	 }*/
-
-	 
+   void Update () {
 
    }
 

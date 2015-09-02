@@ -19,10 +19,13 @@ public bool resetPositionOnMax = false;
 public float startDelay = 0;
 public bool lockMovement = false;
 
+private float originalZPosition = 0f;
+
 	// Use this for initialization
 	void Start () {
 	  xPosition = transform.position.x;
 	  yPosition = transform.position.y;
+	  originalZPosition = transform.position.z;
 
 	  if(startDelay>0f && lockMovement) {
 		Invoke("UnlockMovement",startDelay);
@@ -76,12 +79,13 @@ public bool lockMovement = false;
 
 	 //go back to beginning
 	 if(max && resetPositionOnMax) {
-		currentPosition = new Vector2(xPosition,yPosition);
+		currentPosition = new Vector3(xPosition,yPosition,originalZPosition);
 	 }
 	 else {
 
 						//MOVING THE PLAFTORM
-		  currentPosition = new Vector2(transform.position.x,transform.position.y);
+		  currentPosition = new Vector3(transform.position.x,transform.position.y,originalZPosition);
+
 		  if(vertical) {
 		   if(!max) {//continue until reach max
 		     currentPosition.y +=step;
@@ -100,9 +104,9 @@ public bool lockMovement = false;
 		   }
 	 }
 
-	
 	  
 	 if(!stopMovement) {
+	    
 		transform.position = currentPosition;
 	 }
 

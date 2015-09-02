@@ -138,7 +138,9 @@ public class MainLoaderScript : MonoBehaviour {
 				swipeRightRect = new Rect( width/2 + 200, height/2-200,128,64);
 				GUI.DrawTexture(swipeRightRect,swipeRightIcon);
 
-				GUI.Label (new Rect(width/2-140, height/2-300, 500, 50), "Swipe Left or Right to choose level!");//style
+				GUI.Label (new Rect(width/2-140, height/2-300, 500, 50), "Swipe Left/Right to choose level!");//style
+
+				GUI.Label (new Rect(width/2-140, height/2-150, 500, 50), "Swipe Left/Right to move player!");//style
 				
 				//swipeTouchRect = new Rect( width/2 , height/2+200,100,100);
 				//GUI.DrawTexture(swipeTouchRect,swipeTouchIcon,ScaleMode.ScaleToFit);

@@ -67,7 +67,7 @@ public class HeroScript : MonoBehaviour {
 			 }
 		     
 		    }
-		    else {
+		    else if(!player.IsGroundVisible() && !player.IsPlayerFalling()) {
 				player.KillPlayer ();
 		    }
 
