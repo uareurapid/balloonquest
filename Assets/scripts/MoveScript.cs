@@ -76,9 +76,9 @@ public class MoveScript : MonoBehaviour
 		//check on X
 		if(limitedMovementXInterval>0) {
 
+			//moving to the left
 			if(direction.x < 0 ) {
-			//moving left
-			
+
 			  if(!revert) {
 				if(currentPosition.x < startPosition.x - (0.0f + limitedMovementXInterval ) ){
 				
@@ -98,16 +98,19 @@ public class MoveScript : MonoBehaviour
 			
 			
 		   }
+		   //moving to the right
 		   else if(direction.x > 0) {
-			//moving right
+			
 			  if(!revert) {
 				if(currentPosition.x > startPosition.x + (0.0f+ limitedMovementXInterval) ){
-				
+
+				  //if not stop on max, then is time to revert direction
 				   if(!stopOnMaxX) {
 					revert = true;
 					startPosition.x = currentPosition.x;
 				   }
 				   else {
+				   //otherwise just stop
 					 stopMovement = true;
 				   }
 					
@@ -187,9 +190,9 @@ public class MoveScript : MonoBehaviour
 		
        }
 	   else if(!revert && ( AllowRevertDirection() &&  HasLimitedMovementInterval() ) ) {
-		
-		   CheckPositions();
-		   if(revert) {
+	
+		    CheckPositions();
+		    if(revert) {
 
 		       if(limitedMovementXInterval>0) {
 					// 1 - revert current direction on x axis
@@ -200,19 +203,17 @@ public class MoveScript : MonoBehaviour
 					direction.y = direction.y*-1;
 		       }
 				
-				// 3 - Define new movement, based on new direction
-				movement = new Vector2(
-					speed.x * direction.x,
-					speed.y * direction.y);
-				revert = false;
-		   }
-	
+
+		    }
+
+			// 3 - Define new movement, based on new direction
+			movement = new Vector2(speed.x * direction.x, speed.y * direction.y);
+			revert = false;
 		
 			
 		}
 
 	  else if(allowMoveIfNotVisible && allowRevertXDirection && revert) {
-
 	     
 				// 1 - revert current direction on x axis
 	            direction.x = direction.x*-1;
@@ -227,7 +228,7 @@ public class MoveScript : MonoBehaviour
 				}
 	  }
 	  else {
-	  
+
 			if( allowMoveIfNotVisible || isVisible ) {
 				
 				lastDirectionChange += Time.deltaTime;
@@ -290,7 +291,6 @@ public class MoveScript : MonoBehaviour
 		if( (allowMoveIfNotVisible || isVisible) && !stopMovement  ) {
 			 GetComponent<Rigidbody2D>().velocity = movement;
 		}
-	  
 		
 	}
 	//gets a random y direction, either 0,-1 or 1

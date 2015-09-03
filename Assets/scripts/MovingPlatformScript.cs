@@ -5,6 +5,7 @@ public class MovingPlatformScript : MonoBehaviour {
 
 private float xPosition;
 private float yPosition;
+private float zPosition;
 private bool max;//reach max movement?
 
 public bool vertical = false;//vertical movement?
@@ -25,7 +26,7 @@ private float originalZPosition = 0f;
 	void Start () {
 	  xPosition = transform.position.x;
 	  yPosition = transform.position.y;
-	  originalZPosition = transform.position.z;
+	  zPosition = transform.position.z;
 
 	  if(startDelay>0f && lockMovement) {
 		Invoke("UnlockMovement",startDelay);
@@ -84,7 +85,7 @@ private float originalZPosition = 0f;
 	 else {
 
 						//MOVING THE PLAFTORM
-		  currentPosition = new Vector3(transform.position.x,transform.position.y,originalZPosition);
+		  currentPosition = new Vector3(transform.position.x,transform.position.y,zPosition);
 
 		  if(vertical) {
 		   if(!max) {//continue until reach max
