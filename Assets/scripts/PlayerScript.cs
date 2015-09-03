@@ -137,16 +137,6 @@ public class PlayerScript : MonoBehaviour
 		//CheckInAppPurchases();
 	}
 
-	//todo, code me
-	/*public void LaunchFailsafe() {
-		GameObject jelly = GameObject.FindGameObjectWithTag("Jelly");
-		if(jelly!=null) {
-		  JellyScript script = jelly.GetComponent<JellyScript>();
-		  if(script!=null){
-		    script.LaunchFailsafe();
-		  }
-		}
-	}*/
 
 	public void EnableGravityScale() {
 		Rigidbody2D rig = GetComponent<Rigidbody2D>();
@@ -263,44 +253,6 @@ public class PlayerScript : MonoBehaviour
 	void Update()
 	{
 
-	 if(IsPlayerAlive()) {
-
-		/*JellyScript jelly = GameObject.FindGameObjectWithTag("Jelly").GetComponent<JellyScript>();
-		if(jelly!=null) {
-	
-		  failSafeUsed = !jelly.CanLaunchFailSafe();
-		}
-		else {
-		  failSafeUsed = true;
-		}
-
-
-		if (!failSafeUsed && Input.touches.Length ==1) {
-			    
-			Touch touch = Input.touches[0];
-			    
-			if(touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)  {
-
-				Vector2 fingerPos = new Vector2(0,0);
-				fingerPos.y =  resolutionHelper.screenHeight - (touch.position.y / Screen.height) * resolutionHelper.screenHeight;
-				fingerPos.x = (touch.position.x / Screen.width) * resolutionHelper.screenWidth;
-
-				if(failSafeRect!=null && failSafeRect.Contains(fingerPos) && playerHealth.hitPoints!=null) {
-
-					
-					//need to check if can be used, first
-					//if(!failSafeUsed) { //jelly.CanLaunchFailSafe()
-						//failSafeUsed = true;
-				  		LaunchFailsafe();
-					//}
-				  
-				}
-
-			}
-
-		}*/
-	 }
-		
 
 		if(playerHealth.hitPoints==0 && !isDead) {
 		  HandleLooseAllLifes();
