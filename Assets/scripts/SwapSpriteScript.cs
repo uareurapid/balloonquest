@@ -17,12 +17,12 @@ public class SwapSpriteScript : MonoBehaviour {
 	void Start () {
 		lastUsedSprite = 0;
 		lastSwapTime=0;
-		if (swapDelay > 0f) {
+		if (swapDelay > 0f && canSwap) {
 			Invoke ("AllowSwap", swapDelay);
 		}
-		else {
-			canSwap = true;
-		}
+		//else {
+		//	canSwap = true;
+		//}
 	}
 	
 	// Update is called once per frame
@@ -50,7 +50,7 @@ public class SwapSpriteScript : MonoBehaviour {
 
 	}
 	//swap time
-	void SwapSprites() {
+	public void SwapSprites() {
 		
 		SpriteRenderer renderer = gameObject.GetComponent<SpriteRenderer>();
 		renderer.sprite = sprites[lastUsedSprite];

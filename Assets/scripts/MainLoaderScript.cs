@@ -15,9 +15,18 @@ public class MainLoaderScript : MonoBehaviour {
 	public Texture2D swipeTouchIcon;
 	private Rect swipeTouchRect;
 
-	public Texture2D soundIcon;
-	public Texture2D muteIcon;
+	//music settings
+	public Texture2D musicOnIcon;
+	public Texture2D musicOffIcon;
+	//sound settings
+	public Texture2D soundOnIcon;
+	public Texture2D soundOffIcon;
+
+	private bool accelerometerOn = false;
+
+	private	Rect musicRect;
 	private	Rect soundRect;
+	private bool musicOn = true;
 	private bool soundOn = true;
 
 
@@ -43,7 +52,8 @@ public class MainLoaderScript : MonoBehaviour {
 			
 		}
 		//resolutionHelper.CheckScreenResolution ();
-		checkSoundSettings ();
+		checkSoundSettings();
+		checkMusicSettings();
 
 		if (showSwipeIconsInterval > 0.0f) {
 			InvokeRepeating("ChangeIconsVisibility",showSwipeIconsInterval,showSwipeIconsInterval);
@@ -55,6 +65,18 @@ public class MainLoaderScript : MonoBehaviour {
 	}
 
 	//check if we have sound enabled/disabled
+	void checkMusicSettings() {
+		if (!PlayerPrefs.HasKey (GameConstants.MUSIC_SETTINGS_KEY)) {
+			musicOn = true;
+			PlayerPrefs.SetInt (GameConstants.MUSIC_SETTINGS_KEY, 1);
+			PlayerPrefs.Save ();
+		} 
+		else {
+			int value = PlayerPrefs.GetInt (GameConstants.MUSIC_SETTINGS_KEY, 1);
+			musicOn = (value == 1);
+		}
+	}
+
 	void checkSoundSettings() {
 		if (!PlayerPrefs.HasKey (GameConstants.SOUND_SETTINGS_KEY)) {
 			soundOn = true;
@@ -66,17 +88,26 @@ public class MainLoaderScript : MonoBehaviour {
 			soundOn = (value == 1);
 		}
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		
 		//change sound settings?
 		if (!isMobilePlatform) {
 			if (Input.GetButtonDown("Fire1")) {
+				if (musicRect.Contains (Input.mousePosition)) {
+					musicOn = !musicOn;
+					PlayerPrefs.SetInt (GameConstants.MUSIC_SETTINGS_KEY, musicOn ? 1 : 0);
+					PlayerPrefs.Save ();
+				}
 				if (soundRect.Contains (Input.mousePosition)) {
 					soundOn = !soundOn;
 					PlayerPrefs.SetInt (GameConstants.SOUND_SETTINGS_KEY, soundOn ? 1 : 0);
 					PlayerPrefs.Save ();
+				}
+
+				if(DetectAccelerometerTouchesDesktop().Equals("AccelerometerSettings")) {
+					ChangeAccelerometerSettings();
 				}
 			}
 		} 
@@ -89,10 +120,19 @@ public class MainLoaderScript : MonoBehaviour {
 
 					Vector2 fingerPos = GetFingerPosition(touch,resolutionHelper.isWidescreen);
 
-					if(soundRect.Contains(fingerPos)) {
-						soundOn = !soundOn;
-						PlayerPrefs.SetInt(GameConstants.SOUND_SETTINGS_KEY,soundOn ? 1 : 0);
+					if(musicRect.Contains(fingerPos)) {
+						musicOn = !musicOn;
+						PlayerPrefs.SetInt(GameConstants.MUSIC_SETTINGS_KEY,musicOn ? 1 : 0);
 						PlayerPrefs.Save();
+					}
+					if (soundRect.Contains (fingerPos)) {
+						soundOn = !soundOn;
+						PlayerPrefs.SetInt (GameConstants.SOUND_SETTINGS_KEY, soundOn ? 1 : 0);
+						PlayerPrefs.Save ();
+					}
+
+					if(DetectAccelerometerTouchesMobile().Equals("AccelerometerSettings")) {
+						ChangeAccelerometerSettings();
 					}
 
 				}
@@ -105,7 +145,16 @@ public class MainLoaderScript : MonoBehaviour {
 	void ChangeIconsVisibility() {
 		showSwipeIcons = !showSwipeIcons;
 	}
-	
+
+	void ChangeAccelerometerSettings() {
+		GameObject obj = GameObject.FindGameObjectWithTag("AccelerometerSettings");
+		SwapSpriteScript swap = obj.GetComponent<SwapSpriteScript>();
+		swap.SwapSprites();
+		SpriteRenderer rend = obj.GetComponent<SpriteRenderer>();
+		rend.enabled=!rend.enabled;
+
+		//TODO write player preferences
+	}
 	void OnGUI() {
 		
 		
@@ -147,11 +196,11 @@ public class MainLoaderScript : MonoBehaviour {
 			}
 
 
-			soundRect = new Rect(width-160 ,15,128,64);
-			if(muteIcon==null || soundIcon==null) {
+			musicRect = new Rect(width-160 ,15,128,64);
+			if(musicOffIcon==null || musicOnIcon==null) {
 				Debug.Log("muteIcon && soundIcon");
 			}
-			GUI.DrawTexture(soundRect, soundOn ? soundIcon : muteIcon);
+			GUI.DrawTexture(musicRect, musicOn ? musicOnIcon : musicOffIcon);
 
 		}
 
@@ -185,5 +234,38 @@ public class MainLoaderScript : MonoBehaviour {
 		style.font = skin.label.font;
 		style.fontSize = skin.label.fontSize+10;
 		style.normal.textColor = Color.black;
+	}
+
+	private string DetectAccelerometerTouchesDesktop() {
+
+
+		if(Input.GetMouseButtonDown(0)){
+			Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		    Collider2D hitCollider = Physics2D.OverlapPoint(mousePosition);
+			
+			if(hitCollider){
+			  return hitCollider.transform.gameObject.tag ;
+			}
+		}
+		return "false";
+	}
+
+	private string DetectAccelerometerTouchesMobile() {
+
+
+		for (int i = 0; i < Input.touchCount; ++i) {
+			if (Input.GetTouch(i).phase == TouchPhase.Began) {
+				Vector3 touchPosition = Camera.main.ScreenToWorldPoint(Input.GetTouch(i).position);
+				RaycastHit2D hitInfo = Physics2D.Raycast(touchPosition, Vector2.zero);
+				// RaycastHit2D can be either true or null, but has an implicit conversion to bool, so we can use it like this
+				if(hitInfo)
+				{
+					return hitInfo.transform.gameObject.tag;
+					 
+					// Here you can check hitInfo to see which collider has been hit, and act appropriately.
+				}
+			}
+		}
+		return "false";
 	}
 }

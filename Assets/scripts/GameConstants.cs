@@ -75,7 +75,7 @@ namespace BalloonQuest
 				public const string PREVIOUS_BEST_SCORE_KEY = "previous_best_score";//the previous best
 
 				public const string SOUND_SETTINGS_KEY = "sound_settings";
-
+				public const string MUSIC_SETTINGS_KEY = "music_settings";
 
 				//to track level unlocked/locked
 				public const string UNLOCKED_LEVEL_KEY = "unlocked_level";//+ level number

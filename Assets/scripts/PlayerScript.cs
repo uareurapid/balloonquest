@@ -35,6 +35,7 @@ public class PlayerScript : MonoBehaviour
 	//at every new level the value is reset to deafut speed (1)
 	GroundScript ground;
 
+
 	public float speedX = 1;
 
 	Transform cachedTransform;
@@ -292,6 +293,11 @@ public class PlayerScript : MonoBehaviour
 		    canMove = false;
 			Invoke("LoadNextLevel",3.0f);
 		}
+
+		//MORE OR LESS
+		//if(supportsGyroscope) {
+		//	transform.rotation = Input.gyro.attitude;
+		//}
 
 
 	}
@@ -782,6 +788,7 @@ public class PlayerScript : MonoBehaviour
 	public void DisableMovement() {
 		canMove = false;
 	}
+
 	public void PlayerStationary() {
 
 	}

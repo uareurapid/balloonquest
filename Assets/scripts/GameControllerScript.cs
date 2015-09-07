@@ -42,6 +42,7 @@ public class GameControllerScript : MonoBehaviour {
     Rect jumpRect;
 
 	private bool soundOn = true;
+	private bool musicOn = true;
 	public bool isGamePaused = true;
 	private bool isGameStarted = false;
 	private bool isGameOver = true;
@@ -193,6 +194,7 @@ public class GameControllerScript : MonoBehaviour {
 		CheckPause();
 
 		checkSoundSettings();
+		checkMusicSettings();
 
 		lastHowToTime = 0f;
 		initialHowToTime = 0f;
@@ -244,6 +246,18 @@ public class GameControllerScript : MonoBehaviour {
 		else {
 			int value = PlayerPrefs.GetInt (GameConstants.SOUND_SETTINGS_KEY, 1);
 			soundOn = (value == 1);
+		}
+	}
+
+	void checkMusicSettings() {
+		if (!PlayerPrefs.HasKey (GameConstants.MUSIC_SETTINGS_KEY)) {
+			musicOn = true;
+			PlayerPrefs.SetInt (GameConstants.MUSIC_SETTINGS_KEY, 1);
+			PlayerPrefs.Save ();
+		} 
+		else {
+			int value = PlayerPrefs.GetInt (GameConstants.MUSIC_SETTINGS_KEY, 1);
+			musicOn = (value == 1);
 		}
 	}
 
@@ -690,7 +704,7 @@ public class GameControllerScript : MonoBehaviour {
 
 		CheckPause();
 		EnableLevelsScroll ();
-		if (soundOn) {
+		if (musicOn) {
 			StartMusic();
 		}
 
