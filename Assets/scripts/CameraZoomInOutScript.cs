@@ -96,7 +96,7 @@ public class CameraZoomInOutScript : MonoBehaviour {
 			isMovementComplete = false;
 			canMove = true;
 
-			if (currentLevel - 1 >= 1)
+			if (currentLevel - 1 >= 0)
 				previousLevel = currentLevel-1;
 			else//stay in the same level
 				previousLevel = currentLevel;

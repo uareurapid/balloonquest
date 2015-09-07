@@ -76,6 +76,7 @@ namespace BalloonQuest
 
 				public const string SOUND_SETTINGS_KEY = "sound_settings";
 				public const string MUSIC_SETTINGS_KEY = "music_settings";
+				public const string ACCELEROMETER_SETTINGS_KEY = "accelerometer_settings";
 
 				//to track level unlocked/locked
 				public const string UNLOCKED_LEVEL_KEY = "unlocked_level";//+ level number

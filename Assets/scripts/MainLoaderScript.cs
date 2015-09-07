@@ -149,11 +149,13 @@ public class MainLoaderScript : MonoBehaviour {
 	void ChangeAccelerometerSettings() {
 		GameObject obj = GameObject.FindGameObjectWithTag("AccelerometerSettings");
 		SwapSpriteScript swap = obj.GetComponent<SwapSpriteScript>();
+		swap.IncreaseSpriteIndex ();
 		swap.SwapSprites();
-		SpriteRenderer rend = obj.GetComponent<SpriteRenderer>();
-		rend.enabled=!rend.enabled;
 
-		//TODO write player preferences
+		int useAccelerometer = PlayerPrefs.GetInt (GameConstants.ACCELEROMETER_SETTINGS_KEY, 0);
+		useAccelerometer = (useAccelerometer == 0) ? 1 : 0;
+		PlayerPrefs.SetInt (GameConstants.ACCELEROMETER_SETTINGS_KEY, useAccelerometer);
+		PlayerPrefs.Save();
 	}
 	void OnGUI() {
 		

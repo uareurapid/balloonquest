@@ -35,11 +35,7 @@ public class SwapSpriteScript : MonoBehaviour {
 			if( lastSwapTime >= swapInterval ) {
 				//time to swap images
 				
-				lastUsedSprite+=1;
-				if(lastUsedSprite==sprites.Length) {
-					lastUsedSprite = 0;
-				}
-				
+				IncreaseSpriteIndex();		
 				SwapSprites();
 				lastSwapTime = 0f;
 			}
@@ -59,6 +55,13 @@ public class SwapSpriteScript : MonoBehaviour {
 			Invoke("SwitchController",controllerSwitchDelay);
 		}
 		
+	}
+
+	public void IncreaseSpriteIndex() {
+		lastUsedSprite+=1;
+		if(lastUsedSprite==sprites.Length) {
+			lastUsedSprite = 0;
+		}
 	}
 	
 	//call directly

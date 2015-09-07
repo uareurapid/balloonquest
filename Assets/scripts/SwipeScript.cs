@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using BalloonQuest;
 
 public class SwipeScript : MonoBehaviour {
 	
@@ -11,21 +12,34 @@ public class SwipeScript : MonoBehaviour {
 	private float minSwipeDist  = 50.0f;
 	private float maxSwipeTime = 0.5f;
 	
-	
+	bool supportsAccelerometer= false;
+	bool accelerometerActivated = false;
 	private PlayerScript player;
 	
 	void Start()  {
 	
 	   GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
 	   player = playerObj.GetComponent<PlayerScript>();
+	   //has support?
+	   bool supportsAccelerometer = SystemInfo.supportsAccelerometer;
+	   //if not supported or not activated, disable the corresponding script
+	   if (!supportsAccelerometer || !IsAccelerometerActivated ()) {
+
+			player.GetComponent<AccelerometerInputScript>().enabled = false;
+	   }
 	}
-	
+
+	bool IsAccelerometerActivated() {
+		int useAccelerometer = PlayerPrefs.GetInt (GameConstants.ACCELEROMETER_SETTINGS_KEY, 0);
+		accelerometerActivated = (useAccelerometer == 1) ? true : false;
+		return accelerometerActivated;
+	}
 	// Update is called once per frame
 	void Update () {
 		float gestureTime;
 		float gestureDist;
 		
-		if (Input.touchCount > 0){
+		if (!accelerometerActivated && Input.touchCount > 0 ){
 			
 			foreach (Touch touch in Input.touches)
 			{
