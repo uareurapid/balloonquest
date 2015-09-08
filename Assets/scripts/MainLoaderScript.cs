@@ -34,6 +34,8 @@ public class MainLoaderScript : MonoBehaviour {
 	public float showSwipeIconsInterval = 2.0f;
 	private bool showSwipeIcons = false;
 
+	private bool isSettingsVisible = true;
+
 	// Use this for initialization
 	void Start () {
 		isMobilePlatform = (Application.platform == RuntimePlatform.IPhonePlayer) || (Application.platform == RuntimePlatform.Android);
@@ -54,10 +56,19 @@ public class MainLoaderScript : MonoBehaviour {
 		//resolutionHelper.CheckScreenResolution ();
 		checkSoundSettings();
 		checkMusicSettings();
+		CheckAccelerometerSavedSettings();
 
 		if (showSwipeIconsInterval > 0.0f) {
 			InvokeRepeating("ChangeIconsVisibility",showSwipeIconsInterval,showSwipeIconsInterval);
 		}
+	}
+
+	void CheckAccelerometerSavedSettings() {
+		int useAccelerometer = PlayerPrefs.GetInt (GameConstants.ACCELEROMETER_SETTINGS_KEY, 0);
+		accelerometerOn = (useAccelerometer == 0) ? false : true;
+		//sprite[0] = unchecked
+		//sprite[1] = checked
+		SetAccelerometerSettings(accelerometerOn ? 1 : 0);
 	}
 
 	void Awake() {
@@ -77,6 +88,7 @@ public class MainLoaderScript : MonoBehaviour {
 		}
 	}
 
+
 	void checkSoundSettings() {
 		if (!PlayerPrefs.HasKey (GameConstants.SOUND_SETTINGS_KEY)) {
 			soundOn = true;
@@ -92,27 +104,8 @@ public class MainLoaderScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
-		//change sound settings?
-		if (!isMobilePlatform) {
-			if (Input.GetButtonDown("Fire1")) {
-				if (musicRect.Contains (Input.mousePosition)) {
-					musicOn = !musicOn;
-					PlayerPrefs.SetInt (GameConstants.MUSIC_SETTINGS_KEY, musicOn ? 1 : 0);
-					PlayerPrefs.Save ();
-				}
-				if (soundRect.Contains (Input.mousePosition)) {
-					soundOn = !soundOn;
-					PlayerPrefs.SetInt (GameConstants.SOUND_SETTINGS_KEY, soundOn ? 1 : 0);
-					PlayerPrefs.Save ();
-				}
 
-				if(DetectAccelerometerTouchesDesktop().Equals("AccelerometerSettings")) {
-					ChangeAccelerometerSettings();
-				}
-			}
-		} 
-		else {
-			if (Input.touches.Length ==1) {
+			if (isMobilePlatform && Input.touches.Length ==1) {
 
 				Touch touch = Input.touches[0];
 
@@ -131,14 +124,15 @@ public class MainLoaderScript : MonoBehaviour {
 						PlayerPrefs.Save ();
 					}
 
-					if(DetectAccelerometerTouchesMobile().Equals("AccelerometerSettings")) {
-						ChangeAccelerometerSettings();
-					}
+
 
 				}
 
-			}  //end if (Input.touches.Length ==1) 
-		}
+			}
+			if(DetectAccelerometerTouchesMobile().Equals("AccelerometerSettings")) {
+				ChangeAccelerometerSettings();
+			}
+		
 
 	}
 
@@ -146,14 +140,26 @@ public class MainLoaderScript : MonoBehaviour {
 		showSwipeIcons = !showSwipeIcons;
 	}
 
-	void ChangeAccelerometerSettings() {
+	void SetAccelerometerSettings(int index) {
 		GameObject obj = GameObject.FindGameObjectWithTag("AccelerometerSettings");
 		SwapSpriteScript swap = obj.GetComponent<SwapSpriteScript>();
-		swap.IncreaseSpriteIndex ();
-		swap.SwapSprites();
+		swap.SwapSprites(index);
+	} 
+
+	void ChangeAccelerometerSettings() {
+
+		GameObject obj = GameObject.FindGameObjectWithTag("AccelerometerSettings");
+		SwapSpriteScript swap = obj.GetComponent<SwapSpriteScript>();
+		//if is on, will be off after this method
+		//sprite[0] = unchecked
+		//sprite[1] = checked
+		swap.SwapSprites(accelerometerOn ? 0 : 1 );
 
 		int useAccelerometer = PlayerPrefs.GetInt (GameConstants.ACCELEROMETER_SETTINGS_KEY, 0);
+
+		//swap values
 		useAccelerometer = (useAccelerometer == 0) ? 1 : 0;
+		accelerometerOn = !accelerometerOn;
 		PlayerPrefs.SetInt (GameConstants.ACCELEROMETER_SETTINGS_KEY, useAccelerometer);
 		PlayerPrefs.Save();
 	}
@@ -181,7 +187,7 @@ public class MainLoaderScript : MonoBehaviour {
 			//style.normal.textColor = Color.black;
 
 		
-			if(showSwipeIcons) {
+			if(showSwipeIcons && IsSettingsVisible()) {
 
 				swipeLeftRect = new Rect( width/2 - 300, height/2-200,128,64);
 				GUI.DrawTexture(swipeLeftRect,swipeLeftIcon);
@@ -199,19 +205,46 @@ public class MainLoaderScript : MonoBehaviour {
 
 
 			musicRect = new Rect(width-160 ,15,128,64);
-			if(musicOffIcon==null || musicOnIcon==null) {
-				Debug.Log("muteIcon && soundIcon");
-			}
 			GUI.DrawTexture(musicRect, musicOn ? musicOnIcon : musicOffIcon);
+
+			soundRect = new Rect(width-160 ,90,128,64);
+			GUI.DrawTexture(soundRect, soundOn ? soundOnIcon : soundOffIcon);
 
 		}
 
+		//------------------------------------
 
+		//change sound settings?
+		if (!isMobilePlatform && Event.current.type == EventType.MouseUp ) {
+
+				if (musicRect.Contains (Event.current.mousePosition)) {
+					musicOn = !musicOn;
+					PlayerPrefs.SetInt (GameConstants.MUSIC_SETTINGS_KEY, musicOn ? 1 : 0);
+					PlayerPrefs.Save ();
+				}
+				if (soundRect.Contains (Event.current.mousePosition)) {
+					soundOn = !soundOn;
+					PlayerPrefs.SetInt (GameConstants.SOUND_SETTINGS_KEY, soundOn ? 1 : 0);
+					PlayerPrefs.Save ();
+				}
+
+				if(DetectAccelerometerTouchesDesktop().Equals("AccelerometerSettings")) {
+					ChangeAccelerometerSettings();
+				}
+		} 
+
+		//----------------------------------
 
 		GUI.matrix = svMat;
 		
 	}
 
+	bool IsSettingsVisible() {
+
+	    GameObject settings = GameObject.FindGameObjectWithTag("Settings");
+		isSettingsVisible = (settings!=null && settings.GetComponent<SpriteRenderer>().isVisible);
+		return isSettingsVisible;
+	}
 	/**
 	*Get the correct finger touch position
 	*/

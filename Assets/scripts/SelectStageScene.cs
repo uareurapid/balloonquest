@@ -179,18 +179,7 @@ public class SelectStageScene : MonoBehaviour {
 	}
 	
 	public void OnGUI() {
-		//GUI.color = Color.white - Color.black * fadeAlpha;
 
-		//GUI.DrawTexture( new Rect( screenTextureOffset.x, screenTextureOffset.y, Screen.width, Screen.height ), screenTexture );
-		/*// Specific axis. Constraining visually leaves easy potential access later on.
-		if ( Mathf.Abs( screenTextureOffset.x ) > Mathf.Abs( screenTextureOffset.y ) ) {
-			// x-axis
-			GUI.DrawTexture( new Rect( screenTextureOffset.x, 0, Screen.width, Screen.height ), screenTexture );
-		} else {
-			// y-axis
-			GUI.DrawTexture( new Rect( 0, screenTextureOffset.y, Screen.width, Screen.height ), screenTexture );
-		}
-		*/
 	}
 	
 }

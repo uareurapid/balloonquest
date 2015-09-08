@@ -162,7 +162,7 @@ public class PlayerScript : MonoBehaviour
 
 	   Rigidbody2D rig = GetComponent<Rigidbody2D>();
 	   if(rig!=null) {
-		 return rig.gravityScale == 1.0f && !hasBalloon;
+		 return rig.gravityScale == 1.0f;/* && !hasBalloon;*/
 	   }
 
 	   return false;
