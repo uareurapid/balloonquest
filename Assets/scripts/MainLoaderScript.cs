@@ -189,15 +189,15 @@ public class MainLoaderScript : MonoBehaviour {
 		
 			if(showSwipeIcons && IsSettingsVisible()) {
 
-				swipeLeftRect = new Rect( width/2 - 300, height/2-200,128,64);
+				swipeLeftRect = new Rect( width/2 - 350, height/2,128,64);
 				GUI.DrawTexture(swipeLeftRect,swipeLeftIcon);
 				
-				swipeRightRect = new Rect( width/2 + 200, height/2-200,128,64);
+				swipeRightRect = new Rect( width/2 + 200, height/2,128,64);
 				GUI.DrawTexture(swipeRightRect,swipeRightIcon);
 
-				GUI.Label (new Rect(width/2-140, height/2-300, 500, 50), "Swipe Left/Right to choose level!");//style
+				//GUI.Label (new Rect(width/2-170, height/2+200, 500, 50), "Swipe Left/Right to choose level!");//style
 
-				GUI.Label (new Rect(width/2-140, height/2-150, 500, 50), "Swipe Left/Right to move player!");//style
+				//GUI.Label (new Rect(width/2-160, height/2-50, 500, 50), "Swipe Left/Right to move player!");//style
 				
 				//swipeTouchRect = new Rect( width/2 , height/2+200,100,100);
 				//GUI.DrawTexture(swipeTouchRect,swipeTouchIcon,ScaleMode.ScaleToFit);

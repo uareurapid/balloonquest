@@ -38,6 +38,8 @@ public class PunchScript : MonoBehaviour
 	//by default is always false, so must be explicit set to true
 	//like on asteroid spawner (of level 1) for instance
 	bool isVisible = false;
+	//interval between each complete punch and the new one
+	public float punchInterval = 0f;
 	
 	void Start() {
 
@@ -115,7 +117,11 @@ public class PunchScript : MonoBehaviour
 		    revert = false;
 		  }
 
-
+		  //only do this if greater than 0
+		  if(punchInterval>0) {
+		    start = false;
+		    Invoke("StartMovement",punchInterval);
+		  }
 			
 		}
 		
