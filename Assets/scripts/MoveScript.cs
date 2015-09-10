@@ -50,13 +50,16 @@ public class MoveScript : MonoBehaviour
 	private GameObject target;
 	
 	private Vector3 startPosition;
-	
+
+	public bool startOnlyIfVisible = false;
+	private bool isVisible = false;
+
 	
 	//allows the object to move even if not visible
 	//by default is always false, so must be explicit set to true
 	//like on asteroid spawner (of level 1) for instance
 	public bool allowMoveIfNotVisible = false;
-	bool isVisible = false;
+
 	
 	void Start() {
 	
@@ -179,6 +182,10 @@ public class MoveScript : MonoBehaviour
 	
 	void Update()
 	{
+
+	  if(!isVisible && startOnlyIfVisible) {
+	    return;
+	  }
 
        if(!revert && (stopOnMaxX || stopOnMaxY) ) {
          CheckPositions();
@@ -312,6 +319,10 @@ public class MoveScript : MonoBehaviour
 	
 	
 	void OnBecameVisible() {
+		//if(isVisible) {
+	 	//	return; //UNITY BUG
+		//}
+
 		isVisible = true;
 
 	}
@@ -328,4 +339,20 @@ public class MoveScript : MonoBehaviour
 		
 		isVisible = false;
 	}
+
+	/*
+
+	void OnBecameInvisible() {
+	  if(!isVisible) {
+	   return;
+	  }
+	  isVisible = false;
+	}
+	
+	void OnBecameVisible() {
+
+	if(isVisible) {
+	 return; //UNITY BUG
+	}
+	*/
 }
