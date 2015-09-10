@@ -46,6 +46,11 @@ namespace BalloonQuest
 				public const string CURRENT_WORLD_KEY = "CurrentWorld";
 				public const string CURRENT_LEVEL_KEY = "CurrentLevel";
 
+				//Batch keys
+				public const string BATCH_DEV_KEY_ANDROID ="DEV55F07A40CEA3A931948E83C6621";
+				public const string BATCH_PROD_KEY_ANDROID ="55F07A40CC39F9874B7C29DDFA65F8";
+				public const string BATCH_DEV_KEY_IOS ="DEV55F07A06A93469849BCA92C9389";
+				public const string BATCH_PROD_KEY_IOS ="55F07A06A69E19FF8BCD5B57574764";
 
 				//achievements same ids of GAME CENTER
 				public const string ACHIEVEMENT_GURU_KEY = "rescued_all_jelly_troopers";
@@ -60,7 +65,7 @@ namespace BalloonQuest
 				//public const int ACHIEVEMENT_GURU_CHECKPOINT = END GAME :-)
 
 				//leaderboards
-				public const string LEADERBOARD_MAIN_SCORE = "jelly_troopers_main_leaderboard";
+				public const string LEADERBOARD_MAIN_SCORE = "com.pcdreams.mrballoony.leaderboard.mainscores";
 				public const string LEADERBOARD_BEST_TIME = "jelly_troopers_best_time_leaderboard";
 				public const string LEADERBOARD_LESS_DEATHS = "jelly_troopers_less_deaths_leaderboard";
 

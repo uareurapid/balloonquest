@@ -7,6 +7,7 @@ using LitJson;
 
 using Batch;
 using Batch.Internal;
+using BalloonQuest;
 
 namespace Batch
 {
@@ -52,6 +53,13 @@ namespace Batch
 			{
 				Logger.Log(false, "Plugin Load", string.Format("{0} Loaded", VERSION));
 			}
+
+			Config config = new Config();
+			//TODO change this on release for production
+        	config.IOSAPIKey = GameConstants.BATCH_DEV_KEY_IOS;
+        	config.AndroidAPIKey = GameConstants.BATCH_DEV_KEY_ANDROID;
+			StartPlugin(config);//BatchPlugin.
+			Push.RegisterForRemoteNotifications();
 		}
 
 		/// <summary>

@@ -35,6 +35,7 @@ public class MainLoaderScript : MonoBehaviour {
 	private bool showSwipeIcons = false;
 
 	private bool isSettingsVisible = true;
+	SoundEffectsHelper soundEffects;
 
 	// Use this for initialization
 	void Start () {
@@ -45,7 +46,7 @@ public class MainLoaderScript : MonoBehaviour {
 		GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
 		if(scripts!=null) {
 			resolutionHelper = scripts.GetComponent<GUIResolutionHelper>();
-			//translationManager = scripts.GetComponent<TextLocalizationManager>();
+			soundEffects = scripts.GetComponentInChildren<SoundEffectsHelper>();
 		}
 		else {
 			resolutionHelper = GUIResolutionHelper.Instance;
@@ -115,11 +116,13 @@ public class MainLoaderScript : MonoBehaviour {
 
 					if(musicRect.Contains(fingerPos)) {
 						musicOn = !musicOn;
+						soundEffects.PlaySettingsSound();
 						PlayerPrefs.SetInt(GameConstants.MUSIC_SETTINGS_KEY,musicOn ? 1 : 0);
 						PlayerPrefs.Save();
 					}
 					if (soundRect.Contains (fingerPos)) {
 						soundOn = !soundOn;
+						soundEffects.PlaySettingsSound();
 						PlayerPrefs.SetInt (GameConstants.SOUND_SETTINGS_KEY, soundOn ? 1 : 0);
 						PlayerPrefs.Save ();
 					}
@@ -130,6 +133,7 @@ public class MainLoaderScript : MonoBehaviour {
 
 			}
 			if(DetectAccelerometerTouchesMobile().Equals("AccelerometerSettings")) {
+				soundEffects.PlaySettingsSound();
 				ChangeAccelerometerSettings();
 			}
 		
@@ -219,16 +223,19 @@ public class MainLoaderScript : MonoBehaviour {
 
 				if (musicRect.Contains (Event.current.mousePosition)) {
 					musicOn = !musicOn;
+					soundEffects.PlaySettingsSound();
 					PlayerPrefs.SetInt (GameConstants.MUSIC_SETTINGS_KEY, musicOn ? 1 : 0);
 					PlayerPrefs.Save ();
 				}
 				if (soundRect.Contains (Event.current.mousePosition)) {
 					soundOn = !soundOn;
+					soundEffects.PlaySettingsSound();
 					PlayerPrefs.SetInt (GameConstants.SOUND_SETTINGS_KEY, soundOn ? 1 : 0);
 					PlayerPrefs.Save ();
 				}
 
 				if(DetectAccelerometerTouchesDesktop().Equals("AccelerometerSettings")) {
+					soundEffects.PlaySettingsSound();
 					ChangeAccelerometerSettings();
 				}
 		} 
