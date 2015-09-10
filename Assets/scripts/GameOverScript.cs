@@ -2,6 +2,7 @@
 using UnityEngine.SocialPlatforms;
 using BalloonQuest;
 using System.Collections;
+using ChartboostSDK;
 
 
 /// <summary>
@@ -23,6 +24,7 @@ public class GameOverScript : MonoBehaviour
 
 	//Texture2D resumeTexture ;
 	Texture2D homeTexture ;
+	Texture2D rateTexture;
 	//Texture2D exitTexture ;
 	//Texture2D achievementsTexture;
 	//Texture2D creditsTexture ;
@@ -30,7 +32,7 @@ public class GameOverScript : MonoBehaviour
 
 	//Texture2D storeTexture;
 	Rect storeTextureRect;
-
+	Rect rateRect;
 	Rect homeTextureRect ;
 	//Rect exitTextureRect ;
 	Rect achievementsRect;
@@ -67,6 +69,7 @@ public class GameOverScript : MonoBehaviour
 		skin = Resources.Load("GUISkin") as GUISkin;
 		//exitTexture = Resources.Load("menu") as Texture2D;
 		homeTexture = Resources.Load("home") as Texture2D;
+		rateTexture	= Resources.Load("button_rate") as Texture2D;
 
 		//exitTexture = Resources.Load("button_quit") as Texture2D;
 		//achievementsTexture = Resources.Load("button_achievements") as Texture2D;
@@ -102,6 +105,10 @@ public class GameOverScript : MonoBehaviour
 
 		//show them to the user
 		ShowGameOverBoard ();
+
+		//for troubleshooting got to https://answers.chartboost.com/hc/en-us/articles/200780379-Unity-Integration
+		ShowInterstitial ();
+		//for unity adds, check this: https://unity3d.com/learn/tutorials/modules/beginner/live-training-archive/integrating-ads
 		
 	}
 	
@@ -111,6 +118,12 @@ public class GameOverScript : MonoBehaviour
 		CheckInAppPurchases();
 
 
+	}
+
+	void ShowInterstitial() {
+		// Show interstitial at location HomeScreen. 
+		// See Chartboost.cs for available location options.
+		Chartboost.showInterstitial(CBLocation.HomeScreen);
 	}
 
 	void ClearPlayerPrefs() {
@@ -296,10 +309,13 @@ public class GameOverScript : MonoBehaviour
 						GUI.Label (new Rect (width / 2 - 45, height / 2 - 95, 300, 50), best < 10 ? " " + best : best.ToString (), style);
 					}//else do not print it
 					
-					
-					    
-
-			}//end repaint
+					#if UNITY_ANDROID && !UNITY_EDITOR
+					rateRect = new Rect( width/2 - 160,height/2+240,240,80);
+					GUI.DrawTexture(rateRect, rateTexture);
+					#endif
+			
+			
+		}//end repaint
 			
 			
 		//********************* CLICK / TOUCH CHECKS *******************
@@ -313,10 +329,15 @@ public class GameOverScript : MonoBehaviour
 				{
 					PlaySettingsSoundAndLoadMain ();
 				}
-
+				#if UNITY_ANDROID && !UNITY_EDITOR
+				if(rateRect.Contains(Event.current.mousePosition) ) {
+				  Application.OpenURL("market://details?id=com.pcdreams.superjellytroopers");
+				}
+				#endif
 			
-
-
+			
+			
+			
 		}
 		//mobile checks
 		else if(isMobilePlatform && Input.touchCount == 1 )
@@ -341,10 +362,15 @@ public class GameOverScript : MonoBehaviour
 				{
 					PlaySettingsSoundAndLoadMain();
 				}
-
+				#if UNITY_ANDROID && !UNITY_EDITOR
+				if(rateRect.Contains(fingerPos)) {
+					Application.OpenURL("market://details?id=com.pcdreams.mrballoony");
+				}
+				#endif
+				
 			}
 		}
-
+		
 		GUI.skin.label.normal.textColor = UnityEngine.Color.black;
 			
 		//restore the matrix	

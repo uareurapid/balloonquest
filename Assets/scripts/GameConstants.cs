@@ -13,6 +13,10 @@ namespace BalloonQuest
 
 				public const string SPIKES_LINE_BARRIER = "SpikesLine";
 
+				//Unity Ads
+				public const string UNITY_ADS_ANDROID_GAME_ID = "72442";
+				public const string UNITY_ADS_IOS_GAME_ID = "72442";
+
 				public const float MAX_SCREENSHOT_ROTATION = 45f;
 				public const float MAX_SCREENSHOT_WIDTH = 512f;
 				public const float MAX_SCREENSHOT_HEIGHT = 384f;

@@ -24,6 +24,12 @@ public class MainLoaderScript : MonoBehaviour {
 
 	private bool accelerometerOn = false;
 
+	//game services
+	private	Rect achievementsRect;
+	private	Rect leaderboardsRect;
+	public Texture2D leaderboardsIcon;
+	public Texture2D achievementsIcon;
+
 	private	Rect musicRect;
 	private	Rect soundRect;
 	private bool musicOn = true;
@@ -126,6 +132,12 @@ public class MainLoaderScript : MonoBehaviour {
 						PlayerPrefs.SetInt (GameConstants.SOUND_SETTINGS_KEY, soundOn ? 1 : 0);
 						PlayerPrefs.Save ();
 					}
+					if (leaderboardsRect.Contains (fingerPos)) {
+						soundEffects.PlaySettingsSound();
+					}
+					if (achievementsRect.Contains (fingerPos)) {
+						soundEffects.PlaySettingsSound();
+					}
 
 
 
@@ -199,20 +211,25 @@ public class MainLoaderScript : MonoBehaviour {
 				swipeRightRect = new Rect( width/2 + 200, height/2,128,64);
 				GUI.DrawTexture(swipeRightRect,swipeRightIcon);
 
-				//GUI.Label (new Rect(width/2-170, height/2+200, 500, 50), "Swipe Left/Right to choose level!");//style
 
-				//GUI.Label (new Rect(width/2-160, height/2-50, 500, 50), "Swipe Left/Right to move player!");//style
-				
-				//swipeTouchRect = new Rect( width/2 , height/2+200,100,100);
-				//GUI.DrawTexture(swipeTouchRect,swipeTouchIcon,ScaleMode.ScaleToFit);
 			}
 
-
+			//--------------------------------------------------------------------
 			musicRect = new Rect(width-160 ,15,128,64);
 			GUI.DrawTexture(musicRect, musicOn ? musicOnIcon : musicOffIcon);
 
 			soundRect = new Rect(width-160 ,90,128,64);
 			GUI.DrawTexture(soundRect, soundOn ? soundOnIcon : soundOffIcon);
+			//--------------------------------------------------------------------
+			//these ones only display if settings scene is visible
+			if(isSettingsVisible) {
+				leaderboardsRect = new Rect(width/2 - 350 ,height/2 +150,128,64);
+				GUI.DrawTexture(leaderboardsRect, leaderboardsIcon);
+				
+				achievementsRect = new Rect(width/2 + 200 ,height/2 +150,128,64);
+				GUI.DrawTexture(achievementsRect,achievementsIcon);
+			}
+
 
 		}
 
@@ -233,7 +250,13 @@ public class MainLoaderScript : MonoBehaviour {
 					PlayerPrefs.SetInt (GameConstants.SOUND_SETTINGS_KEY, soundOn ? 1 : 0);
 					PlayerPrefs.Save ();
 				}
-
+				if (leaderboardsRect.Contains (Event.current.mousePosition)) {
+					soundEffects.PlaySettingsSound();
+				}
+				if (achievementsRect.Contains (Event.current.mousePosition)) {
+					soundEffects.PlaySettingsSound();
+				}
+			
 				if(DetectAccelerometerTouchesDesktop().Equals("AccelerometerSettings")) {
 					soundEffects.PlaySettingsSound();
 					ChangeAccelerometerSettings();
