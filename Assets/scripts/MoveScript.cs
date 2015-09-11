@@ -51,14 +51,20 @@ public class MoveScript : MonoBehaviour
 	
 	private Vector3 startPosition;
 
-	public bool startOnlyIfVisible = false;
+	//public bool startOnlyIfVisible = false;
 	private bool isVisible = false;
+
+	//some thing that triggers the movement, even if the object is not visible
+	//and we only allow to move if visible
+	//NOTE: the SpriteRenderer associated to that object must be visible
+	public GameObject movementTrigger = null;
 
 	
 	//allows the object to move even if not visible
 	//by default is always false, so must be explicit set to true
 	//like on asteroid spawner (of level 1) for instance
 	public bool allowMoveIfNotVisible = false;
+	private bool wasMovementTriggeredByOther = false;
 
 	
 	void Start() {
@@ -183,9 +189,9 @@ public class MoveScript : MonoBehaviour
 	void Update()
 	{
 
-	  if(!isVisible && startOnlyIfVisible) {
-	    return;
-	  }
+	  //if(!isVisible && startOnlyIfVisible) {
+	  //  return;
+	  //}
 
        if(!revert && (stopOnMaxX || stopOnMaxY) ) {
          CheckPositions();
@@ -235,8 +241,13 @@ public class MoveScript : MonoBehaviour
 				}
 	  }
 	  else {
+			//check if something triggered the movement, only when value is still false
+			if(movementTrigger!=null && wasMovementTriggeredByOther==false) {
+				wasMovementTriggeredByOther = IsMovementTriggerVisible();
+			}
 
-			if( allowMoveIfNotVisible || isVisible ) {
+
+			if( allowMoveIfNotVisible || isVisible || wasMovementTriggeredByOther ) {
 				
 				lastDirectionChange += Time.deltaTime;
 				lastXDirectionChange += Time.deltaTime;
@@ -290,12 +301,14 @@ public class MoveScript : MonoBehaviour
 	
 	void FixedUpdate()
 	{
-	  //we only move the enemy or asteroi if the player is on scene,
-	  //otherwise we see a lot of space without enemies, more close to the end of the level
+
+		//if(!isVisible && startOnlyIfVisible) {
+		//	return;
+		//}
 	  
 		// Apply movement to the rigidbody
 	    //check if in camera
-		if( (allowMoveIfNotVisible || isVisible) && !stopMovement  ) {
+		if( (allowMoveIfNotVisible || isVisible || wasMovementTriggeredByOther) && !stopMovement  ) {
 			 GetComponent<Rigidbody2D>().velocity = movement;
 		}
 		
@@ -319,9 +332,9 @@ public class MoveScript : MonoBehaviour
 	
 	
 	void OnBecameVisible() {
-		//if(isVisible) {
-	 	//	return; //UNITY BUG
-		//}
+		if(isVisible) {
+	 		return; //UNITY BUG
+		}
 
 		isVisible = true;
 
@@ -329,6 +342,10 @@ public class MoveScript : MonoBehaviour
 
 	//TODO; IS NOT TURNING BACK ANYMORE
 	void OnBecameInvisible (){
+
+		if(!isVisible) {
+			return;
+		}
 		
 		if(isVisible) {
 			if (allowMoveIfNotVisible && allowRevertXDirection && limitedMovementXInterval == 0) {
@@ -340,19 +357,27 @@ public class MoveScript : MonoBehaviour
 		isVisible = false;
 	}
 
-	/*
+	bool IsMovementTriggerVisible() {
+		if (movementTrigger == null)
+			return false;
 
-	void OnBecameInvisible() {
-	  if(!isVisible) {
-	   return;
-	  }
-	  isVisible = false;
-	}
-	
-	void OnBecameVisible() {
+		SpriteRenderer rend = movementTrigger.GetComponent<SpriteRenderer> ();
+		if (rend != null) {
+			return rend.isVisible;
+		}
 
-	if(isVisible) {
-	 return; //UNITY BUG
+		//no renderer, check the position (for 2D, x and y should be between 0 and 1)
+		// and z positive??
+
+		Vector3 objectPos = Camera.main.WorldToViewportPoint(movementTrigger.transform.position);
+		Debug.Log ("Position of the movement Trigger: " + objectPos);
+		bool trigger = (objectPos.x >= 0f) && (objectPos.x <= 1f) && (objectPos.y >= 0f) && (objectPos.y <= 1f);
+		if (trigger) {
+			Debug.Log("Trigger position:" + objectPos);
+			wasMovementTriggeredByOther = true;//this triggered the movement, so independent of other settings it can move now
+		}
+		return trigger;
+
 	}
-	*/
+
 }
