@@ -57,11 +57,16 @@ namespace BalloonQuest
 				public const string BATCH_PROD_KEY_IOS ="55F07A06A69E19FF8BCD5B57574764";
 
 				//achievements same ids of GAME CENTER
-				public const string ACHIEVEMENT_GURU_KEY = "rescued_all_jelly_troopers";
-				public const string ACHIEVEMENT_HERO_KEY = "rescued_150_jelly_troopers";
-				public const string ACHIEVEMENT_LEGEND_KEY = "rescued_200_jelly_troopers";
-				public const string ACHIEVEMENT_BRAVE_KEY = "rescued_110_jelly_troopers"; //typo on game center, should be 100 but is 110
-
+				//com.pcdreams.mrballoony.achievement.level1
+				public const string ACHIEVEMENT_LEVEL1_KEY = "com.pcdreams.mrballoony.achievement.level1";
+				public const string ACHIEVEMENT_LEVEL2_KEY = "com.pcdreams.mrballoony.achievement.level2";
+				public const string ACHIEVEMENT_LEVEL3_KEY = "com.pcdreams.mrballoony.achievement.level3";
+				public const string ACHIEVEMENT_LEVEL4_KEY = "com.pcdreams.mrballoony.achievement.level4";
+				public const string ACHIEVEMENT_LEVEL5_KEY = "com.pcdreams.mrballoony.achievement.level5";
+				public const string ACHIEVEMENT_LEVEL6_KEY = "com.pcdreams.mrballoony.achievement.level6";
+				public const string ACHIEVEMENT_LEVEL7_KEY = "com.pcdreams.mrballoony.achievement.level7";
+				public const string ACHIEVEMENT_LEVEL8_KEY = "com.pcdreams.mrballoony.achievement.level8";
+			
 				//achievements points
 				public const int ACHIEVEMENT_LEGEND_CHECKPOINT = 200; //saved 200 troopers
 				public const int ACHIEVEMENT_HERO_CHECKPOINT = 150; //saved 150 troopers

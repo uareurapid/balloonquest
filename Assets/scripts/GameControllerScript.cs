@@ -236,6 +236,14 @@ public class GameControllerScript : MonoBehaviour {
 		StartCountdown ();
 	}
 
+	void OnLevelWasLoaded(int level) {
+
+	    if(isMobilePlatform) {
+			Handheld.StopActivityIndicator();
+	    }
+        
+    }
+
 	//check if we have sound enabled/disabled
 	void checkSoundSettings() {
 		if (!PlayerPrefs.HasKey (GameConstants.SOUND_SETTINGS_KEY)) {

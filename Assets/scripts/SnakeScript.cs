@@ -4,7 +4,7 @@ using System.Collections;
 public class SnakeScript : MonoBehaviour {
 
 	public bool enableMovementOnlyVisible = true;
-
+	public float enableDelay = 0f;
 	private bool isVisible = false;
 
 	// Use this for initialization
@@ -23,8 +23,21 @@ public class SnakeScript : MonoBehaviour {
 		}
 		
 		isVisible = true;
-		EnableMovement();
+
+		if(enableDelay==0f) {
+			EnableMovement();//enable right now
+		}
+		else {
+		 StartCoroutine(EnableDelayedMovement());//only after the delay
+		}
+
 		
+	}
+
+	IEnumerator EnableDelayedMovement() {
+
+	  yield return new WaitForSeconds(enableDelay);
+	  EnableMovement();
 	}
 
 	void EnableMovement() {

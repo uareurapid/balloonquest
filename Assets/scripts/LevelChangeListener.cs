@@ -37,6 +37,10 @@ public class LevelChangeListener : MonoBehaviour {
 		if ( (levelTouched > 0 && levelTouched==level) && !loading && !levelLocked) {
 
 			loading = true;
+
+			if(isMobilePlatform) {
+				Handheld.StartActivityIndicator();
+			}
 			Application.LoadLevel ("Level" + levelTouched);
 		
 		}	

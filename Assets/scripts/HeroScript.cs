@@ -33,12 +33,11 @@ public class HeroScript : MonoBehaviour {
 	void OnBecameInvisible() {
 		isVisible = false;
 		player.setVisible(false);
+		Debug.Log("SHOULD KILL IT NOW!!!!");
 		if (!isBlinkingHit && player.IsPlayerAlive() && !player.PlayerTouchedGround()) {
 			player.KillPlayer();
 		}
-		//else {
-		//  moveTowardsSign = true;
-		//}
+
 	}
 
 	void OnTriggerEnter2D(Collider2D collision)

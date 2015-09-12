@@ -21,12 +21,14 @@ public class CameraShake : MonoBehaviour
 
 	public bool autoStartShakeOnVisible = false;
 	private float initialShakeDuration = 0f;
-	
+	private bool isMobilePlatform = false;
+	private static RuntimePlatform platform;
 	Vector3 originalPos;
 
 	void Start() {
 
 	  initialShakeDuration = shakeDuration;
+	  isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer) || (platform == RuntimePlatform.Android);
 	  
 	  if (shakeDelay > 0f) {
 		 if (shakeInterval <= 0f) {
@@ -111,6 +113,9 @@ public class CameraShake : MonoBehaviour
 	  shakeDuration = initialShakeDuration;
 	  OnEnable();
 	  PlayEarthQuakeSound ();
+	  if(isMobilePlatform) {
+	    Handheld.Vibrate();
+	  }
 
 	  if(gameObject.tag!=null && gameObject.CompareTag("MainCamera")) {
 	  //now shake also the other objects with same script, at the same time we shake the camera

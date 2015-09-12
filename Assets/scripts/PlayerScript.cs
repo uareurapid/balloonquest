@@ -212,6 +212,7 @@ public class PlayerScript : MonoBehaviour
 	public void KillPlayer() {
 	  if(!isDead) {
 		HandleLooseAllLifes();
+		Handheld.Vibrate();
 	  }
 	}
 
