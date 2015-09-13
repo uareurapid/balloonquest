@@ -143,10 +143,20 @@ public class MainLoaderScript : MonoBehaviour {
 
 				}
 
+				if(DetectAccelerometerTouchesMobile().Equals("AccelerometerSettings")) {
+					soundEffects.PlaySettingsSound();
+					ChangeAccelerometerSettings();
+				}
+
+				DetectSocialTouchesMobile();
+
 			}
-			if(DetectAccelerometerTouchesMobile().Equals("AccelerometerSettings")) {
+			else if(DetectAccelerometerTouchesDesktop().Equals("AccelerometerSettings")) {
 				soundEffects.PlaySettingsSound();
 				ChangeAccelerometerSettings();
+			}
+			else {
+			    DetectSocialTouchesDesktop();
 			}
 		
 
@@ -203,7 +213,7 @@ public class MainLoaderScript : MonoBehaviour {
 			//style.normal.textColor = Color.black;
 
 		
-			if(showSwipeIcons && IsSettingsVisible()) {
+			/*if(showSwipeIcons && IsSettingsVisible()) {
 
 				swipeLeftRect = new Rect( width/2 - 350, height/2,128,64);
 				GUI.DrawTexture(swipeLeftRect,swipeLeftIcon);
@@ -212,7 +222,7 @@ public class MainLoaderScript : MonoBehaviour {
 				GUI.DrawTexture(swipeRightRect,swipeRightIcon);
 
 
-			}
+			}*/
 
 			//--------------------------------------------------------------------
 			musicRect = new Rect(width-160 ,15,128,64);
@@ -223,10 +233,10 @@ public class MainLoaderScript : MonoBehaviour {
 			//--------------------------------------------------------------------
 			//these ones only display if settings scene is visible
 			if(isSettingsVisible) {
-				leaderboardsRect = new Rect(width/2 - 350 ,height/2 +150,128,64);
+				leaderboardsRect = new Rect(width-160 ,height/2 +150,128,64);
 				GUI.DrawTexture(leaderboardsRect, leaderboardsIcon);
 				
-				achievementsRect = new Rect(width/2 + 200 ,height/2 +150,128,64);
+				achievementsRect = new Rect(width-160 ,height/2 +75,128,64);
 				GUI.DrawTexture(achievementsRect,achievementsIcon);
 			}
 
@@ -257,16 +267,49 @@ public class MainLoaderScript : MonoBehaviour {
 					soundEffects.PlaySettingsSound();
 				}
 			
-				if(DetectAccelerometerTouchesDesktop().Equals("AccelerometerSettings")) {
-					soundEffects.PlaySettingsSound();
-					ChangeAccelerometerSettings();
-				}
+				
 		} 
 
 		//----------------------------------
 
 		GUI.matrix = svMat;
 		
+	}
+
+	private string DetectAccelerometerTouchesDesktop() {
+
+
+		if(Input.GetMouseButtonDown(0)){
+			Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		    Collider2D hitCollider = Physics2D.OverlapPoint(mousePosition);
+			
+			if(hitCollider){
+			  return hitCollider.transform.gameObject.tag ;
+			}
+		}
+		return "false";
+	}
+
+	private void DetectSocialTouchesDesktop() {
+
+
+		if(Input.GetMouseButtonDown(0)){
+			Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		    Collider2D hitCollider = Physics2D.OverlapPoint(mousePosition);
+			
+			if(hitCollider) {
+				if(hitCollider.transform.gameObject.tag.Equals("twitter")){
+			      Application.OpenURL("https://twitter.com/pcdreamsapps");
+			    }
+				else if(hitCollider.transform.gameObject.tag.Equals("facebook")){
+			      Application.OpenURL("https://facebook.com/pcdreamssoftware");
+			    }
+				else if(hitCollider.transform.gameObject.tag.Equals("web")){
+			      Application.OpenURL("http://www.pcdreams-software.com");
+			    }
+			}
+		}
+
 	}
 
 	bool IsSettingsVisible() {
@@ -301,19 +344,6 @@ public class MainLoaderScript : MonoBehaviour {
 		style.normal.textColor = Color.black;
 	}
 
-	private string DetectAccelerometerTouchesDesktop() {
-
-
-		if(Input.GetMouseButtonDown(0)){
-			Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-		    Collider2D hitCollider = Physics2D.OverlapPoint(mousePosition);
-			
-			if(hitCollider){
-			  return hitCollider.transform.gameObject.tag ;
-			}
-		}
-		return "false";
-	}
 
 	private string DetectAccelerometerTouchesMobile() {
 
@@ -333,4 +363,32 @@ public class MainLoaderScript : MonoBehaviour {
 		}
 		return "false";
 	}
+
+	private void DetectSocialTouchesMobile() {
+
+
+		for (int i = 0; i < Input.touchCount; ++i) {
+			if (Input.GetTouch(i).phase == TouchPhase.Began) {
+				Vector3 touchPosition = Camera.main.ScreenToWorldPoint(Input.GetTouch(i).position);
+				RaycastHit2D hitInfo = Physics2D.Raycast(touchPosition, Vector2.zero);
+				// RaycastHit2D can be either true or null, but has an implicit conversion to bool, so we can use it like this
+				if(hitInfo)
+				{
+					if(hitInfo.transform.gameObject.tag.Equals("twitter")){
+				      Application.OpenURL("https://twitter.com/pcdreamsapps");
+				    }
+					else if(hitInfo.transform.gameObject.tag.Equals("facebook")){
+				      Application.OpenURL("https://facebook.com/pcdreamssoftware");
+				    }
+					else if(hitInfo.transform.gameObject.tag.Equals("web")){
+				      Application.OpenURL("http://www.pcdreams-software.com");
+				    }
+					 
+					// Here you can check hitInfo to see which collider has been hit, and act appropriately.
+				}
+			}
+		}
+
+	}
+
 }
