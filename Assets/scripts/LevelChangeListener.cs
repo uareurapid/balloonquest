@@ -45,8 +45,30 @@ public class LevelChangeListener : MonoBehaviour {
 		
 		}	
 
+
+		if(level==0 && IsSettingsVisible()) {
+		 GameObject hero = GameObject.FindGameObjectWithTag("Hero");
+		 if(hero!=null) {
+		  hero.GetComponent<MoveScript>().enabled = false;
+		 }
+
+		}
+		else {
+			GameObject hero = GameObject.FindGameObjectWithTag("Hero");
+		 	if(hero!=null) {
+		  		hero.GetComponent<MoveScript>().enabled = true;
+		 	}
+		}
+
 	}
 
+
+	bool IsSettingsVisible() {
+
+	    GameObject settings = GameObject.FindGameObjectWithTag("Settings");
+		bool isSettingsVisible = (settings!=null && settings.GetComponent<SpriteRenderer>().isVisible);
+		return isSettingsVisible;
+	}
 
 	private int DetectLevelTouchesMobile() {
 		
