@@ -5,6 +5,7 @@ public class SpriteMaterialChangerScript : MonoBehaviour {
 
     public Material defaultSpritesMaterial;
     public Material graySpriteMaterial;
+	public Material currentMaterial;
     public float startDelay = 0f;//start delayed?
     public float stopAfterSeconds = 10f; //stop after 10f
     public float swapInterval = 2f; //change every 2 secs
@@ -12,9 +13,13 @@ public class SpriteMaterialChangerScript : MonoBehaviour {
     public int maxSwaps = 0;
     private int counter = 0;
     private SpriteRenderer[] rendererArray;
+	public bool affectsOnlyCurrentObject = false;
 	// Use this for initialization
 	void Start () {
-	 rendererArray = GameObject.FindObjectsOfType<SpriteRenderer>();
+
+	if(!affectsOnlyCurrentObject)
+	 	rendererArray = GameObject.FindObjectsOfType<SpriteRenderer>();
+
 	 currentMaterialIndex = 0;
 	 counter = 0;
 	 InvokeRepeating("Swap",startDelay,swapInterval);
@@ -25,32 +30,58 @@ public class SpriteMaterialChangerScript : MonoBehaviour {
 	void Update () {
 
 	  if(counter == maxSwaps && maxSwaps > 0) {
-	    Debug.Log("CANCEL INVOKE");
 	    CancelInvoke("Swap");
 	  }
 	}
 
 	void Swap() {
 
-		foreach(SpriteRenderer rend in rendererArray) {
-			if(currentMaterialIndex == 0) {
-	    		rend.material = defaultSpritesMaterial;
-
-	  		}
-	  		else {
-	    		rend.material = graySpriteMaterial;
-
-	  		}
-		}
-
-		if(currentMaterialIndex == 0) {
-			currentMaterialIndex = 1;
+		if(currentMaterial == graySpriteMaterial) {
+			currentMaterial = defaultSpritesMaterial;
+			
 		}
 		else {
-		   currentMaterialIndex = 0;
+			currentMaterial = graySpriteMaterial;
+			
 		}
 
+		if (affectsOnlyCurrentObject) {
+			SpriteRenderer rend = GetComponent<SpriteRenderer> ();
+			if (rend != null) {
+				rend.material = currentMaterial;//reset also the color
+				if (maxSwaps==counter+1 && currentMaterial == defaultSpritesMaterial) {
+
+					//check if we have a reference to the original color
+					EmeraldLineColor col = GetComponent<EmeraldLineColor>();
+					if(col!=null) {
+						rend.color = col.originalColor;
+					}
+					else {
+						rend.color = Color.white;
+					}
+				}
+
+			}
+
+		} 
+		else {
+			//is a global script instance, affects all objects of the same type
+			foreach(SpriteRenderer rend in rendererArray) {
+				
+				rend.material = currentMaterial;
+				//reset also the color
+				if (maxSwaps==counter+1 && currentMaterial == defaultSpritesMaterial) {
+					rend.color = Color.white;
+				}
+				
+			}
+		}
+
+
+	
+
 		counter+=1;
+
 
 	  
 	}

@@ -26,11 +26,18 @@ public class AutoDestroyScript : MonoBehaviour {
 	}
 
 	void OnBecameInvisible() {
-	  if(isVisible && destroyIfInvisible) {
+      if (!isVisible)
+			return;
+
+		isVisible = false;
+
+	  if(!isVisible && destroyIfInvisible) {
 	    Destroy(gameObject);
 	  }
 	}
 	void OnBecameVisible() {
+	  if (isVisible)
+		return;
 
 	  isVisible = true;
 

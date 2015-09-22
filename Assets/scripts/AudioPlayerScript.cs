@@ -9,8 +9,15 @@ public class AudioPlayerScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-	  if(GetComponent<AudioSource>()!=null && playInterval>0f) {
-	    InvokeRepeating("PlayClip",startDelay,playInterval);
+	  if(GetComponent<AudioSource>()!=null) {
+
+		if(playInterval>0f) {
+			InvokeRepeating("PlayClip",startDelay,playInterval);
+		}
+		else {  //play just once
+				Invoke("PlayClip",startDelay);
+			}
+	    
 	  }
 	}
 	

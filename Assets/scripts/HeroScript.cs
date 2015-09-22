@@ -9,6 +9,7 @@ public class HeroScript : MonoBehaviour {
 	private bool isBlinkingHit = false;
 
 	private int burnedCount = 0;
+	private bool hasOpenedChest = false;
 
 	private GameObject skull;
 
@@ -121,11 +122,20 @@ public class HeroScript : MonoBehaviour {
 	  bool reached = startedMovingTowards && moveTowards.HasReachedTarget();
 
 	  if(reached) {
-	   //play the teleportation effect
-	   ParticleSystem part = GetComponentInChildren<ParticleSystem>();
-	   if(part!=null) {
-	     part.Play(true);
+
+	   if(hasOpenedChest) {
+			//play the teleportation effect
+			ParticleSystem part = GetComponentInChildren<ParticleSystem>();
+			if(part!=null) {
+				part.Play(true);
+			}
+
 	   }
+	   else {
+		//say it did not reached yet
+		reached = false;
+	   }
+	   
 	  }
 	  return reached ;
 	}
@@ -155,6 +165,10 @@ public class HeroScript : MonoBehaviour {
 			}
 			
 		}
+	}
+
+	public void OpenChest(bool open) {
+		hasOpenedChest = open;
 	}
 
 	IEnumerator HideSprite(float length) {

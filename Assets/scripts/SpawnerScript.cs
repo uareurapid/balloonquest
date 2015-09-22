@@ -8,6 +8,8 @@ public class SpawnerScript : MonoBehaviour
 	public float spawnDelay = 2f;		// The amount of time before spawning starts.
 	public GameObject[] enemies;		// Array of enemy prefabs.
 
+	//the parent of the spawned child
+	public Transform spawnedParent;
 
 	public Texture2D[] thumbnails;
 	
@@ -32,7 +34,7 @@ public class SpawnerScript : MonoBehaviour
 	
 	GUISkin skin;
 	
-	private GameObject nextPlatform;
+	private GameObject nextSpawned;
 
 	//aux var
 	private bool spawnOnHold = false;
@@ -102,8 +104,11 @@ public class SpawnerScript : MonoBehaviour
 					newPosition.y = transform.position.y;
 					newPosition.z = transform.position.z;
 	        //the spawned object will have the same rotation of the spawner object itself
-				nextPlatform = (GameObject)Instantiate(enemies[spawnedIndex], newPosition, transform.rotation);
+				    nextSpawned = (GameObject)Instantiate(enemies[spawnedIndex], newPosition, transform.rotation);
 					
+					if(spawnedParent!=null) {
+						nextSpawned.transform.parent = spawnedParent;
+					}
 				
 				    spawnCount+=1;
 					//CheckCameraFollow(nextJelly.transform);

@@ -104,7 +104,7 @@ public class FallenTreeScript : MonoBehaviour {
 				audio.Stop();
 			}
 			isVisible = false;
-			if(autoDestroy && enabled) {
+			if(autoDestroy) {
 				Destroy(gameObject);
 			}
 		}

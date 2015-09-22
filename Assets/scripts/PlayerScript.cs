@@ -547,7 +547,7 @@ public class PlayerScript : MonoBehaviour
 		}
 		//DisableGravityScale();
 		//Normal landing stuff
-		if(!hasLanded) {
+		if(!hasLanded && IsPlayerAlive()) {
 
 			hasLanded = true;
 		    canMove = true;
@@ -575,6 +575,8 @@ public class PlayerScript : MonoBehaviour
 
 			PlaySuccessSound ();
 
+			DisableCameraShake();
+
 			if(level < max) {
 				//Go to next level in 2 seconds!
 
@@ -592,6 +594,13 @@ public class PlayerScript : MonoBehaviour
 	    
 			
 
+	}
+	//disable camera shake if needed
+	void DisableCameraShake() {
+		CameraShake shake = Camera.main.GetComponent<CameraShake> ();
+		if (shake != null) {
+			shake.enabled = false;
+		}
 	}
 
 

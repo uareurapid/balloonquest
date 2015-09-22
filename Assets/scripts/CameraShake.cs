@@ -119,12 +119,12 @@ public class CameraShake : MonoBehaviour
 
 	  if(gameObject.tag!=null && gameObject.CompareTag("MainCamera")) {
 	  //now shake also the other objects with same script, at the same time we shake the camera
-		 CameraShake[] otherObjects = GameObject.FindObjectsOfType<CameraShake>();
-		 Debug.Log("ENCONTREI NUM: " + otherObjects.Length);
-		 foreach(CameraShake obj in otherObjects) {
+		 CameraShake[] otherShakyObjects = GameObject.FindObjectsOfType<CameraShake>();
+		 Debug.Log("ENCONTREI NUM: " + otherShakyObjects.Length);
+		 foreach(CameraShake obj in otherShakyObjects) {
 		   string tag = obj.gameObject.tag;
 		   if(tag!=null && tag.Equals("MainCamera")) {
-		     Debug.Log("This is the camera itself, ignoring...");
+		     Debug.Log("This is the camera itself, ignoring it...");
 		     continue;//ignore the camera, since we are dealing already with it
 		   }
 		   else {
