@@ -34,7 +34,7 @@ public class SpriteMaterialChangerScript : MonoBehaviour {
 	  }
 	}
 
-	void Swap() {
+	public void Swap() {
 
 		if(currentMaterial == graySpriteMaterial) {
 			currentMaterial = defaultSpritesMaterial;
@@ -67,7 +67,15 @@ public class SpriteMaterialChangerScript : MonoBehaviour {
 		else {
 			//is a global script instance, affects all objects of the same type
 			foreach(SpriteRenderer rend in rendererArray) {
-				
+
+			    //i am destroying some object that uses this rendered CHECK!!!
+				GameObject owner = rend.gameObject;
+				//this object has itself a material changer, so we do not consider it
+				SpriteMaterialChangerScript changer = owner.GetComponent<SpriteMaterialChangerScript>();
+				if(changer!=null && changer.affectsOnlyCurrentObject) {
+				  continue;
+				}
+
 				rend.material = currentMaterial;
 				//reset also the color
 				if (maxSwaps==counter+1 && currentMaterial == defaultSpritesMaterial) {

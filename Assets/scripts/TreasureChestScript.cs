@@ -38,7 +38,9 @@ public class TreasureChestScript : MonoBehaviour {
 				au.Play();
 			}
 
+			ChangeRainbowColor();
 			Invoke("UnleashColors",2f);
+
 		}
 		
 	}
@@ -47,5 +49,25 @@ public class TreasureChestScript : MonoBehaviour {
 		SpriteMaterialChangerScript change = GetComponent<SpriteMaterialChangerScript> ();
 		if(change!=null)
 		  change.enabled = true;
+	}
+
+	//changes the rainbow color
+	void ChangeRainbowColor() {
+
+	  GameObject obj = GameObject.FindGameObjectWithTag("Scripts");
+	  if(obj!=null) {
+	    GameControllerScript controller = obj.GetComponent<GameControllerScript>();
+
+	      int level = controller.currentLevel;
+
+	      string tagToFind = "Level"+level;
+	      GameObject emeraldObj = GameObject.FindGameObjectWithTag(tagToFind);
+	      if(emeraldObj!=null) {
+			SpriteMaterialChangerScript mat = emeraldObj.GetComponent<SpriteMaterialChangerScript>();
+	        mat.enabled = true;
+	        mat.Swap();
+	      
+	      }
+	  }
 	}
 }
