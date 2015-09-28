@@ -36,6 +36,7 @@ public class CFX_Demo_New : MonoBehaviour
 			GameObject child = this.transform.GetChild(i).gameObject;
 			particleExampleList.Add(child);
 		}
+		particleExampleList.Sort( delegate(GameObject o1, GameObject o2) { return o1.name.CompareTo(o2.name); } );
 		ParticleExamples = particleExampleList.ToArray();
 		
 		defaultCamPosition = Camera.main.transform.position;

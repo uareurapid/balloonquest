@@ -89,7 +89,7 @@ public class MoveScript : MonoBehaviour
 			if(direction.x < 0 ) {
 
 			  if(!revert) {
-				if(currentPosition.x < startPosition.x - (0.0f + limitedMovementXInterval /2 ) ){
+				if(currentPosition.x < startPosition.x - (0.0f + limitedMovementXInterval /*/2*/ ) ){
 				
 				    if(!stopOnMaxX) {
 					  revert = true;
@@ -111,7 +111,7 @@ public class MoveScript : MonoBehaviour
 		   else if(direction.x > 0) {
 			
 			  if(!revert) {
-				if(currentPosition.x > startPosition.x + (0.0f+ limitedMovementXInterval / 2) ){
+				if(currentPosition.x > startPosition.x + (0.0f+ limitedMovementXInterval /*/ 2*/) ){
 
 				  //if not stop on max, then is time to revert direction
 				   if(!stopOnMaxX) {

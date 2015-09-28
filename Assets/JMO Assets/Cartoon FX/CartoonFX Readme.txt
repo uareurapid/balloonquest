@@ -1,5 +1,5 @@
-﻿Cartoon FX Pack, version 2.76
-2015/01/16
+﻿Cartoon FX Pack, version 2.77
+2015/09/05
 © 2015 - Jean Moreno
 =============================
 
@@ -72,6 +72,10 @@ I'd be happy to see any effects used in your project, so feel free to drop me a 
 
 RELEASE NOTES
 -------------
+v2.77
+- put all shaders in the same folder
+- fixed a mobile effect using desktop materials
+
 v2.76
 - fixed deprecated method warning in Unity 4.3+
 

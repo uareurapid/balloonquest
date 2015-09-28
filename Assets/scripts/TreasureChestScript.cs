@@ -38,11 +38,21 @@ public class TreasureChestScript : MonoBehaviour {
 				au.Play();
 			}
 
+			ChangeColorFlash();
 			ChangeRainbowColor();
 			Invoke("UnleashColors",2f);
 
 		}
 		
+	}
+
+	//fire the chest/ground big flash, with the same colour as the level
+	void ChangeColorFlash() {
+		GameObject obj = GameObject.FindGameObjectWithTag("ColorChangerFlash");
+		if(obj!=null) {
+			ActivateScript part = obj.GetComponentInChildren<ActivateScript>();
+			part.Activate();
+		}
 	}
 
 	void UnleashColors() {
@@ -63,6 +73,14 @@ public class TreasureChestScript : MonoBehaviour {
 	      string tagToFind = "Level"+level;
 	      GameObject emeraldObj = GameObject.FindGameObjectWithTag(tagToFind);
 	      if(emeraldObj!=null) {
+
+	        //Activate the smaller white flash
+
+			ActivateScript activateFlash = emeraldObj.GetComponent<ActivateScript>();
+			if(activateFlash!=null) {
+			  activateFlash.Activate();
+			}
+	        //change the colour
 			SpriteMaterialChangerScript mat = emeraldObj.GetComponent<SpriteMaterialChangerScript>();
 	        mat.enabled = true;
 	        mat.Swap();
