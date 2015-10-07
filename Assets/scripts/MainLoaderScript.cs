@@ -197,7 +197,7 @@ public class MainLoaderScript : MonoBehaviour {
 		if (style == null) {
 			LoadStyle();
 		}
-		style.normal.textColor = Color.black;
+		//style.normal.textColor = Color.black;
 		
 		Matrix4x4 svMat = GUI.matrix;//save current matrix
 		
@@ -210,33 +210,20 @@ public class MainLoaderScript : MonoBehaviour {
 		GUI.matrix = Matrix4x4.TRS (Vector3.zero, Quaternion.identity, scaleVector);
 
 		if (Event.current.type == EventType.Repaint) {
-			//style.normal.textColor = Color.black;
-
-		
-			/*if(showSwipeIcons && IsSettingsVisible()) {
-
-				swipeLeftRect = new Rect( width/2 - 350, height/2,128,64);
-				GUI.DrawTexture(swipeLeftRect,swipeLeftIcon);
-				
-				swipeRightRect = new Rect( width/2 + 200, height/2,128,64);
-				GUI.DrawTexture(swipeRightRect,swipeRightIcon);
-
-
-			}*/
 
 			//--------------------------------------------------------------------
-			musicRect = new Rect(width-160 ,15,128,64);
+			musicRect = new Rect(width-160 ,15,96,96);
 			GUI.DrawTexture(musicRect, musicOn ? musicOnIcon : musicOffIcon);
 
-			soundRect = new Rect(width-160 ,90,128,64);
+			soundRect = new Rect(width-160 ,120,96,96);
 			GUI.DrawTexture(soundRect, soundOn ? soundOnIcon : soundOffIcon);
 			//--------------------------------------------------------------------
 			//these ones only display if settings scene is visible
 			if(isSettingsVisible) {
-				leaderboardsRect = new Rect(width-160 ,height/2 +150,128,64);
+				leaderboardsRect = new Rect(width-160 ,height/2 +190,96,96);
 				GUI.DrawTexture(leaderboardsRect, leaderboardsIcon);
 				
-				achievementsRect = new Rect(width-160 ,height/2 +75,128,64);
+				achievementsRect = new Rect(width-160 ,height/2 +75,96,96);
 				GUI.DrawTexture(achievementsRect,achievementsIcon);
 			}
 
@@ -341,7 +328,7 @@ public class MainLoaderScript : MonoBehaviour {
 		style.alignment = TextAnchor.MiddleLeft;
 		style.font = skin.label.font;
 		style.fontSize = skin.label.fontSize+10;
-		style.normal.textColor = Color.black;
+		//style.normal.textColor = Color.black;
 	}
 
 

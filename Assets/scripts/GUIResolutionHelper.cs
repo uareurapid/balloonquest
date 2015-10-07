@@ -10,8 +10,8 @@ public class GUIResolutionHelper : MonoBehaviour {
 	
 	//the "target" resolution (iphone 4, bq aquaris on landscape mode)
 	
-	public int screenWidth = 1024;
-	public int screenHeight = 768;
+	public int screenWidth = 768;
+	public int screenHeight = 1024;
 	
 	public Vector3 scaleVector = new Vector3(1f,1f,1f);
 	

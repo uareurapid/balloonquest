@@ -34,11 +34,14 @@ public class HeroScript : MonoBehaviour {
 	void OnBecameInvisible() {
 		isVisible = false;
 		player.setVisible(false);
-		Debug.Log("SHOULD KILL IT NOW!!!!");
 		if (!isBlinkingHit && player.IsPlayerAlive() && !player.PlayerTouchedGround()) {
 			player.KillPlayer();
 		}
 
+	}
+
+	public bool IsPlayerAlive() {
+	  return player!=null && player.IsPlayerAlive();
 	}
 
 	void OnTriggerEnter2D(Collider2D collision)
@@ -67,8 +70,21 @@ public class HeroScript : MonoBehaviour {
 			 }
 		     
 		    }
-		    else if(!player.IsGroundVisible() && !player.IsPlayerFalling()) {
+
+		    else {
+		     //if the ground is still not visible, kill it!!!
+		     if(!player.IsGroundVisible()){
 				player.KillPlayer ();
+		     }
+		     else {
+		        //ok, ground is visible, but i´m not falling, so die mother fucker die!!!
+				if(!player.IsPlayerFallingToGround()) {
+					player.KillPlayer ();
+				}
+		     }
+				
+		    
+
 		    }
 
 		} 
@@ -130,6 +146,8 @@ public class HeroScript : MonoBehaviour {
 				part.Play(true);
 			}
 
+
+			HidePointer();
 	   }
 	   else {
 		//say it did not reached yet
@@ -140,6 +158,18 @@ public class HeroScript : MonoBehaviour {
 	  return reached ;
 	}
 
+	void HidePointer() {
+		//shows a pointer blinking
+
+		GameObject obj = GameObject.FindGameObjectWithTag("pointer");
+		if(obj!=null) {
+		  BlinkSpriteScript blink = obj.GetComponent<BlinkSpriteScript>();
+		  if(blink) {
+		    blink.DisableBlink();
+		  }
+		}
+	
+	}
 	public void BlinkWhenHit() { 
 	 isBlinkingHit = true; //i need to know this otherwise OnBecameInvisble is called and the gameobject will get destroyed
 	 //Player invisible for some Time 

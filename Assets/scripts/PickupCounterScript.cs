@@ -7,11 +7,14 @@ public class PickupCounterScript : MonoBehaviour {
 	public Font font;
 	public int fontSize;
 	public Texture2D icon;
-	
-	public int textureXPosition;
-	public int textureYPosition;
+
 	public int textureWidth = 128;
 	public int textureHeight = 128; 
+
+	public int yPosition = 70;
+
+	public int xPosition = -1; 
+
 
 	private GUIResolutionHelper resolutionHelper;
 
@@ -69,18 +72,27 @@ public class PickupCounterScript : MonoBehaviour {
 		Vector3 scaleVector = resolutionHelper.scaleVector;
 		bool isWideScreen = resolutionHelper.isWidescreen;
 		
-		if(isWideScreen) {
-			GUI.matrix = Matrix4x4.TRS(new Vector3( (resolutionHelper.scaleX - scaleVector.y) / 2 * width, 0, 0), Quaternion.identity, scaleVector);
-		}
-		else {
+		//if(isWideScreen) {
+		//	GUI.matrix = Matrix4x4.TRS(new Vector3( (resolutionHelper.scaleX - scaleVector.y) / 2 * width, 0, 0), Quaternion.identity, scaleVector);
+		//}
+		//else {
 			
-			GUI.matrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,scaleVector);
-		}
+		GUI.matrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,scaleVector);
+		//}
 		
 		if(Event.current.type==EventType.Repaint) {
 
-			DrawText( "X " + numberPickups, fontSize, textureXPosition + textureWidth ,0,120,60);
-			GUI.DrawTexture(new Rect(textureXPosition,textureYPosition,textureWidth,textureHeight),icon);
+		    if(xPosition>0) {
+
+				DrawText( "X " + numberPickups, fontSize,xPosition+textureWidth ,yPosition,120,60);
+				GUI.DrawTexture(new Rect(xPosition,yPosition,textureWidth,textureHeight),icon);
+		    }
+		    else {
+
+				DrawText( "X " + numberPickups, fontSize, width-textureWidth,yPosition,120,60);
+				GUI.DrawTexture(new Rect(width-textureWidth*2,yPosition,textureWidth,textureHeight),icon);
+		    }
+
        
 			
 		}
@@ -90,12 +102,12 @@ public class PickupCounterScript : MonoBehaviour {
 	public void DrawText(string text, int fontSize, int x, int y,int width,int height) {
 		
 		
-		GUIStyle centeredStyleSmaller = GUI.skin.GetStyle("Label");
+		GUIStyle centeredStyleSmaller = new GUIStyle(GUI.skin.label);
 		centeredStyleSmaller.alignment = TextAnchor.MiddleLeft;
 		centeredStyleSmaller.font = font;
 		centeredStyleSmaller.fontSize = fontSize ;
 		
-		GUI.Label (new Rect(x, y, width, height), text);
+		GUI.Label (new Rect(x, y, width, height), text,centeredStyleSmaller);
 	}
 	
 

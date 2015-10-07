@@ -30,6 +30,8 @@ public class PlayerScript : MonoBehaviour
 
 	private bool isVisible = true;
 
+	private bool isFallingToGround = false;
+
 	//this is needed for the pickup speed
 	//the jelly must inherit player speed
 	//at every new level the value is reset to deafut speed (1)
@@ -60,7 +62,7 @@ public class PlayerScript : MonoBehaviour
 	private bool moving = false;
 	private bool canMove = true;
 	
-	private PickupCounterScript coinsCounter;
+	private PickupCounterScript parachuteCounter;
 
 	private bool hasBalloon = true;
 	private bool hasParachute = false;
@@ -85,8 +87,12 @@ public class PlayerScript : MonoBehaviour
 		startingPos = cachedTransform.position;
 		
 		scripts = GameObject.FindGameObjectWithTag("Scripts");
-		coinsCounter = scripts.GetComponent<PickupCounterScript>();
+		parachuteCounter = scripts.GetComponent<PickupCounterScript>();
 		controller = scripts.GetComponent<GameControllerScript> ();
+		//make sure we have this updated
+		resolutionHelper = scripts.GetComponent<GUIResolutionHelper> ();
+		resolutionHelper.CheckScreenResolution();
+
 		hasParachute = false;
 		failSafeUsed = false;
 		hasBalloon = true;
@@ -99,6 +105,8 @@ public class PlayerScript : MonoBehaviour
 		ground = GetGround ();
 
 		hero = GetHero();
+
+		isFallingToGround = false;
 		
 	}
 
@@ -117,25 +125,7 @@ public class PlayerScript : MonoBehaviour
 	
 	void Awake() {
 
-		/*GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
-		if(scripts!=null) {
-		  controller = scripts.GetComponent<GameControllerScript>();
-		  resolutionHelper = scripts.GetComponent<GUIResolutionHelper>();
-		  translationManager = scripts.GetComponent<TextLocalizationManager>();
-		}
-		else {
-		  controller = GameControllerScript.Instance;
-		  resolutionHelper = GUIResolutionHelper.Instance;
-		  translationManager = TextLocalizationManager.Instance;
-		}
-
-		translationManager.LoadSystemLanguage(Application.systemLanguage);*/
-		//changeSpriteCounter = Time.deltaTime;
-		//make sure we have this updated
-		resolutionHelper = GUIResolutionHelper.Instance;
-		resolutionHelper.CheckScreenResolution();
-
-		//CheckInAppPurchases();
+		
 	}
 
 
@@ -144,6 +134,7 @@ public class PlayerScript : MonoBehaviour
 		if(rig!=null) {
 			rig.gravityScale =1.0f;
 			canMove = false;
+			isFallingToGround = true;
 		}
 	}
 
@@ -151,7 +142,12 @@ public class PlayerScript : MonoBehaviour
 		Rigidbody2D rig = GetComponent<Rigidbody2D>();
 		if(rig!=null) {
 			rig.gravityScale =0.0f;//don´t let him continue to fall
+			isFallingToGround = false;
 		}
+	}
+
+	public bool IsPlayerFallingToGround() {
+	  return isFallingToGround;
 	}
 
 	public bool IsPlayerFalling() {
@@ -261,7 +257,7 @@ public class PlayerScript : MonoBehaviour
 		}
 
 		//if is standing on a landing platform we do not clamp, and let him die
-		if ( (canMove && !isStandingOnPlatform) || ( IsPlayerFalling() && IsGroundVisible()) ) {
+		//if ( /*(canMove && !isStandingOnPlatform) || ( IsPlayerFalling() && IsGroundVisible()) */) {
 
 			//only clamp if can move otherwise let him go outside screen and kill it
 			var dist = (transform.position - Camera.main.transform.position).z;
@@ -288,19 +284,14 @@ public class PlayerScript : MonoBehaviour
 				transform.position.z
 				);
 
-		}
+		//}
 
 		if(hasLanded && hero.HasHeroReachedTarget()) {
 		    canMove = false;
 			Invoke("LoadNextLevel",3.0f);
 		}
 
-		//MORE OR LESS
-		//if(supportsGyroscope) {
-		//	transform.rotation = Input.gyro.attitude;
-		//}
-
-
+	
 	}
 	
 		
@@ -473,7 +464,7 @@ public class PlayerScript : MonoBehaviour
 		
 		EnemyScript enemy = collisionObject.GetComponent<EnemyScript> ();
 		//collided with enemy
-		if (enemy != null) {
+		if (enemy != null && !isFallingToGround) {
 				
 			if (PlayerHasBalloon ()) {
 				BurstBallon ();
@@ -524,15 +515,33 @@ public class PlayerScript : MonoBehaviour
 	}
 
 	public void HandleGemCollision(GemScript gem) {
-	 if(hasBalloon) {
-	   Sprite newSprite = gem.GetBalloonGift();
-	   SpriteRenderer renderer = GetComponent<SpriteRenderer> ();
-	   renderer.sprite = newSprite;
-	   renderer.enabled = true;
-	   GetComponent<PolygonCollider2D> ().enabled = true;
-	   soundEffects.PlayPowerupSound();
-	   
-	 }
+
+	   PickupCounterScript counter;
+
+	  if(gem.isRed) {
+			counter = GameObject.FindGameObjectWithTag("RedGemCounter").GetComponent<PickupCounterScript>();
+	  }
+	  else if(gem.isGreen) {
+			counter = GameObject.FindGameObjectWithTag("GreenGemCounter").GetComponent<PickupCounterScript>();
+	  }
+	  else {
+	  //blue
+			counter = GameObject.FindGameObjectWithTag("BlueGemCounter").GetComponent<PickupCounterScript>();
+	  }
+
+	  counter.AddPickup();
+	  //add a new balloon?
+	  if(counter.numberPickups>=gem.giftAfter && hasBalloon) {
+
+		Sprite newSprite = gem.GetBalloonGift();
+	    SpriteRenderer renderer = GetComponent<SpriteRenderer> ();
+	    renderer.sprite = newSprite;
+	    renderer.enabled = true;
+	    GetComponent<PolygonCollider2D> ().enabled = true;
+	    soundEffects.PlayPowerupSound();
+	  }
+
+
 	}
 
 
@@ -809,12 +818,12 @@ public class PlayerScript : MonoBehaviour
 
 	public void IncreaseCoins(int value) {
 
-      if(coinsCounter!=null) {
-        coinsCounter.AddPickup();
-		if(coinsCounter.numberPickups>=GameConstants.MINIMUM_COINS_FAILSAFE_PARACHUTE && !hasParachute) {
+      if(parachuteCounter!=null) {
+        parachuteCounter.AddPickup();
+		if(parachuteCounter.numberPickups>=GameConstants.MINIMUM_COINS_FAILSAFE_PARACHUTE && !hasParachute) {
 			//should be bought with virtual currency?
 			AddFailsafeParachute();
-			coinsCounter.RemoveMultiplePickups(GameConstants.MINIMUM_COINS_FAILSAFE_PARACHUTE);
+			parachuteCounter.RemoveMultiplePickups(GameConstants.MINIMUM_COINS_FAILSAFE_PARACHUTE);
 		}
       }
 	}

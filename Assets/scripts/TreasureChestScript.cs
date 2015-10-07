@@ -21,7 +21,7 @@ public class TreasureChestScript : MonoBehaviour {
 
 		GameObject collisionObject = otherCollider.gameObject;
 		HeroScript player = collisionObject.GetComponent<HeroScript> ();
-		if (player != null) {
+		if (player != null && player.IsPlayerAlive() && !opened) {
 			//Open the chest
 			Animator anim = GetComponent<Animator>();
 			anim.enabled = true;
@@ -31,6 +31,8 @@ public class TreasureChestScript : MonoBehaviour {
 			}
 			opened = true;
 			player.OpenChest(opened);
+
+			ShowPointer();
 
 			//play sound
 			AudioSource au = GetComponent<AudioSource>();
@@ -44,6 +46,17 @@ public class TreasureChestScript : MonoBehaviour {
 
 		}
 		
+	}
+
+	//shows a pointer blinking
+	void ShowPointer() {
+		GameObject obj = GameObject.FindGameObjectWithTag("pointer");
+		if(obj!=null) {
+		  BlinkSpriteScript blink = obj.GetComponent<BlinkSpriteScript>();
+		  if(blink!=null) {
+		    blink.EnableBlink(0,1.2f);
+		  }
+		}
 	}
 
 	//fire the chest/ground big flash, with the same colour as the level

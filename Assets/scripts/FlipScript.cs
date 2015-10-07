@@ -126,7 +126,7 @@ public class FlipScript : MonoBehaviour {
 			//We can reduce the draw calls from OnGUI() function by 
 			//enclosing all the contents inside a if loop like this one
 			//draw level
-			skin.label.normal.textColor = Color.black;
+			//skin.label.normal.textColor = Color.black;
 			
 			Matrix4x4 svMat = GUI.matrix;//save current matrix
 

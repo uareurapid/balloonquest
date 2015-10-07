@@ -174,8 +174,8 @@ public class GameOverScript : MonoBehaviour
 		style = GUI.skin.GetStyle("Label");
 		style.alignment = TextAnchor.MiddleLeft;
 		style.font = freeTextFont;
-		style.fontSize = freeTextFontSize;
-		style.normal.textColor = Color.black;
+		style.fontSize = freeTextFontSize-5;
+		//style.normal.textColor = Color.black;
 	}
 
     void Update() {
@@ -239,7 +239,7 @@ public class GameOverScript : MonoBehaviour
 		GUI.skin = skin;
 
 		//increase the font size
-		style.fontSize = freeTextFontSize + 20;
+		style.fontSize = freeTextFontSize + 10;
 		
 		Matrix4x4 svMat = GUI.matrix;//save current matrix
 		
@@ -250,17 +250,7 @@ public class GameOverScript : MonoBehaviour
 		bool isWideScreen = resolutionHelper.isWidescreen;
 
 		//Matrix4x4 wideMatrix = Matrix4x4.TRS(new Vector3( (resolutionHelper.scaleX - scaleVector.y) / 2 * width, 0, 0), Quaternion.identity, scaleVector);
-		Matrix4x4 normalMatrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,scaleVector);
-		
-		//if(isWideScreen) {
-		//	GUI.matrix =  wideMatrix;
-			
-			
-		//}
-		//else {
-			GUI.matrix = normalMatrix;
-			
-		//}
+		GUI.matrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,scaleVector);
 
 
 		   // bool showNextLevel = false;
@@ -279,26 +269,19 @@ public class GameOverScript : MonoBehaviour
 			
 			
 			if(Event.current.type==EventType.Repaint) {
-
-
-			       if(isShowingMessage) {
-
-						style.normal.textColor = Color.black;
-						GUI.Label (new Rect(width/2-140, height/2-300, 300, 50), "Game Over!!!",style);
-			       }
-
+		
 
 
 					//*******************************
 
-					homeTextureRect = new Rect( width/2 - 80, height/2+160,128,64);
+					homeTextureRect = new Rect(width/2-48, height-150,96,96);
 					GUI.DrawTexture(homeTextureRect,homeTexture);
 				
 					int score = PlayerPrefs.GetInt (GameConstants.HIGH_SCORE_KEY,1);
 					int best = PlayerPrefs.GetInt (GameConstants.BEST_SCORE_KEY,1);
 					//try to keep the scores aligned
 					if(!scoresHidden) {
-						GUI.Label (new Rect(width/2-45, height/2-160, 300, 50), score < 10 ? " "+ score : score.ToString(),style);
+						GUI.Label (new Rect(width/2-60, height/2-250, 300, 60), score < 10 ? " "+ score : score.ToString(),style);
 					}
 
 
@@ -306,7 +289,7 @@ public class GameOverScript : MonoBehaviour
 					//
 					if (!blinkOnBestScore && !scoresHidden) { 
 						//Just write it there!
-						GUI.Label (new Rect (width / 2 - 45, height / 2 - 95, 300, 50), best < 10 ? " " + best : best.ToString (), style);
+						GUI.Label (new Rect (width / 2 - 60, height / 2 - 160, 300, 60), best < 10 ? " " + best : best.ToString (), style);
 					}//else do not print it
 					
 					#if UNITY_ANDROID && !UNITY_EDITOR
@@ -371,7 +354,7 @@ public class GameOverScript : MonoBehaviour
 			}
 		}
 		
-		GUI.skin.label.normal.textColor = UnityEngine.Color.black;
+		//GUI.skin.label.normal.textColor = UnityEngine.Color.black;
 			
 		//restore the matrix	
 		GUI.matrix = svMat;	

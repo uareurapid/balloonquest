@@ -29,6 +29,7 @@ public class GameControllerScript : MonoBehaviour {
 	private float minTextureHeight = 128;
 	private float rotationAngle = 45f;
 
+	private GUIStyle centeredStyleLarger;
 	
 	public int screenWidth;
 	public int screenHeight;
@@ -767,10 +768,10 @@ public class GameControllerScript : MonoBehaviour {
 
 			// Set the skin to use
 			GUI.skin = skin;
-			//We can reduce the draw calls from OnGUI() function by 
-			//enclosing all the contents inside a if loop like this one
-			//draw level
-			skin.label.normal.textColor = Color.black;
+
+			if(centeredStyleLarger==null) {
+				BuildLargerLabelStyle();
+			} 
 			
 			Matrix4x4 svMat = GUI.matrix;//save current matrix
 
@@ -779,36 +780,24 @@ public class GameControllerScript : MonoBehaviour {
 			int width = resolutionHelper.screenWidth;
 			int height = resolutionHelper.screenHeight;
 
-			Matrix4x4 normalMatrix;
-			Matrix4x4 wideMatrix;
-			//we use the center matrix for the buttons
-			wideMatrix = Matrix4x4.TRS(new Vector3( (resolutionHelper.scaleX - scaleVector.y) / 2 * width, 0, 0), Quaternion.identity, scaleVector);
-			normalMatrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,scaleVector);
+			//GUI.matrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,scaleVector);
 
 			//assign normal matrix by default
-			GUI.matrix = normalMatrix;
 
 		    if(Event.current.type==EventType.Repaint && !isGameOver) {
-
-			 	//DrawText(GetTranslationKey(GameConstants.MSG_LEVEL) 
-					//	+ " " + currentLevel, messagesFontSizeSmaller +10, 20, 10,200,50);
 	
 				if(elapsedMissionMeters>=1 && !isLevelComplete) {
-					  DrawText(elapsedMissionMeters +" meters!"  , messagesFontSizeLarger, width/2-100, 10,300,50);
+					  DrawText(elapsedMissionMeters +" meters!"  , messagesFontSizeLarger+10, 0, 70,Screen.width,50);
 					
 				}
 
 			    if(isLevelComplete) {
 				    //unlock some achievement here maybe
-					DrawText("Congratulations! Level " + currentLevel + " Complete."  , messagesFontSizeLarger, width/2-200, height/2-200,600,50);
+					DrawText("Congratulations!"  , messagesFontSizeLarger, 0, Screen.height/2-200,Screen.width,50);
+					DrawText("Level " + currentLevel + " Complete."  , messagesFontSizeLarger, 0, Screen.height/2,Screen.width,50);
 				}
 
 			}
-
-         //Draw the final boss hits instead
-         //TODO on last level show new instructions, like on first level
-		 // if(IsFinalLevel()) {
-		  //}
 		    			
 			if(Event.current.type==EventType.Repaint) {
 
@@ -819,12 +808,12 @@ public class GameControllerScript : MonoBehaviour {
 					Vector2 pivotPoint = new Vector2(Screen.width / 2, Screen.height / 2);
 
 					//if not touhced or already hit max
-					if(!touchedScreenshotTexture || minTextureWidth == GameConstants.MAX_SCREENSHOT_WIDTH) {
+					if(!touchedScreenshotTexture ) {
 						//rotate the matrix to draw the texture
 						//float rotAngle = 45f;
 						GUIUtility.RotateAroundPivot(GameConstants.MAX_SCREENSHOT_ROTATION, pivotPoint);
 	        			
-				     	screenshotTextureRect = new Rect(width/2,height/2,GameConstants.MIN_SCREENSHOT_WIDTH,GameConstants.MIN_SCREENSHOT_HEIGHT);
+				     	screenshotTextureRect = new Rect(Screen.width/2,Screen.height/2,GameConstants.MIN_SCREENSHOT_WIDTH,GameConstants.MIN_SCREENSHOT_HEIGHT);
 						GUI.DrawTexture(screenshotTextureRect,screenshotTexture);
 
 						//restore the matrix rotation afterdraw the texture
@@ -833,16 +822,11 @@ public class GameControllerScript : MonoBehaviour {
 					}
 					else {
 					   //draw it bigger, but it will cover other things, no???
-						
-						rotationAngle-=1;
-						if(rotationAngle>0f) {
-							rotationAngle = 0f;
-						}
-					        Debug.Log("Angle is: " + rotationAngle);
-							GUIUtility.RotateAroundPivot(rotationAngle, pivotPoint);
 
-							minTextureWidth +=1;
-							minTextureHeight +=1;
+							if(minTextureWidth < GameConstants.MAX_SCREENSHOT_WIDTH) {
+								minTextureWidth +=2;
+								minTextureHeight +=2;
+							}
 
 							if(minTextureWidth > GameConstants.MAX_SCREENSHOT_WIDTH) {
 								minTextureWidth = GameConstants.MAX_SCREENSHOT_WIDTH;
@@ -850,14 +834,14 @@ public class GameControllerScript : MonoBehaviour {
 							if(minTextureHeight > GameConstants.MAX_SCREENSHOT_HEIGHT) {
 								minTextureHeight = GameConstants.MAX_SCREENSHOT_HEIGHT;
 							}
+							//we need to count with image size, size the position is top left of the texture
+							screenshotTextureRect = new Rect ((Screen.width / 2) - (minTextureWidth/2), 
+							(Screen.height / 2 + 50) - (minTextureHeight/2),
+							minTextureWidth,
+							minTextureHeight);
 
-							Debug.Log("Size is: w: " + minTextureWidth + " h: " + minTextureHeight);
-							screenshotTextureRect = new Rect(width/2,height/2,minTextureWidth,minTextureHeight);
 							GUI.DrawTexture(screenshotTextureRect,screenshotTexture);
 
-							GUIUtility.RotateAroundPivot(-rotationAngle, pivotPoint);
-					  
-						
 					}
 			    	
 			    }
@@ -867,15 +851,15 @@ public class GameControllerScript : MonoBehaviour {
 						
 				
 					//we need this to put the play/pause at right
-					if(isWideScreen){
+					/*if(isWideScreen){
 						GUI.matrix = wideMatrix;
 					}
 					else{
 						GUI.matrix = normalMatrix;
-					}
+					}*/
 
 
-					pausePlayRect = new Rect(width-160 ,15,128,64);
+					pausePlayRect = new Rect(width-160 ,15,96,96);
 
 
 					if(isGamePaused) {
@@ -904,12 +888,12 @@ public class GameControllerScript : MonoBehaviour {
 			     if(player!=null && !showUnlockLevel && !isGameComplete) {
 				  
 					//make sure we draw this at the center of the screen
-					if(isWideScreen){
+					/*if(isWideScreen){
 						GUI.matrix = wideMatrix;
 					}
 					else{
 						GUI.matrix = normalMatrix;
-					}
+					}*/
 
 
 					//exitTextureRect = new Rect( width/2 - 100, screenHeight/2,200,80);
@@ -924,22 +908,7 @@ public class GameControllerScript : MonoBehaviour {
 					GUI.DrawTexture(rateRect, rateTexture);
 					#endif
 					//start playing //screenWidth
-
-					//---------------------------------------------------------------------------------					
-					/*#if UNITY_ANDROID || UNITY_IOS
-					//GUI.Label(new Rect(width/2-69,(int)screenHeight / 3 * 2 - 15,200,40),"Leaderboards");
-					leaderboardsRect = new Rect(width/2-50,screenHeight / 3 * 2 + 10 ,96,96);
-					GUI.DrawTexture(leaderboardsRect, leaderBoardTexture,ScaleMode.ScaleToFit);
-					#endif*/
-					//---------------------------------------------------------------------------------
-
-
-
-					//if(highScore > 0) {
-						//GetTranslationKey(GameConstants.MSG_HIGH_SCORE)
-					//	DrawText("High Score: " + highScore, messagesFontSizeSmaller +10,740, 10,220,40);
-					//}
-								
+						
 					
 				 }
 				
@@ -955,12 +924,12 @@ public class GameControllerScript : MonoBehaviour {
 		//---------------------------------------------------------
 		//before checking the clicks we put the correct matrix
 
-		if(isWideScreen){
+		/*if(isWideScreen){
 			GUI.matrix = wideMatrix;
 		}
 		else{
 			GUI.matrix = normalMatrix;
-		}
+		}*/
 		//---------------------------------------------
 
 		if(!isMobilePlatform) { //desktop
@@ -1008,23 +977,7 @@ public class GameControllerScript : MonoBehaviour {
 							ResumeGame();
 						}
 			     } 
-			     /*else if(backRect.Contains(Event.current.mousePosition)) {
-					EnableLevelsScroll();
-			        player.MoveBackward();
-			        ScrollLevelsForward();
-			     }
-			     else if(forwardRect.Contains(Event.current.mousePosition)) {
-			        
-					EnableLevelsScroll();
-					player.MoveForward();
-					ScrollLevelsBackward();
-			     }
-				 else if(jumpRect.Contains(Event.current.mousePosition)) {
-			        player.Jump();
-			     }
-			     else {
-			       DisableLevelsScroll();
-			     }*/
+			   
 			  }
 			      
 			}
@@ -1095,26 +1048,7 @@ public class GameControllerScript : MonoBehaviour {
 
 					  }
 
-					  /*if(backRect.Contains(fingerPos)) {
-					  	//move player back
-					  	EnableLevelsScroll();
-					  	player.MoveBackward();
-					  	ScrollLevelsForward();
-
-					  }
-					  else if(forwardRect.Contains(fingerPos)) {
-					  	//move player forward
-					  	EnableLevelsScroll();
-					  	player.MoveForward();
-					  	ScrollLevelsBackward();
-					  }
-					  else if(jumpRect.Contains(fingerPos)) {
-					   player.Jump();
-					  }
-					  else {
-					    player.PlayerStationary();
-					    DisableLevelsScroll();
-					  }*/
+				
 				 }
 					
 			  }  //end if (Input.touches.Length ==1) 
@@ -1125,6 +1059,15 @@ public class GameControllerScript : MonoBehaviour {
 	  GUI.matrix = svMat;
 	
 }	
+
+	void BuildLargerLabelStyle() {
+	
+		centeredStyleLarger =  new GUIStyle(GUI.skin.label);
+		centeredStyleLarger.alignment = TextAnchor.UpperCenter;
+		centeredStyleLarger.font = messagesFont;
+		centeredStyleLarger.fontSize = messagesFontSizeSmaller;
+
+	}
 
 	public void FinishLevel() {
 		isLevelComplete = true;
@@ -1195,21 +1138,6 @@ public class GameControllerScript : MonoBehaviour {
 	    return fingerPos;
 	}
 
-	//IEnumerator ShowMessage (string message, float delay) {
-      /*GameObject textObj = GameObject.FindGameObjectWithTag("JellyTxt");
-      if(textObj!=null) {
-		GUIText guiText = textObj.GetComponent<GUIText>();
-		if(guiText!=null) {
-			guiText.text = message;
-     		guiText.enabled = true;
-     		yield return new WaitForSeconds(delay);
-     		guiText.enabled = false;
-		}
-
-      }*/
-
- 	//}
-
 
 	string GetTranslationKey(string key) {
 		return	translationManager.GetText(key);
@@ -1239,33 +1167,33 @@ public class GameControllerScript : MonoBehaviour {
 	public void DrawText(string text, int fontSize) {
 	
 
-		GUIStyle centeredStyleSmaller = GUI.skin.GetStyle("Label");
-		centeredStyleSmaller.alignment = TextAnchor.MiddleLeft;
-		centeredStyleSmaller.font = messagesFont;
-		centeredStyleSmaller.fontSize = fontSize;
-		GUI.Label (new Rect(screenWidth/2-200, screenHeight/2, 400, 50), text);
+		//GUIStyle centeredStyleSmaller = GUI.skin.GetStyle("Label");
+		//centeredStyleSmaller.alignment = TextAnchor.MiddleLeft;
+		//centeredStyleSmaller.font = messagesFont;
+		//centeredStyleSmaller.fontSize = fontSize;
+		GUI.Label (new Rect(screenWidth/2-200, screenHeight/2, 400, 50), text,centeredStyleLarger);
 	}
 	
 	public void DrawText(string text, int fontSize, int x, int y,int width,int height) {
 		
 		
-		GUIStyle centeredStyleSmaller = GUI.skin.GetStyle("Label");
-		centeredStyleSmaller.alignment = TextAnchor.MiddleLeft;
-		centeredStyleSmaller.font = messagesFont;
-		centeredStyleSmaller.fontSize = fontSize;
+		//GUIStyle centeredStyleSmaller = GUI.skin.GetStyle("Label");
+		//centeredStyleSmaller.alignment = TextAnchor.MiddleLeft;
+		//centeredStyleSmaller.font = messagesFont;
+		//centeredStyleSmaller.fontSize = fontSize;
 		
-		GUI.Label(new Rect(x, y, width, height), text);
+		GUI.Label(new Rect(x, y, width, height), text,centeredStyleLarger);
 	}
 
 	public void DrawText(string text, int fontSize, float x, float y,int width,int height) {
 		
 		
-		GUIStyle centeredStyleSmaller = GUI.skin.GetStyle("Label");
-		centeredStyleSmaller.alignment = TextAnchor.MiddleLeft;
-		centeredStyleSmaller.font = messagesFont;
-		centeredStyleSmaller.fontSize = fontSize;
+		//GUIStyle centeredStyleSmaller = GUI.skin.GetStyle("Label");
+		//centeredStyleSmaller.alignment = TextAnchor.MiddleLeft;
+		//centeredStyleSmaller.font = messagesFont;
+		//centeredStyleSmaller.fontSize = fontSize;
 		
-		GUI.Label(new Rect(x, y, width, height), text);
+		GUI.Label(new Rect(x, y, width, height), text,centeredStyleLarger);
 	}
 	
 	//release banner resources

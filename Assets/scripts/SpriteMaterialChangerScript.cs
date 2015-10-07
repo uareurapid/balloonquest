@@ -68,7 +68,9 @@ public class SpriteMaterialChangerScript : MonoBehaviour {
 			//is a global script instance, affects all objects of the same type
 			foreach(SpriteRenderer rend in rendererArray) {
 
-			    //i am destroying some object that uses this rendered CHECK!!!
+			  if(rend!=null) {
+
+				//i am destroying some object that uses this rendered CHECK!!!
 				GameObject owner = rend.gameObject;
 				//this object has itself a material changer, so we do not consider it
 				SpriteMaterialChangerScript changer = owner.GetComponent<SpriteMaterialChangerScript>();
@@ -81,6 +83,8 @@ public class SpriteMaterialChangerScript : MonoBehaviour {
 				if (maxSwaps==counter+1 && currentMaterial == defaultSpritesMaterial) {
 					rend.color = Color.white;
 				}
+			  }
+			    
 				
 			}
 		}
