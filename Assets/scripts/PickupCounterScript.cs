@@ -8,6 +8,10 @@ public class PickupCounterScript : MonoBehaviour {
 	public int fontSize;
 	public Texture2D icon;
 
+	//something that we instantiate and add to player object
+	public GameObject transformGift = null;
+	//this will be the balloon script basically
+
 	public int textureWidth = 128;
 	public int textureHeight = 128; 
 
@@ -108,6 +112,23 @@ public class PickupCounterScript : MonoBehaviour {
 		centeredStyleSmaller.fontSize = fontSize ;
 		
 		GUI.Label (new Rect(x, y, width, height), text,centeredStyleSmaller);
+	}
+
+	//add this transform to the player object
+	public void AddGiftGameObjectToPlayer(PlayerScript player) {
+	  if(transformGift!=null) {
+		 GameObject newBalloonObject = (GameObject)Instantiate(transformGift, player.transform.position, player.transform.rotation);	
+		 newBalloonObject.transform.parent = player.transform;
+
+		 BalloonScript ball = newBalloonObject.GetComponent<BalloonScript>();
+		 if(ball!=null && ball.IsUndestructibleThroughTime()) {
+			//green
+			//will start the countdown
+			ball.StartCountdownDestruction();
+		 }
+
+	  }
+		
 	}
 	
 

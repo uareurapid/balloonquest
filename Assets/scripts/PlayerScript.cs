@@ -30,7 +30,10 @@ public class PlayerScript : MonoBehaviour
 
 	private bool isVisible = true;
 
-	private bool isFallingToGround = false;
+	private bool isLanding = false;
+	//it can be falling but not landing
+	//the difference is if it has balloon or not and if the ground is visible
+	private bool isFalling = false;
 
 	//this is needed for the pickup speed
 	//the jelly must inherit player speed
@@ -72,6 +75,10 @@ public class PlayerScript : MonoBehaviour
 	SoundEffectsHelper soundEffects;
 	private bool isStandingOnPlatform = false;
 
+	private bool hasRedGemGift = false;
+	private bool hasGreenGemGift = false;
+	private bool hasBlueGemGift = false;
+
 	private HeroScript hero;
 
 	private bool isJumping = false;
@@ -106,8 +113,23 @@ public class PlayerScript : MonoBehaviour
 
 		hero = GetHero();
 
-		isFallingToGround = false;
+		isFalling = false;
+		isLanding = false;
+
+		//the possible gifts
+		hasRedGemGift = false;
+	    hasGreenGemGift = false;
+	    hasBlueGemGift = false;
 		
+	}
+
+	public void ResetDefaultSprite() {
+	  GetComponent<SpriteRenderer>().sprite = defaultBalloon;
+	  //reset these as well
+	  hasRedGemGift = false;
+	  hasGreenGemGift = false;
+	  hasBlueGemGift = false;
+
 	}
 
 	//check if we are on a platform
@@ -134,7 +156,6 @@ public class PlayerScript : MonoBehaviour
 		if(rig!=null) {
 			rig.gravityScale =1.0f;
 			canMove = false;
-			isFallingToGround = true;
 		}
 	}
 
@@ -142,12 +163,11 @@ public class PlayerScript : MonoBehaviour
 		Rigidbody2D rig = GetComponent<Rigidbody2D>();
 		if(rig!=null) {
 			rig.gravityScale =0.0f;//don´t let him continue to fall
-			isFallingToGround = false;
 		}
 	}
 
-	public bool IsPlayerFallingToGround() {
-	  return isFallingToGround;
+	public bool IsPlayerFallingToLand() {
+	  return isLanding && ground.isVisible;
 	}
 
 	public bool IsPlayerFalling() {
@@ -165,7 +185,7 @@ public class PlayerScript : MonoBehaviour
 	}
 
 	GroundScript GetGround() {
-		return GameObject.FindGameObjectWithTag("Ground").GetComponent<GroundScript>();
+		return GameObject.FindGameObjectWithTag("Ground").GetComponentInChildren<GroundScript>();
 	}
 
 	public bool IsGroundVisible() {
@@ -464,7 +484,21 @@ public class PlayerScript : MonoBehaviour
 		
 		EnemyScript enemy = collisionObject.GetComponent<EnemyScript> ();
 		//collided with enemy
-		if (enemy != null && !isFallingToGround) {
+		if ( (enemy != null && IsPlayerAlive()) && !IsPlayerFallingToLand() ) {
+
+		    //do not handle grounded enemy collisions
+			if(PlayerTouchedGround()){
+			  return;
+			}
+
+		   //check if i have a gift ballooon undestructible
+		   BalloonScript ball = GetComponentInChildren<BalloonScript>();
+		   if(ball!=null) {
+		     //just handle the gift balloon stuff
+		     HandleCollisionWhileUsingGiftBalloon(ball);
+		     return;
+		   }
+
 				
 			if (PlayerHasBalloon ()) {
 				BurstBallon ();
@@ -504,42 +538,98 @@ public class PlayerScript : MonoBehaviour
 	
 				
 		}
-		else {
-			GemScript gem = collisionObject.GetComponent<GemScript>();
-			if(gem!=null) {
-			  HandleGemCollision(gem);
-			}
+
+
+		
+
+	}
+
+	//the name says it all no?? :-)
+	public void HandleCollisionWhileUsingGiftBalloon(BalloonScript ball) {
+
+		if(ball.IsUndestructibleThroughHits()) {
+		       //blue
+		      ball.DecreaseHitsCounter();
+
 		}
-		
-		
+		/*else if(ball.IsUndestructibleThroughTime()) {
+		       //green
+
+		    if(!ball.startDestroying) {
+		         //will start the countdown
+				ball.StartCountdownDestruction();
+		     }
+
+		}*/
 	}
 
 	public void HandleGemCollision(GemScript gem) {
 
 	   PickupCounterScript counter;
+	   bool isRed = false;
+	   bool isBlue =  false;
+	   bool isGreen = false;
 
 	  if(gem.isRed) {
 			counter = GameObject.FindGameObjectWithTag("RedGemCounter").GetComponent<PickupCounterScript>();
+			isRed = true;
 	  }
 	  else if(gem.isGreen) {
 			counter = GameObject.FindGameObjectWithTag("GreenGemCounter").GetComponent<PickupCounterScript>();
+			isGreen =  true;
 	  }
 	  else {
-	  //blue
+	  		//blue
 			counter = GameObject.FindGameObjectWithTag("BlueGemCounter").GetComponent<PickupCounterScript>();
+			isBlue = true;
 	  }
 
 	  counter.AddPickup();
 	  //add a new balloon?
-	  if(counter.numberPickups>=gem.giftAfter && hasBalloon) {
+	  if(counter.numberPickups >= gem.giftAfter && hasBalloon) {
+	    //why the hasBalloon? Can´t i just pick one while falling? It would be nice, i could jump from a platform as well and get one
 
-		Sprite newSprite = gem.GetBalloonGift();
-	    SpriteRenderer renderer = GetComponent<SpriteRenderer> ();
-	    renderer.sprite = newSprite;
-	    renderer.enabled = true;
-	    GetComponent<PolygonCollider2D> ().enabled = true;
-	    soundEffects.PlayPowerupSound();
+
+	    if( (isRed && hasRedGemGift) || (isBlue && hasBlueGemGift) || (isGreen && hasGreenGemGift) ) {
+				//just destroy the gem object, as i already have this gift, and they don´t acumulate
+	  			Destroy(gem.gameObject);
+	    }
+	    else {
+			//i can only have one gift at the time
+			BalloonScript existing = GetComponentInChildren<BalloonScript>();
+			if(existing!=null) {
+		  		Destroy(existing.gameObject);
+			}
+
+			Sprite newSprite = gem.GetBalloonGift();
+	    	SpriteRenderer renderer = GetComponent<SpriteRenderer> ();
+	    	renderer.sprite = newSprite;
+	    	renderer.enabled = true;
+	    	GetComponent<PolygonCollider2D> ().enabled = true;
+	    	soundEffects.PlayPowerupSound();
+
+	    	//add the balloon script
+	    	counter.AddGiftGameObjectToPlayer(this);
+
+	    	//now i need to reset it when i destroy the balloon script
+	    	hasGreenGemGift = isGreen;
+	    	hasRedGemGift = isRed;
+	    	hasBlueGemGift = isBlue;
+
+	    	//destroy this gem
+			Destroy(gem.gameObject);
+
+	    }
+		
+
+
+
 	  }
+	  else {
+	    //just destroy it
+		Destroy(gem.gameObject);
+	  }
+
 
 
 	}
@@ -559,6 +649,13 @@ public class PlayerScript : MonoBehaviour
 		if(!hasLanded && IsPlayerAlive()) {
 
 			hasLanded = true;
+
+			//TODO not sure about these 2 here!!!
+			//------------------------------------
+			isLanding = false;
+			isFalling = false;
+			//------------------------------------
+
 		    canMove = true;
 		    //slow down movement
 		    maxSpeed = maxSpeed / 2;
@@ -837,10 +934,14 @@ public class PlayerScript : MonoBehaviour
 	 return true;
 	}
 
-	//disables balloon
+	//kills balloon!!!
 	public void BurstBallon() {
-		//TODO play effects/sound
+
+
 		hasBalloon = false;
+		isFalling = true;
+		isLanding = false;
+
 		//play effects
 		SpecialEffectsHelper fx = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
 		if (fx != null) {
@@ -851,12 +952,14 @@ public class PlayerScript : MonoBehaviour
 		ReleaseBalloon();
 
 		if (hasParachute) {
-			//enable parachute sprite
+			//enable parachute sprite, will reset the vars:
+			//isFalling and isLanding
 			EnableParachute ();
 		} 
 		else {
 			//make him fall to the ground
 			EnableGravityScale ();
+
 		}
 	}
 
@@ -890,6 +993,7 @@ public class PlayerScript : MonoBehaviour
 		return parachute.GetComponent<SpriteRenderer> ().enabled;
 	}
 
+	//kill the parachute!!!
 	public void BurstParachute() {
 
 		//play effects
@@ -903,7 +1007,17 @@ public class PlayerScript : MonoBehaviour
 		parachute.GetComponent<CircleCollider2D> ().enabled = false;
 		//make him fall to the ground
 		EnableGravityScale ();
+
+		isFalling = true;
+		isLanding = false;
 		hasParachute = false;
+	}
+
+	//called from the ground script
+	public void MakePlayerFallToLand() {
+		EnableGravityScale ();
+		isFalling = true;
+		isLanding = true;
 	}
 
 	private void EnableParachute() {
@@ -913,6 +1027,9 @@ public class PlayerScript : MonoBehaviour
 			parachute.GetComponent<CircleCollider2D> ().enabled = true;
 			failSafeUsed = true;
 		}
+
+		isFalling = false;
+		isLanding = false;
 	}
 
 	public bool CanPlayerMove() {

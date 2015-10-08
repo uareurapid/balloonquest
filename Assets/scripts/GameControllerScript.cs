@@ -780,14 +780,14 @@ public class GameControllerScript : MonoBehaviour {
 			int width = resolutionHelper.screenWidth;
 			int height = resolutionHelper.screenHeight;
 
-			//GUI.matrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,scaleVector);
+
 
 			//assign normal matrix by default
 
 		    if(Event.current.type==EventType.Repaint && !isGameOver) {
 	
 				if(elapsedMissionMeters>=1 && !isLevelComplete) {
-					  DrawText(elapsedMissionMeters +" meters!"  , messagesFontSizeLarger+10, 0, 70,Screen.width,50);
+					  DrawText(elapsedMissionMeters +" meters!"  , messagesFontSizeLarger+12, 0, 90,Screen.width,50);
 					
 				}
 
@@ -846,6 +846,9 @@ public class GameControllerScript : MonoBehaviour {
 			    	
 			    }
 
+			    //now define the matrix for the buttons
+				//GUI.matrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,scaleVector);
+
 				if(isGameStarted) {
 			
 						
@@ -859,7 +862,7 @@ public class GameControllerScript : MonoBehaviour {
 					}*/
 
 
-					pausePlayRect = new Rect(width-160 ,15,96,96);
+					pausePlayRect = new Rect(Screen.width-100 ,15,96,96);
 
 
 					if(isGamePaused) {
@@ -887,21 +890,7 @@ public class GameControllerScript : MonoBehaviour {
 				  //neither if i'm rolling credits
 			     if(player!=null && !showUnlockLevel && !isGameComplete) {
 				  
-					//make sure we draw this at the center of the screen
-					/*if(isWideScreen){
-						GUI.matrix = wideMatrix;
-					}
-					else{
-						GUI.matrix = normalMatrix;
-					}*/
-
-
-					//exitTextureRect = new Rect( width/2 - 100, screenHeight/2,200,80);
-					//GUI.DrawTexture(exitTextureRect, exitTexture);
-
-
-
-
+			
 
 					#if UNITY_ANDROID && !UNITY_EDITOR
 					rateRect = new Rect( width/2 - 100,screenHeight/2+40,200,80);
@@ -931,6 +920,8 @@ public class GameControllerScript : MonoBehaviour {
 			GUI.matrix = normalMatrix;
 		}*/
 		//---------------------------------------------
+
+		GUI.matrix = svMat;
 
 		if(!isMobilePlatform) { //desktop
 
@@ -969,6 +960,8 @@ public class GameControllerScript : MonoBehaviour {
 
 				//Did i paused the game???
 				  if(pausePlayRect.Contains(Event.current.mousePosition)) {
+
+
 						isGamePaused = !isGamePaused;
 						if(isGamePaused) {
 							PauseGame();

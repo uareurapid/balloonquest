@@ -42,7 +42,7 @@ public class GroundScript : MonoBehaviour {
 			StopMovement ();
 
 			//enable player gravity scale to touch the ground
-			MakePlayerFall ();
+			MakePlayerFallToLand ();
 		
 			//disable the layers scrolling
 			DisableScrolling ();
@@ -55,13 +55,12 @@ public class GroundScript : MonoBehaviour {
 	}
 
 	//disables movement and set gravity scale to 1.0f
-	void MakePlayerFall() {
+	void MakePlayerFallToLand() {
 
 		GameObject player = GameObject.FindGameObjectWithTag("Player");
 		if(player!=null) {
 			PlayerScript script = player.GetComponent<PlayerScript>();
-			script.EnableGravityScale();
-			//script.DisableMovement();
+			script.MakePlayerFallToLand();
 		}
 	}
 

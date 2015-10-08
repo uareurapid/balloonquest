@@ -53,16 +53,28 @@ public class HeroScript : MonoBehaviour {
 	{
 		PerformUpdate(collision.gameObject);
 	}
+
+	public PlayerScript GetPlayer() {
+	  return player;
+	}
 	
 	void PerformUpdate(GameObject collisionObject) {
 		
 		
 		EnemyScript enemy = collisionObject.GetComponent<EnemyScript> ();
 		//collided with enemy
-		if (enemy != null && player != null && player.IsPlayerAlive ()) {
+
+		if ( (enemy != null && player != null) 
+			&& player.IsPlayerAlive() && !player.IsPlayerFallingToLand() ) {
+
 			Debug.Log("COLLIDED HERO");
+			//do not handle grounded enemy collisions
+			if(player.PlayerTouchedGround()){
+			  return;
+			}
+
 		    if(enemy.isBurner && skull!=null) {
-		     //TODO
+
 		     Debug.Log("start burn");
 			 if(burnedCount == 0) {
 				InvokeRepeating("SwapBurnedSprite",0f,0.2f);
@@ -72,31 +84,20 @@ public class HeroScript : MonoBehaviour {
 		    }
 
 		    else {
-		     //if the ground is still not visible, kill it!!!
-		     if(!player.IsGroundVisible()){
-				player.KillPlayer ();
-		     }
-		     else {
-		        //ok, ground is visible, but i´m not falling, so die mother fucker die!!!
-				if(!player.IsPlayerFallingToGround()) {
+		          //is user using a gift balloon?
+				  BalloonScript ball = player.GetComponentInChildren<BalloonScript>();
+				  if(ball!=null) {
+					player.HandleCollisionWhileUsingGiftBalloon(ball);
+				  }
+				  //no special thing to do, just kill it
+				  else {
 					player.KillPlayer ();
-				}
-		     }
-				
-		    
+				  }
 
-		    }
+		     }
 
 		} 
-		else {
-			//is a gem?
-			GemScript gem = collisionObject.GetComponent<GemScript>();
-			if(gem!=null && player!=null) {
-				player.HandleGemCollision(gem);
-			}
-		}
-		
-		
+
 	}	
 
 	void SwapBurnedSprite() {
