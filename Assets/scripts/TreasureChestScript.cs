@@ -95,8 +95,11 @@ public class TreasureChestScript : MonoBehaviour {
 			}
 	        //change the colour
 			SpriteMaterialChangerScript mat = emeraldObj.GetComponent<SpriteMaterialChangerScript>();
-	        mat.enabled = true;
-	        mat.Swap();
+			if(mat!=null) {
+				mat.enabled = true;
+	        	mat.Swap();
+			}
+	        
 	      
 	      }
 	  }

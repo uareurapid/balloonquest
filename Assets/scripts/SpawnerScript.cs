@@ -17,7 +17,9 @@ public class SpawnerScript : MonoBehaviour
     
     //index of the next thumbnail
 	private int nextThumbnail=-1;
-    
+	//how many can i spawn at the same time
+    public int maxSpawnsSameTime = 1;
+	public int minSpawnsSameTime = 1;
     
 	Vector3 newPosition = new Vector3(0f,0f,0f);
 	//margin regarding the transform position
@@ -93,17 +95,26 @@ public class SpawnerScript : MonoBehaviour
 	  //check also if controller action is not stopped
 	  //stop spawining if we are stopped
 	  if(canSpawn ) { //controller.SpawnAllowed() check the number of jellies
-	  
+
+	      
+	      int numSpawns = 1;
+	      //if i have 2 different values, get a random between
+	      if(minSpawnsSameTime < maxSpawnsSameTime) {
+			numSpawns= Random.Range(minSpawnsSameTime,maxSpawnsSameTime+1);
+	      }
+	      for(int i = 0; i < numSpawns; i++) {
+
 			int spawnedIndex = 0;
 			if(enemies.Length>1) {
 				spawnedIndex = Random.Range(0,enemies.Length);
 			}
-	        //Added random position (-40,+40) for the spawn position
+	
 				  float randomX = Random.Range(transform.position.x - marginLeft, transform.position.x + marginRight);
 					newPosition.x = randomX;
 					newPosition.y = transform.position.y;
 					newPosition.z = transform.position.z;
-	        //the spawned object will have the same rotation of the spawner object itself
+
+	        		//the spawned object will have the same rotation of the spawner object itself
 				    nextSpawned = (GameObject)Instantiate(enemies[spawnedIndex], newPosition, transform.rotation);
 					
 					if(spawnedParent!=null) {
@@ -115,6 +126,9 @@ public class SpawnerScript : MonoBehaviour
 	           
 	        
 
+
+	      }
+			
 	  
 			
 			//canSpawn = false;

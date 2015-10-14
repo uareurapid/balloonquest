@@ -3,12 +3,17 @@ using System.Collections;
 
 public class PickupCoinScript : MonoBehaviour {
 
+	GameControllerScript gameEngine;
 	SoundEffectsHelper sfx;
+	SpecialEffectsHelper se;
+	public int points = 2;
 	// Use this for initialization
 	void Start () {
 	  GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
 	  if(scripts!=null) {
 		sfx = scripts.GetComponentInChildren<SoundEffectsHelper>();
+		se = scripts.GetComponentInChildren<SpecialEffectsHelper>();
+		gameEngine = scripts.GetComponent<GameControllerScript>();
 	  }
 	}
 	
@@ -62,7 +67,15 @@ public class PickupCoinScript : MonoBehaviour {
 
    void HandleCollisionWithPlayer(PlayerScript player) {
 		if (sfx != null) {
-			sfx.PlayPickupCoinSound();
+		   sfx.PlayPickupCoinSound();
+		}
+		if(se!=null) {
+		   se.PlayCoinBurstEffect(transform.position);
+		   se.Play2PointsEffect(transform.position);
+		}
+
+		if(gameEngine!=null) {
+			gameEngine.IncreaseScoreBy(points);
 		}
 
 		player.IncreaseCoins(1);

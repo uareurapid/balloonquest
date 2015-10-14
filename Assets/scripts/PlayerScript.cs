@@ -24,9 +24,16 @@ public class PlayerScript : MonoBehaviour
 
 	public Sprite defaultBalloon;
 	public Sprite balloonOne;
-	public Sprite balloonTwo;
-	public Sprite balloonThree;
-	public Sprite balloonFour;
+
+	//gems balloons
+	public Sprite blueBalloon;//blue balloon
+	public Sprite greenBalloon;//green balloon
+	public Sprite redBalloon;//red balloon
+
+
+	public Sprite colouredBalloon;
+
+
 
 	private bool isVisible = true;
 
@@ -129,6 +136,8 @@ public class PlayerScript : MonoBehaviour
 	  hasRedGemGift = false;
 	  hasGreenGemGift = false;
 	  hasBlueGemGift = false;
+
+	  ChangeAvatar(false,false,false);
 
 	}
 
@@ -459,7 +468,16 @@ public class PlayerScript : MonoBehaviour
 	void OnTriggerEnter2D(Collider2D otherCollider)
 	{
 
-		PerformUpdate(otherCollider.gameObject);
+		GameObject collisionObject = otherCollider.gameObject;
+		GroundScript ground = collisionObject.GetComponentInChildren<GroundScript> ();
+		if (ground != null) {
+		    Debug.Log("Handle ground collision!");
+			HandleGroundCollision (ground.isVisible);
+		} 
+		else if(!hasLanded) {
+		   //ignore collisions when already landed
+			PerformUpdate(otherCollider.gameObject);
+		}
 	}
 
 	//handle the collision with another sprite (not other trigger)
@@ -468,7 +486,7 @@ public class PlayerScript : MonoBehaviour
 		GameObject collisionObject = collision.gameObject;
 		GroundScript ground = collisionObject.GetComponentInChildren<GroundScript> ();
 		if (ground != null) {
-
+		    Debug.Log("Handle ground collision!");
 			HandleGroundCollision (ground.isVisible);
 		} 
 		else if(!hasLanded) {
@@ -495,7 +513,7 @@ public class PlayerScript : MonoBehaviour
 		   BalloonScript ball = GetComponentInChildren<BalloonScript>();
 		   if(ball!=null) {
 		     //just handle the gift balloon stuff
-		     HandleCollisionWhileUsingGiftBalloon(ball);
+		     HandleCollisionWhileUsingGiftBalloon(ball,enemy);
 		     return;
 		   }
 
@@ -545,11 +563,17 @@ public class PlayerScript : MonoBehaviour
 	}
 
 	//the name says it all no?? :-)
-	public void HandleCollisionWhileUsingGiftBalloon(BalloonScript ball) {
+	public void HandleCollisionWhileUsingGiftBalloon(BalloonScript ball, EnemyScript enemy) {
 
 		if(ball.IsUndestructibleThroughHits()) {
 		       //blue
 		      ball.DecreaseHitsCounter();
+		      if(enemy.isExplosive) {
+		        ParticleSystem part = enemy.gameObject.GetComponentInChildren<ParticleSystem>();
+		        if(part!=null) {
+		          part.Play();
+		        }
+		      }
 
 		}
 		/*else if(ball.IsUndestructibleThroughTime()) {
@@ -561,6 +585,14 @@ public class PlayerScript : MonoBehaviour
 		     }
 
 		}*/
+	}
+
+	void UpdateHealthBar(float currentHealth) {
+		GameObject healthbar = GameObject.FindGameObjectWithTag("HealthBar");
+		if(healthbar!=null) {
+			HealthBar bar = healthbar.GetComponent<HealthBar>();
+			bar.SetCurrentHealth(currentHealth);
+		}
 	}
 
 	public void HandleGemCollision(GemScript gem) {
@@ -616,6 +648,8 @@ public class PlayerScript : MonoBehaviour
 	    	hasRedGemGift = isRed;
 	    	hasBlueGemGift = isBlue;
 
+	    	ChangeAvatar(isRed,isGreen,isBlue);
+
 	    	//destroy this gem
 			Destroy(gem.gameObject);
 
@@ -634,10 +668,29 @@ public class PlayerScript : MonoBehaviour
 
 	}
 
+	//Change the avatar background on the UI canvas
+	void ChangeAvatar(bool red, bool green, bool blue) {
+		GameObject avatar = GameObject.FindGameObjectWithTag("AvatarBalloon");
+		if(avatar!=null) {
+			UnityEngine.UI.Image image = avatar.GetComponent<UnityEngine.UI.Image>();
+			if(red) {
+				image.sprite = redBalloon;
+			}
+			else if(green) {
+				image.sprite = greenBalloon;
+			}
+			else if(blue) {
+				image.sprite = blueBalloon;
+			}
+			else {
+				image.sprite = defaultBalloon;
+			}
+		}
 
+   }
 
 	//handle collision with ground
-	void HandleGroundCollision(bool groundVisible) {
+	public void HandleGroundCollision(bool groundVisible) {
 
 		//HUGE FALL; WERE DEAD ANYWAY!!
 		if (!groundVisible && IsPlayerAlive()) {
@@ -668,7 +721,8 @@ public class PlayerScript : MonoBehaviour
 			//play effects
 			SpecialEffectsHelper fx = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
 			if (fx != null) {
-				fx.PlayJellyLandedEffect(transform.position);
+				fx.PlayLandingEffect(transform.position);
+				fx.PlayTouchdownEffect(transform.position);
 			}
 			PlayLandingSound();
 
@@ -679,9 +733,12 @@ public class PlayerScript : MonoBehaviour
 			int level = controller.currentLevel;
 			int max = controller.numberOfLevels;
 
-			PlaySuccessSound ();
 
-			DisableCameraShake();
+
+
+			controller.StopMusic();
+			PlaySuccessSound ();
+			controller.DisableGameElements(true);
 
 			if(level < max) {
 				//Go to next level in 2 seconds!
@@ -700,13 +757,6 @@ public class PlayerScript : MonoBehaviour
 	    
 			
 
-	}
-	//disable camera shake if needed
-	void DisableCameraShake() {
-		CameraShake shake = Camera.main.GetComponent<CameraShake> ();
-		if (shake != null) {
-			shake.enabled = false;
-		}
 	}
 
 
@@ -801,17 +851,10 @@ public class PlayerScript : MonoBehaviour
 	//called by the engine when player dies
 	void OnDestroy()
 	{
-		DisableScrolling();
-		DisableSpawning();
+	    //check needed, otherwise i might be just loading the next scene normally
+	    if(isDead)
+		  controller.DisableGameElements(false);
 		
-	}
-
-	void DisableScrolling() {
-		controller.DisableScrolling();
-	}
-
-	void DisableSpawning() {
-		controller.DisableSpawning();
 	}
 	
 	void ShowGameOver(bool showNextlevel) {
@@ -836,6 +879,8 @@ public class PlayerScript : MonoBehaviour
 
 		playerHealth.hitPoints=0;
 
+		UpdateHealthBar(0f);
+
 		//take a screenshot of the level (and allow touch on this)
 		controller.TakeScreenShot();
 
@@ -854,6 +899,8 @@ public class PlayerScript : MonoBehaviour
 
 
 	}
+
+
 
 
 	public bool IsPlayerAlive() {
@@ -1018,6 +1065,7 @@ public class PlayerScript : MonoBehaviour
 		EnableGravityScale ();
 		isFalling = true;
 		isLanding = true;
+		Debug.Log("Make player fall");
 	}
 
 	private void EnableParachute() {

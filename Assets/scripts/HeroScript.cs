@@ -87,7 +87,7 @@ public class HeroScript : MonoBehaviour {
 		          //is user using a gift balloon?
 				  BalloonScript ball = player.GetComponentInChildren<BalloonScript>();
 				  if(ball!=null) {
-					player.HandleCollisionWhileUsingGiftBalloon(ball);
+					player.HandleCollisionWhileUsingGiftBalloon(ball,enemy);
 				  }
 				  //no special thing to do, just kill it
 				  else {

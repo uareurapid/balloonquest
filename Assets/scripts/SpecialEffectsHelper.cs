@@ -22,6 +22,16 @@ public class SpecialEffectsHelper : MonoBehaviour
 
 	public ParticleSystem electricityEffect;
 
+	public ParticleSystem coinBurstEffect;
+
+	public ParticleSystem touchDownEffect;
+	//2
+	public ParticleSystem pointsEffect2Points;
+	//5
+	public ParticleSystem pointsEffect5Points;
+	//10
+	public ParticleSystem pointsEffect10Points;
+
 	
 	void Awake()
 	{
@@ -55,6 +65,10 @@ public class SpecialEffectsHelper : MonoBehaviour
 
 	}*/
 
+	public void PlayCoinBurstEffect(Vector3 position) {
+		instantiate(coinBurstEffect, position);
+	}
+
 	public void PlayJellyHitDeadEffect(Vector3 position) {
 		instantiate(hitEffect, position);
 	}
@@ -64,7 +78,7 @@ public class SpecialEffectsHelper : MonoBehaviour
 	}
 
 	
-	public void PlayJellyLandedEffect(Vector3 position) {
+	public void PlayLandingEffect(Vector3 position) {
 		instantiate(landEffect, position);
 	}
 	
@@ -72,8 +86,22 @@ public class SpecialEffectsHelper : MonoBehaviour
 		instantiate(soulEffect, position);
 	}
 
+	public void PlayTouchdownEffect(Vector3 position) {
+		instantiate(touchDownEffect, position);
+	}
+
 	public void PlayJElectricityEffect(Vector3 position) {
 		instantiate(electricityEffect, position);
+	}
+
+	public void Play5PointsEffect(Vector3 position) {
+		instantiate(pointsEffect5Points, position);
+	}
+	public void Play10PointsEffect(Vector3 position) {
+		instantiate(pointsEffect10Points, position);
+	}
+	public void Play2PointsEffect(Vector3 position) {
+		instantiate(pointsEffect2Points, position);
 	}
 
 	public void PlayWaterSplashEffect(Vector3 position) {

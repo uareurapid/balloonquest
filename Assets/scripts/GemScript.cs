@@ -9,6 +9,8 @@ public class GemScript : MonoBehaviour {
 	public bool isGreen = false;
 	public bool isBlue = false;
 
+	public int points = 10;
+
 
 	//give a gift after n pickups
 	public int giftAfter = 5;
@@ -38,7 +40,7 @@ public class GemScript : MonoBehaviour {
 		PlayerScript player = otherCollider.GetComponent<PlayerScript> ();
 		if(player!=null) {
 		 //gem collided with player
-		  if(player!=null && player.IsPlayerAlive()) {
+		  if(player!=null && player.IsPlayerAlive() && !player.PlayerTouchedGround()) {
 			player.HandleGemCollision(this);
 			PlayPickupSound();
 			handledThis = true;
@@ -49,8 +51,8 @@ public class GemScript : MonoBehaviour {
 		    //could be a hero, which is basically same as player, but for the character only
 			HeroScript hero = otherCollider.GetComponent<HeroScript> ();
 			if(hero!=null) {
-				player = hero.GetPlayer();
-				if(player!=null && player.IsPlayerAlive()) {
+				player = hero.GetPlayer(); //do not handle it if i already touched ground
+				if(player!=null && player.IsPlayerAlive() && !player.PlayerTouchedGround()) {
 				  player.HandleGemCollision(this);
 				  PlayPickupSound();
 				  handledThis = true;
@@ -71,8 +73,25 @@ public class GemScript : MonoBehaviour {
 		if (sfx != null) {
 		   sfx.PlayPickupCoinSound();
 	    }
-	  }
 
-	}
+		SpecialEffectsHelper fx = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
+		if (fx != null) {
+		    if(isRed) {
+		        //make sure we show it in front of the other stuff
+				fx.Play5PointsEffect(new Vector3(transform.position.x,transform.position.y,-2f));
+		    }
+			else {
+				fx.Play10PointsEffect(new Vector3(transform.position.x,transform.position.y,-2f));
+			}
+		}
+
+		GameControllerScript gameEngine = scripts.GetComponent<GameControllerScript>();
+		if(gameEngine!=null) {
+			gameEngine.IncreaseScoreBy(points);
+		}
+	}//if scripts!=null
+
+   }
+
 
 }

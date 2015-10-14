@@ -71,23 +71,13 @@ public class GameOverScript : MonoBehaviour
 		homeTexture = Resources.Load("home") as Texture2D;
 		rateTexture	= Resources.Load("button_rate") as Texture2D;
 
-		//exitTexture = Resources.Load("button_quit") as Texture2D;
-		//achievementsTexture = Resources.Load("button_achievements") as Texture2D;
-		//creditsTexture = Resources.Load("button_credits") as Texture2D;
-		//missionsTexture = Resources.Load("button_missions") as Texture2D;
-		//storeTexture = Resources.Load("store") as Texture2D;
-
 		GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
 		if(scripts!=null) {
 			resolutionHelper = scripts.GetComponent<GUIResolutionHelper>();
-			//translationManager = scripts.GetComponent<TextLocalizationManager>();
 		}
 		else {
 			resolutionHelper = GUIResolutionHelper.Instance;
-			//handle translation language
-		    //translationManager = TextLocalizationManager.Instance;
 		}
-		//resolutionHelper.CheckScreenResolution();
 
 		initialTime = 0f;
 		isShowingMessage = true;
@@ -246,14 +236,10 @@ public class GameOverScript : MonoBehaviour
 	    int width = resolutionHelper.screenWidth;
 		int height = resolutionHelper.screenHeight;
 		Vector3 scaleVector = resolutionHelper.scaleVector;
-		
 		bool isWideScreen = resolutionHelper.isWidescreen;
 
-		//Matrix4x4 wideMatrix = Matrix4x4.TRS(new Vector3( (resolutionHelper.scaleX - scaleVector.y) / 2 * width, 0, 0), Quaternion.identity, scaleVector);
 		GUI.matrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,scaleVector);
 
-
-		   // bool showNextLevel = false;
 
 
 			GameObject playerPlaying = GameObject.FindGameObjectWithTag ("Player");
@@ -274,7 +260,7 @@ public class GameOverScript : MonoBehaviour
 
 					//*******************************
 
-					homeTextureRect = new Rect(width/2-48, height-150,96,96);
+					homeTextureRect = new Rect(width/2-(homeTexture.width/2), height-150,96,96);
 					GUI.DrawTexture(homeTextureRect,homeTexture);
 				
 					int score = PlayerPrefs.GetInt (GameConstants.HIGH_SCORE_KEY,1);

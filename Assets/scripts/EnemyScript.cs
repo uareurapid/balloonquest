@@ -16,6 +16,8 @@ public class EnemyScript : MonoBehaviour
 	public bool isBloody = false; //releases blood splatter
 	public bool isBurner = false; //burns the enemy
 
+	public bool isExplosive = false; //explodes
+
 	public bool isBoss = false;
 
 	private GameObject scripts;

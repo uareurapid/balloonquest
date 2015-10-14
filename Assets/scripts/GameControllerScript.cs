@@ -86,6 +86,7 @@ public class GameControllerScript : MonoBehaviour {
 	public int currentWorld = 1;
 	//number of minutes to complete the mission
 
+	public GameObject metersHealthBar;
 
 	private MeshRenderer countDownMesh;
 	private int countDown = 3;
@@ -100,14 +101,7 @@ public class GameControllerScript : MonoBehaviour {
 
 
 	
-	//Iads only
-//	private ADBannerView banner = null;
-	
-	//#if UNITY_IPHONE
-	//private ADBannerView banner; 
-	//#endif
-	
-
+	private JetpackBar metersHealtBarScript;
 	
 	private int currentTime = 0;
 
@@ -125,6 +119,7 @@ public class GameControllerScript : MonoBehaviour {
 	bool buyedPremium;
 	bool buyedNoads;
 
+	public UnityEngine.UI.Text metersCounter;
 	
 	private bool openedPlatform = false;
 	GUIResolutionHelper resolutionHelper;
@@ -150,25 +145,7 @@ public class GameControllerScript : MonoBehaviour {
 	    else {
 		  instance = this;
 	    } 
-		
 
-		//check screen size, this was breaking, probably some place we are calling Instance
-		GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
-		if(scripts!=null) {
-			resolutionHelper = scripts.GetComponent<GUIResolutionHelper>();
-			//translationManager = scripts.GetComponent<TextLocalizationManager>();
-		}
-		else {
-			resolutionHelper = GUIResolutionHelper.Instance;
-			//handle translation language
-		    //translationManager = TextLocalizationManager.Instance;
-		
-		}
-		screenWidth = resolutionHelper.screenWidth;
-		screenHeight = resolutionHelper.screenHeight;
-				
-		//translations
-		//translationManager.LoadSystemLanguage(Application.systemLanguage);
 		
 		InitPlayer();
 
@@ -211,6 +188,19 @@ public class GameControllerScript : MonoBehaviour {
 		rateTexture	= Resources.Load("button_rate") as Texture2D;
 		//		exitTexture	= Resources.Load("button_playstart") as Texture2D;
 
+		metersCounter.text = "";
+
+		//check screen size, this was breaking, probably some place we are calling Instance
+		GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
+		if(scripts!=null) {
+			resolutionHelper = scripts.GetComponent<GUIResolutionHelper>();
+		}
+		else {
+			resolutionHelper = GUIResolutionHelper.Instance;
+		}
+		screenWidth = resolutionHelper.screenWidth;
+		screenHeight = resolutionHelper.screenHeight;
+
 		isGameComplete = false;
 		movedGround = false;
 		isLevelComplete = false;
@@ -235,6 +225,10 @@ public class GameControllerScript : MonoBehaviour {
 		paralaxLevels = GetParalaxLevels ();
 		//start game play countdown
 		StartCountdown ();
+
+		metersHealtBarScript = metersHealthBar.GetComponent<JetpackBar>();
+		metersHealtBarScript.SetMaxValue(elapsedMissionMeters);
+		//metersHealtBarScript.SetCurrentValue(elapsedMissionMeters);
 	}
 
 	void OnLevelWasLoaded(int level) {
@@ -243,6 +237,19 @@ public class GameControllerScript : MonoBehaviour {
 			Handheld.StopActivityIndicator();
 	    }
         
+    }
+
+    public void IncreaseScoreBy(int points) {
+
+		GameObject levelScore = GameObject.FindGameObjectWithTag("LevelScore");
+		if(levelScore!=null) {
+			UnityEngine.UI.Text txtScore =levelScore.GetComponent<UnityEngine.UI.Text>();
+		    if(txtScore!=null) {
+		      int previousValue = int.Parse(txtScore.text);
+		      previousValue+=points;
+		      txtScore.text = previousValue.ToString();
+		    }
+		}
     }
 
 	//check if we have sound enabled/disabled
@@ -346,7 +353,15 @@ public class GameControllerScript : MonoBehaviour {
 
 		if(!isGamePaused && player!=null && player.IsPlayerAlive()) {
 
-		  elapsedMissionMeters-=GameConstants.METERS_STEP;
+		  if(elapsedMissionMeters <= 5) {
+				elapsedMissionMeters-=1;
+		  }
+		  else {
+				elapsedMissionMeters-=GameConstants.METERS_STEP;
+		  }
+
+
+		  metersHealtBarScript.SetCurrentValue(elapsedMissionMeters);
 													
 		}//if !gamePaused
 
@@ -365,13 +380,13 @@ public class GameControllerScript : MonoBehaviour {
 	/**
 	* Add extra seconds
 	*/
-	public void	IncreaseTimeSecondsBy(int seconds) {
+	//public void	IncreaseTimeSecondsBy(int seconds) {
 	//do we overlap the min?
 		
-		elapsedMissionMeters+=seconds;
+	//	elapsedMissionMeters+=seconds;
 
 	  
-	}
+	//}
 
 	void PlaySettingsSound() {
 		
@@ -780,148 +795,124 @@ public class GameControllerScript : MonoBehaviour {
 			int width = resolutionHelper.screenWidth;
 			int height = resolutionHelper.screenHeight;
 
-
-
 			//assign normal matrix by default
+			//only now define the matrix for the buttons
+			GUI.matrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,scaleVector);
 
-		    if(Event.current.type==EventType.Repaint && !isGameOver) {
-	
-				if(elapsedMissionMeters>=1 && !isLevelComplete) {
-					  DrawText(elapsedMissionMeters +" meters!"  , messagesFontSizeLarger+12, 0, 90,Screen.width,50);
-					
-				}
+		    if(Event.current.type==EventType.Repaint) {
 
-			    if(isLevelComplete) {
-				    //unlock some achievement here maybe
-					DrawText("Congratulations!"  , messagesFontSizeLarger, 0, Screen.height/2-200,Screen.width,50);
-					DrawText("Level " + currentLevel + " Complete."  , messagesFontSizeLarger, 0, Screen.height/2,Screen.width,50);
-				}
+		        //use normal matrix here
+		        GUI.matrix = svMat;
 
-			}
-		    			
-			if(Event.current.type==EventType.Repaint) {
-
-
-				//draw any screenshot if available
-			    if(screenshotTexture!=null) {
-
-					Vector2 pivotPoint = new Vector2(Screen.width / 2, Screen.height / 2);
-
-					//if not touhced or already hit max
-					if(!touchedScreenshotTexture ) {
-						//rotate the matrix to draw the texture
-						//float rotAngle = 45f;
-						GUIUtility.RotateAroundPivot(GameConstants.MAX_SCREENSHOT_ROTATION, pivotPoint);
-	        			
-				     	screenshotTextureRect = new Rect(Screen.width/2,Screen.height/2,GameConstants.MIN_SCREENSHOT_WIDTH,GameConstants.MIN_SCREENSHOT_HEIGHT);
-						GUI.DrawTexture(screenshotTextureRect,screenshotTexture);
-
-						//restore the matrix rotation afterdraw the texture
-						float rotAngle = GameConstants.MAX_SCREENSHOT_ROTATION * -1;
-	        			GUIUtility.RotateAroundPivot(rotAngle, pivotPoint);
+				if(!isGameOver) {
+					if(elapsedMissionMeters>0 && !isLevelComplete) {
+						metersCounter.text = elapsedMissionMeters +" meters!";
 					}
 					else {
-					   //draw it bigger, but it will cover other things, no???
+					    metersCounter.text = "";
+					}
 
-							if(minTextureWidth < GameConstants.MAX_SCREENSHOT_WIDTH) {
-								minTextureWidth +=2;
-								minTextureHeight +=2;
-							}
+				    if(isLevelComplete) {
+					    //unlock some achievement here maybe
+						DrawText("Congratulations!"  , messagesFontSizeLarger + 5, 0, Screen.height/2-500,Screen.width,50);
+						DrawText("Level " + currentLevel + " Complete."  , messagesFontSizeLarger + 5, 0, Screen.height/2,Screen.width,50);
+					}
+				}//IS GAME OVER
+				else {
+					//draw any screenshot if available
+				    if(screenshotTexture!=null) {
 
-							if(minTextureWidth > GameConstants.MAX_SCREENSHOT_WIDTH) {
-								minTextureWidth = GameConstants.MAX_SCREENSHOT_WIDTH;
-							}
-							if(minTextureHeight > GameConstants.MAX_SCREENSHOT_HEIGHT) {
-								minTextureHeight = GameConstants.MAX_SCREENSHOT_HEIGHT;
-							}
-							//we need to count with image size, size the position is top left of the texture
-							screenshotTextureRect = new Rect ((Screen.width / 2) - (minTextureWidth/2), 
-							(Screen.height / 2 + 50) - (minTextureHeight/2),
-							minTextureWidth,
-							minTextureHeight);
+						Vector2 pivotPoint = new Vector2(Screen.width / 2, Screen.height / 2);
 
+						//if not touhced or already hit max
+						if(!touchedScreenshotTexture ) {
+							//rotate the matrix to draw the texture
+							//float rotAngle = 45f;
+							GUIUtility.RotateAroundPivot(GameConstants.MAX_SCREENSHOT_ROTATION, pivotPoint);
+		        			
+					     	screenshotTextureRect = new Rect(Screen.width/2,Screen.height/2,GameConstants.MIN_SCREENSHOT_WIDTH,GameConstants.MIN_SCREENSHOT_HEIGHT);
 							GUI.DrawTexture(screenshotTextureRect,screenshotTexture);
 
-					}
-			    	
-			    }
+							//restore the matrix rotation afterdraw the texture
+							float rotAngle = GameConstants.MAX_SCREENSHOT_ROTATION * -1;
+		        			GUIUtility.RotateAroundPivot(rotAngle, pivotPoint);
+						}
+						else {
+						   //draw it bigger, but it will cover other things, no???
 
-			    //now define the matrix for the buttons
-				//GUI.matrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,scaleVector);
+								if(minTextureWidth < GameConstants.MAX_SCREENSHOT_WIDTH) {
+									minTextureWidth +=2;
+									minTextureHeight +=2;
+								}
+
+								if(minTextureWidth > GameConstants.MAX_SCREENSHOT_WIDTH) {
+									minTextureWidth = GameConstants.MAX_SCREENSHOT_WIDTH;
+								}
+								if(minTextureHeight > GameConstants.MAX_SCREENSHOT_HEIGHT) {
+									minTextureHeight = GameConstants.MAX_SCREENSHOT_HEIGHT;
+								}
+								//we need to count with image size, size the position is top left of the texture
+								screenshotTextureRect = new Rect ((Screen.width / 2) - (minTextureWidth/2), 
+								(Screen.height / 2 + 50) - (minTextureHeight/2),
+								minTextureWidth,
+								minTextureHeight);
+
+								GUI.DrawTexture(screenshotTextureRect,screenshotTexture);
+
+						}
+				    	
+				    }
+				}
+				//now use this one
+				GUI.matrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,scaleVector);
 
 				if(isGameStarted) {
-			
-						
+						if(player!=null && !player.PlayerTouchedGround()) {
+
+							pausePlayRect = new Rect(width-100, height-100,96,96);
+							if(isGamePaused) {
+							//if not running
+							   GUI.DrawTexture(pausePlayRect, playIcon);
+							}
+							//game is not paused
+						    //draw pause icon
+						    else {
+								GUI.DrawTexture(pausePlayRect, pauseIcon);
+							}
+						}
+					}
+					else {
+					  //Debug.Log("Not started yet");
+					  //if null means it was destroyd, is game over
+					  //besides i cannot start with a null player, and if not a restart
+					  //neither if i'm rolling credits
+				     if(player!=null && !showUnlockLevel && !isGameComplete) {
+					  
 				
-					//we need this to put the play/pause at right
-					/*if(isWideScreen){
-						GUI.matrix = wideMatrix;
-					}
-					else{
-						GUI.matrix = normalMatrix;
-					}*/
 
-
-					pausePlayRect = new Rect(Screen.width-100 ,15,96,96);
-
-
-					if(isGamePaused) {
-					//if not running
-					   GUI.DrawTexture(pausePlayRect, playIcon);
-					 
-					}
-					//game is not paused
-				    //draw pause icon
-				    else {
+						#if UNITY_ANDROID && !UNITY_EDITOR
+						rateRect = new Rect( width/2 - 100,screenHeight/2+40,200,80);
+						GUI.DrawTexture(rateRect, rateTexture);
+						#endif
+						//start playing //screenWidth
+							
 						
-						GUI.DrawTexture(pausePlayRect, pauseIcon);
-					}
-
-
-
-
-				}
-				else {
-
-				
-				  //Debug.Log("Not started yet");
-				  //if null means it was destroyd, is game over
-				  //besides i cannot start with a null player, and if not a restart
-				  //neither if i'm rolling credits
-			     if(player!=null && !showUnlockLevel && !isGameComplete) {
-				  
-			
-
-					#if UNITY_ANDROID && !UNITY_EDITOR
-					rateRect = new Rect( width/2 - 100,screenHeight/2+40,200,80);
-					GUI.DrawTexture(rateRect, rateTexture);
-					#endif
-					//start playing //screenWidth
-						
+					 }
 					
-				 }
+				   }
+	
 				
-			   }
-				
-						
-			}//end repaint
+
+			}
+
 
 				
 
 		//---------------------------------------------------------
 		//*************** CHEK TEXTURE CLICKS *********************
 		//---------------------------------------------------------
-		//before checking the clicks we put the correct matrix
 
-		/*if(isWideScreen){
-			GUI.matrix = wideMatrix;
-		}
-		else{
-			GUI.matrix = normalMatrix;
-		}*/
-		//---------------------------------------------
 
-		GUI.matrix = svMat;
 
 		if(!isMobilePlatform) { //desktop
 
@@ -930,11 +921,11 @@ public class GameControllerScript : MonoBehaviour {
 			if(Event.current.type == EventType.MouseUp ) {
 				
 				if(isGameOver) {
-						#if UNITY_ANDROID && !UNITY_EDITOR
-						if(rateRect.Contains(Event.current.mousePosition) && player!=null) {
-						  Application.OpenURL("market://details?id=com.pcdreams.superjellytroopers");
-					    }
-					    #endif
+						//#if UNITY_ANDROID && !UNITY_EDITOR
+						//if(rateRect.Contains(Event.current.mousePosition) && player!=null) {
+						//  Application.OpenURL("market://details?id=com.pcdreams.superjellytroopers");
+					    //}
+					    //#endif
 
 						//if(exitTextureRect.Contains(Event.current.mousePosition) ) {
 						//	StartGame();
@@ -953,14 +944,9 @@ public class GameControllerScript : MonoBehaviour {
 						touchedScreenshotTexture = true;
 					}
 			    }
-
 				else {
-
-
-
-				//Did i paused the game???
 				  if(pausePlayRect.Contains(Event.current.mousePosition)) {
-
+						//Did i paused the game???
 
 						isGamePaused = !isGamePaused;
 						if(isGamePaused) {
@@ -1053,6 +1039,7 @@ public class GameControllerScript : MonoBehaviour {
 	
 }	
 
+
 	void BuildLargerLabelStyle() {
 	
 		centeredStyleLarger =  new GUIStyle(GUI.skin.label);
@@ -1069,7 +1056,65 @@ public class GameControllerScript : MonoBehaviour {
 
 	}
 
+	public void DisableGameElements(bool disableMovement) {
+		//DisableCameraShake();
+		if(disableMovement) {
+			DisableMovingPlatforms();
+		}
+		DisableScrolling();
+		DisableSpawning();
+	}
 
+	//disable camera shake if needed
+	public void DisableCameraShake() {
+		CameraShake shake = Camera.main.GetComponent<CameraShake> ();
+		if (shake != null) {
+			shake.enabled = false;
+		}
+	}
+
+	//disable all the moving platforms, call when landed
+	public void DisableMovingPlatforms() {
+	  MovingPlatformScript[] objects = GameObject.FindObjectsOfType<MovingPlatformScript>();
+	  foreach(MovingPlatformScript mv in objects) {
+	    if(mv!=null && mv.tag!="Ground") {
+	      mv.enabled = false;
+	      //and make them fall
+	      GameObject obj = mv.gameObject;
+	      if(obj!=null) {
+	          //stop playing any particle
+			  ParticleSystem part = obj.GetComponentInChildren<ParticleSystem>();
+	      	  if(part!=null) {
+				part.Stop(true);
+	      	  }
+	      	  //if it has a body attached, we enable gravity scale on it
+	      	  //we make sure it falls by the laws of gravity
+			  Rigidbody2D body = obj.GetComponent<Rigidbody2D>();
+			  if(body!=null) {
+			    body.gravityScale = 1.0f;
+			    body.isKinematic = false;
+			  }
+	      }
+
+	    }
+	  }
+	}
+	//disable all scrolling backgrounds
+	public void DisableScrolling() {
+		ScrollingScript[] scrolls= FindObjectsOfType(typeof(ScrollingScript)) as ScrollingScript[];
+		foreach (ScrollingScript scroll in scrolls) {
+			scroll.enabled = false;
+		}
+	}
+
+	public void DisableSpawning() {
+		SpawnerScript [] spawners = GameObject.FindObjectsOfType(typeof(SpawnerScript)) as SpawnerScript[];
+		if (spawners != null && spawners.Length > 0) {
+			foreach(SpawnerScript spawner in spawners) {
+				spawner.canSpawn = false;
+			}
+		}
+	}
 
 	public int GetNextLevel() {
 		if (currentLevel < numberOfLevels) {
@@ -1270,22 +1315,6 @@ public class GameControllerScript : MonoBehaviour {
 	//callback for the screenshot script
 	public void SetScreenshotTexture(Texture2D texture) {
 	  screenshotTexture = texture;
-	}
-
-	public void DisableScrolling() {
-		ScrollingScript[] scrolls= FindObjectsOfType(typeof(ScrollingScript)) as ScrollingScript[];
-		foreach (ScrollingScript scroll in scrolls) {
-			scroll.enabled = false;
-		}
-	}
-
-	public void DisableSpawning() {
-		SpawnerScript [] spawners = GameObject.FindObjectsOfType(typeof(SpawnerScript)) as SpawnerScript[];
-		if (spawners != null && spawners.Length > 0) {
-			foreach(SpawnerScript spawner in spawners) {
-				spawner.canSpawn = false;
-			}
-		}
 	}
 
 	

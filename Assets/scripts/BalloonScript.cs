@@ -9,17 +9,32 @@ public class BalloonScript : MonoBehaviour {
 	public int undestructibleForNHits = 0;
 	public int undestructibleForNSeconds = 0;
 
+	private int initialNumberOfHits = 3;
+	private int initialNumberOfSeconds = 10;
+
 	//use only for time ones
 	public bool startDestroying = false;
 
 	public bool destroyable = false;
+	GameObject healthbar;
+
+	UnityEngine.UI.Text boostersText= null;
 
 	GUISkin skin;
 	GUIStyle centeredStyleSmaller;
 	// Use this for initialization
+
 	void Start () {
 	  destroyable = false;
 	  skin = Resources.Load("GUISkin") as GUISkin;
+	  initialNumberOfHits = undestructibleForNHits;
+	  initialNumberOfSeconds = undestructibleForNSeconds;
+	  healthbar = GameObject.FindGameObjectWithTag("HealthBar");
+	  GameObject txt = GameObject.FindGameObjectWithTag("BoostersText");
+	  if(txt!=null) {
+	    boostersText = txt.GetComponent<UnityEngine.UI.Text>();
+	    boostersText.text = "";//insane check
+	  }
 	}
 	
 	// Update is called once per frame
@@ -39,14 +54,29 @@ public class BalloonScript : MonoBehaviour {
 	    startDestroying = false;//avoid call this part again
 		InvokeRepeating("DecreaseSecondsCounter",1.0f,1.0f);
 	  }
+
+		if(boostersText!=null) {
+			if(undestructibleForNHits > 0) {
+			    boostersText.text = "X " + undestructibleForNHits;
+			}
+		    else if(undestructibleForNSeconds > 0) {
+				boostersText.text = undestructibleForNSeconds + " seconds";
+			}
+			else {
+			  boostersText.text = "";//make sure nothing stays there!
+			}
+		}
 	}
 
 	public void DecreaseHitsCounter() {
-	  Debug.Log("DECREASING COUNTER");
+
 	  undestructibleForNHits-=1;
+
 	  if(undestructibleForNHits < 0) {
 	    undestructibleForNHits = 0;
 	  }
+
+	  UpdateHealthBar(undestructibleForNHits);
 
 	  if(undestructibleForNHits==0) {
 	    destroyable = true;
@@ -67,6 +97,8 @@ public class BalloonScript : MonoBehaviour {
 		undestructibleForNSeconds = 0;
 	  }
 
+	  UpdateHealthBar(undestructibleForNSeconds);
+
 	  if(undestructibleForNSeconds==0) {
 	    destroyable = true;
 	  }
@@ -84,7 +116,15 @@ public class BalloonScript : MonoBehaviour {
 	 return destroyable;
 	}
 
-	void OnGUI() {
+	public int GetInitialNumberOfHits() {
+	 return initialNumberOfHits;
+	}
+
+	public int GetInitialNumberOfSeconds() {
+	  return initialNumberOfSeconds;
+	}
+
+	/*void OnGUI() {
 	
 		GUI.skin = skin;
 
@@ -98,17 +138,14 @@ public class BalloonScript : MonoBehaviour {
 			//Matrix4x4 svMat = GUI.matrix;//save current matrix
 			//GUI.matrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,resolutionHelper.scaleVector);
 
-			if(undestructibleForNHits > 0) {
 
-			  DrawText("X " + undestructibleForNHits,20,100,100,600,60);
-			}
-			else if(undestructibleForNSeconds > 0) {
-				DrawText(undestructibleForNSeconds + " seconds",20,100,100,600,60);
-			}
+			  
+
+			 
 		
 
 		}
-	}
+	}*/
 
 	public void DrawText(string text, int fontSize, int x, int y,int width,int height) {
 		
@@ -126,5 +163,14 @@ public class BalloonScript : MonoBehaviour {
 	//just avoid calling this again
 	void OnDestroy() {
 		destroyable = false;
+	}
+
+	void UpdateHealthBar(float currentValue) {
+
+		if(healthbar!=null) {
+		   HealthBar bar = healthbar.GetComponent<HealthBar>();
+			//set visible
+		   bar.SetCurrentHealth(currentValue);
+		}
 	}
 }

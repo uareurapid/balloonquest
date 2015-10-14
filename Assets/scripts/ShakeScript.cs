@@ -25,6 +25,7 @@ public class ShakeScript : MonoBehaviour {
 		Vector3 position = new Vector3(transform.position.x,transform.position.y,transform.position.z);
 		Vector3 newPosition = Random.insideUnitCircle * 0.055f;
 		transform.position = position + newPosition;
+		Handheld.Vibrate();
 
 	  }
 		

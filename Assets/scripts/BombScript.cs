@@ -9,7 +9,8 @@ public class BombScript : MonoBehaviour
 	public AudioClip fuse;					// Audioclip of fuse.
 	public float fuseTime = 1.5f;
 	//public GameObject explosion;			// Prefab of explosion effect.
-
+	public bool isSpikesBomb = false;
+	//release spikes??
 
 	public float detonationDelay = 5f;//5 seconds
 
@@ -83,7 +84,42 @@ public class BombScript : MonoBehaviour
 		    }
 			
 		}
+
+		if(isSpikesBomb) {
+		    Rigidbody []bodies = GetComponentsInChildren<Rigidbody>();
+		    foreach(Rigidbody body in bodies) {
+		      if(body!=null) {
+				GameObject obj = body.gameObject;
+				if(obj!=null) {
+				  Debug.Log("add force to " + bodies.Length);
+				  Vector3 rotation = new Vector3(obj.transform.eulerAngles.x,obj.transform.eulerAngles.y,obj.transform.eulerAngles.z);
+				  body.AddForce(rotation * 20.5f);
+				}
+		      }
+		    }
+
+			Rigidbody2D []bodies2 = GetComponentsInChildren<Rigidbody2D>();
+			foreach(Rigidbody2D body in bodies2) {
+		      if(body!=null) {
+
+				GameObject obj = body.gameObject;
+				if(obj!=null) {
+				  Debug.Log("add force to " + bodies2.Length);
+				  body.isKinematic = false;
+
+				  Vector3 dir = Quaternion.AngleAxis(obj.transform.eulerAngles.z, Vector3.forward) * Vector3.right;
+
+				  //Vector3 rotation = new Vector3(obj.transform.eulerAngles.x,obj.transform.eulerAngles.y,obj.transform.eulerAngles.z);
+				  body.AddForce(dir * 100f);
+				}
+		      }
+		    }
+
+			//rigidbody.AddForce(transform.forward * amount);
+		}
+
+
 		// Destroy the bomb itself.
-		Destroy (gameObject);
+		//Destroy (gameObject);
 	}
 }

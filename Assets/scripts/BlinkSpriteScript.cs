@@ -8,6 +8,7 @@ public class BlinkSpriteScript : MonoBehaviour {
     public bool canBlink = false;
     public int numberOfBlinks = 5;
 
+    private bool hasStarted = false;
     private SpriteRenderer rend;
 	// Use this for initialization
 	void Start () {
@@ -22,21 +23,16 @@ public class BlinkSpriteScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if(canBlink) {
-		 Blink();
+		if(canBlink && !hasStarted) {
+			InvokeRepeating("Blink",delay,blinkInterval);
 		}
 	}
 
 	public void EnableBlink(float del, float interval) {
 	  canBlink = true;
-	  if(canBlink) {
-
-	    for(int i = 0; i<numberOfBlinks; i++) {
-			ShowSprite();
-	 		StartCoroutine(MyWaitMethod(interval));
-			HideSprite();
-	    }
-	  }
+	  delay = del;
+	  blinkInterval = interval; 
+	  hasStarted = false;
 	}
 
 	public void DisableBlink() {
@@ -46,23 +42,17 @@ public class BlinkSpriteScript : MonoBehaviour {
 
 	public void Blink() {
 	  rend.enabled = !rend.enabled;
+
+	  if(!hasStarted) {
+	   hasStarted = true;
+	  }
+
+	  numberOfBlinks-=1;
+	  if(numberOfBlinks < 0) {
+	    numberOfBlinks = 0;
+	    canBlink = false;
+	  }
 	}
 
-	void HideSprite() {
-
-		rend.enabled = false; 
-
-
-	}
-
-	void ShowSprite() {
-
-		rend.enabled = true; 
-	
-	}
-
-	IEnumerator MyWaitMethod(float seconds) {
-		yield return new WaitForSeconds(seconds);
-	}
 
 }

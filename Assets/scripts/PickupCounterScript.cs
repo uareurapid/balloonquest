@@ -121,14 +121,33 @@ public class PickupCounterScript : MonoBehaviour {
 		 newBalloonObject.transform.parent = player.transform;
 
 		 BalloonScript ball = newBalloonObject.GetComponent<BalloonScript>();
-		 if(ball!=null && ball.IsUndestructibleThroughTime()) {
+		 if(ball!=null) {
 			//green
 			//will start the countdown
-			ball.StartCountdownDestruction();
-		 }
+			if(ball.IsUndestructibleThroughTime()) {
 
-	  }
+				SetHealthBar((float)ball.GetInitialNumberOfSeconds());
+				ball.StartCountdownDestruction();
+			}
+			else if(ball.IsUndestructibleThroughHits()) {
+				SetHealthBar((float)ball.GetInitialNumberOfHits());
+				}
+			}
+
+		 }
 		
+	}
+
+	void SetHealthBar(float initialValue) {
+		GameObject healthbar = GameObject.FindGameObjectWithTag("HealthBar");
+		if(healthbar!=null) {
+		   HealthBar bar = healthbar.GetComponent<HealthBar>();
+			//set visible
+		   bar.SetMaxHealth(initialValue);
+		//	foreach(UnityEngine.UI.Image img in bar.gameObject.GetComponentsInChildren<UnityEngine.UI.Image>()){
+		//	   img.enabled=true;
+		//	}
+		}
 	}
 	
 

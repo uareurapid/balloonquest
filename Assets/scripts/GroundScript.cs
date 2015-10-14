@@ -76,5 +76,35 @@ public class GroundScript : MonoBehaviour {
 		platformScript.enabled = false;
 	}
 	
+	/*void OnTriggerEnter2D(Collider2D otherCollider)
+	{
 
+		PlayerScript player = otherCollider.gameObject.GetComponent<PlayerScript>();
+		if(player!=null) {
+		  player.HandleGroundCollision(isVisible);
+		}
+		else {
+		  HeroScript hero = otherCollider.gameObject.GetComponent<HeroScript>();
+		  if(hero!=null) {
+			player = otherCollider.GetComponent<PlayerScript>();
+			player.HandleGroundCollision(isVisible);
+		  }
+		}
+	}
+
+	//handle the collision with another sprite (not other trigger)
+	void OnCollisionEnter2D(Collision2D collision)
+	{
+		PlayerScript player = collision.gameObject.GetComponent<PlayerScript>();
+		if(player!=null) {
+		  player.HandleGroundCollision(isVisible);
+		}
+		else {
+			HeroScript hero = collision.gameObject.GetComponent<HeroScript>();
+		  if(hero!=null) {
+				player = collision.gameObject.GetComponent<PlayerScript>();
+			player.HandleGroundCollision(isVisible);
+		  }
+		}
+	}*/
 }
