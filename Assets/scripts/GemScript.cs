@@ -11,6 +11,7 @@ public class GemScript : MonoBehaviour {
 
 	public int points = 10;
 
+	private bool isVisible = false;
 
 	//give a gift after n pickups
 	public int giftAfter = 5;
@@ -26,6 +27,21 @@ public class GemScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	
+	}
+
+	void OnBecameVisible() {
+	if(isVisible)
+	  return;
+
+		isVisible = true;
+	}
+	
+	void OnBecameInvisible() {
+	 if(!isVisible)
+	   return;
+
+		isVisible = false;
+		Destroy(gameObject);
 	}
 
 	public Sprite GetBalloonGift() {
