@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 //APP STORE LINK https://itunes.apple.com/us/app/super-jelly-troopers/id925880432?ls=1&mt=8
-namespace BalloonQuest
+namespace MrBalloony
 {
 		public class GameConstants
 		{
@@ -32,8 +32,10 @@ namespace BalloonQuest
 				public const int DEBUG_STARTING_POINT_IN_METERS = 200;
 				public const int METERS_STEP = 5;//could be 4 in prod, 3 minimum
 
-				public const int NUM_LEVELS_PER_WORLD = 6;
-				public const int NUM_WORLDS = 4;
+				public const int NUM_LEVELS_PER_WORLD = 1;
+				public const int NUM_WORLDS = 8;
+
+				public const string NEXT_SCENE_KEY = "NextScene";
 
 				//THIS ARE JUST FOR THE CURRENT LEVEL
 				//number of seconds left when finished the 

@@ -134,28 +134,40 @@ public class HeroScript : MonoBehaviour {
 	 return startedMovingTowards;
 	}
 
+	public bool HasOpenedChest() {
+	  return hasOpenedChest;
+	}
+
 	public bool HasHeroReachedTarget() {
+
+	 if(!hasOpenedChest) {
+	   return false;
+	 }
+
 	  MoveTowardsScript moveTowards =  GetComponent<MoveTowardsScript>();
 	  bool reached = startedMovingTowards && moveTowards.HasReachedTarget();
 
-	  if(reached) {
-
-	   if(hasOpenedChest) {
+	  if(reached && hasOpenedChest) {
 			//play the teleportation effect
 			ParticleSystem part = GetComponentInChildren<ParticleSystem>();
 			if(part!=null) {
 				part.Play(true);
 			}
 
+			//teleportation effect/sound
+			GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
+			if(scripts!=null) {
+				SoundEffectsHelper sfx = scripts.GetComponentInChildren<SoundEffectsHelper> ();
+				if (sfx != null) {
+					sfx.PlayTeleportSound();
+				}
+			}
+
+
 
 			HidePointer();
 	   }
-	   else {
-		//say it did not reached yet
-		reached = false;
-	   }
-	   
-	  }
+	
 	  return reached ;
 	}
 
@@ -200,6 +212,10 @@ public class HeroScript : MonoBehaviour {
 
 	public void OpenChest(bool open) {
 		hasOpenedChest = open;
+		//if i opened now and not already start moving, do it now
+		if(hasOpenedChest && !startedMovingTowards) {
+		  StartMovingTowardsSign();
+		}
 	}
 
 	IEnumerator HideSprite(float length) {

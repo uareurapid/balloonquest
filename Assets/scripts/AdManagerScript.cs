@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.Advertisements;
-using BalloonQuest;
+using MrBalloony;
 
 public class AdManagerScript : MonoBehaviour {
 
-	[SerializeField] string gameID = GameConstants.UNITY_ADS_ANDROID_GAME_ID;
+	/*[SerializeField] string gameID = GameConstants.UNITY_ADS_ANDROID_GAME_ID;
 	
 	void Awake()
 	{
@@ -62,5 +62,5 @@ public class AdManagerScript : MonoBehaviour {
 			yield return null;
 		
 		Time.timeScale = currentTimeScale;
-	}
+	}*/
 }

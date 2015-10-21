@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using BalloonQuest;
+using MrBalloony;
 
 public class GameControllerScript : MonoBehaviour {
 
@@ -119,7 +119,10 @@ public class GameControllerScript : MonoBehaviour {
 	bool buyedPremium;
 	bool buyedNoads;
 
+	//remaining meters
 	public UnityEngine.UI.Text metersCounter;
+	//level finished/congratulations
+	public UnityEngine.UI.Text levelFinishedTxt;
 	
 	private bool openedPlatform = false;
 	GUIResolutionHelper resolutionHelper;
@@ -353,12 +356,16 @@ public class GameControllerScript : MonoBehaviour {
 
 		if(!isGamePaused && player!=null && player.IsPlayerAlive()) {
 
-		  if(elapsedMissionMeters <= 5) {
-				elapsedMissionMeters-=1;
-		  }
-		  else {
+		  //do not go under 0
+		  if(elapsedMissionMeters > 0) {
+			if(elapsedMissionMeters <= 5) {
+			    //on 5 start counting 1 by one, until reach 0
+			    elapsedMissionMeters-=1;
+		    }
+		    else {
 				elapsedMissionMeters-=GameConstants.METERS_STEP;
-		  }
+		    }
+		 }
 
 
 		  metersHealtBarScript.SetCurrentValue(elapsedMissionMeters);
@@ -366,7 +373,7 @@ public class GameControllerScript : MonoBehaviour {
 		}//if !gamePaused
 
 		//TODO this should be configurable
-		if (elapsedMissionMeters <= GameConstants.METERS_BOUNDARY_TO_MOVE_GROUND && !movedGround) {
+		/*if (elapsedMissionMeters <= GameConstants.METERS_BOUNDARY_TO_MOVE_GROUND && !movedGround) {
 			GameObject ground = GameObject.FindGameObjectWithTag("Ground");
 			if(ground!=null) {
 				MovingPlatformScript move = ground.GetComponent<MovingPlatformScript>();
@@ -374,7 +381,7 @@ public class GameControllerScript : MonoBehaviour {
 				//avoid that we enable this once more!
 				movedGround = true;
 			}
-		}
+		}*/
 		
 	}
 	/**
@@ -449,6 +456,7 @@ public class GameControllerScript : MonoBehaviour {
 
 	   AudioSource source = GetGameMusic();
 	   if(source!=null) {
+	      source.volume = 0.5f;
 		  source.Play();
 	   }
 
@@ -474,7 +482,7 @@ public class GameControllerScript : MonoBehaviour {
     }
     
 	public void StopMusic() {		
-		Debug.Log ("STOP MUSIC");
+		
 		AudioSource source = GetGameMusic();
 		if(source!=null) {
 			source.Stop();
@@ -482,7 +490,7 @@ public class GameControllerScript : MonoBehaviour {
 
 		foreach(AudioSource sourceAudio in GetGameAudios()) {
 		  if(sourceAudio.isPlaying) {
-		   sourceAudio.Stop();
+		    sourceAudio.Stop();
 		  }
 		}
 
@@ -814,8 +822,8 @@ public class GameControllerScript : MonoBehaviour {
 
 				    if(isLevelComplete) {
 					    //unlock some achievement here maybe
-						DrawText("Congratulations!"  , messagesFontSizeLarger + 5, 0, Screen.height/2-500,Screen.width,50);
-						DrawText("Level " + currentLevel + " Complete."  , messagesFontSizeLarger + 5, 0, Screen.height/2,Screen.width,50);
+					    levelFinishedTxt.text = "Congratulations!" + 
+						"Level " + currentLevel + " Complete.";
 					}
 				}//IS GAME OVER
 				else {
@@ -1063,14 +1071,26 @@ public class GameControllerScript : MonoBehaviour {
 		}
 		DisableScrolling();
 		DisableSpawning();
+		DisableCameraShake();
+		DisablePunchScripts();
+	}
+
+	public void DisablePunchScripts() {
+		PunchScript[] punches= FindObjectsOfType(typeof(PunchScript)) as PunchScript[];
+		foreach (PunchScript punch in punches) {
+			punch.enabled = false;
+		}
 	}
 
 	//disable camera shake if needed
 	public void DisableCameraShake() {
-		CameraShake shake = Camera.main.GetComponent<CameraShake> ();
-		if (shake != null) {
-			shake.enabled = false;
-		}
+	    if(Camera.main!=null) {
+			CameraShake shake = Camera.main.GetComponent<CameraShake> ();
+			if (shake != null) {
+				shake.enabled = false;
+			}
+	    }
+		
 	}
 
 	//disable all the moving platforms, call when landed
@@ -1150,6 +1170,13 @@ public class GameControllerScript : MonoBehaviour {
 	      scroll.enabled = false;
 	    }
 	  }
+
+	  foreach(GameObject obj in paralaxLevels) {
+		ParallaxScript scroll = obj.GetComponent<ParallaxScript>();
+		 if(scroll!=null) {
+		     scroll.enabled = true;
+		 }
+	  }
 	}
 
 	void EnableLevelsScroll() {
@@ -1159,6 +1186,13 @@ public class GameControllerScript : MonoBehaviour {
 	    if(scroll!=null) {
 	      scroll.enabled = true;
 	    }
+	  }
+
+	  foreach(GameObject obj in paralaxLevels) {
+		  ParallaxScript scroll = obj.GetComponent<ParallaxScript>();
+		  if(scroll!=null) {
+		     scroll.enabled = true;
+		  }
 	  }
 	}
 	/**
@@ -1304,11 +1338,13 @@ public class GameControllerScript : MonoBehaviour {
 		obj.transform.position = newPosition;
 	}
 
+	//TODO rechek
 	public void TakeScreenShot() {
+	/*
 		ScreenShotScript screenshot = GameObject.FindGameObjectWithTag("Scripts").GetComponent<ScreenShotScript>();
 		if (screenshot != null) {
 			screenshot.TakeScreenshotBeforeGameOver (this);
-		} 
+		} */
 
 	}
 

@@ -33,6 +33,27 @@ public class GemScript : MonoBehaviour {
 	   return giftBaloon;
 	}
 
+	public void PlayPowerupEffect() {
+
+	  GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
+	  if(scripts!=null) {
+	    SpecialEffectsHelper sfx = scripts.GetComponentInChildren<SpecialEffectsHelper>();
+
+		GameObject player = GameObject.FindGameObjectWithTag("Player");
+		float playerPos = player.transform.position.y;
+
+	    if(isRed) {
+	      sfx.PlayPowerupRed(new Vector3(transform.position.x,playerPos + 20,-5f));
+	    }
+		else if(isGreen) {
+		  sfx.PlayPowerupGreen(new Vector3(transform.position.x,playerPos + 20,-5f));
+	    }
+		else {
+		  sfx.PlayPowerupBlue(new Vector3(transform.position.x,playerPos + 20,-5f));
+	    }
+	  }
+	}
+
 	void OnTriggerEnter2D(Collider2D otherCollider)
 	{
 

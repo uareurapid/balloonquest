@@ -7,7 +7,7 @@ using LitJson;
 
 using Batch;
 using Batch.Internal;
-using BalloonQuest;
+using MrBalloony;
 
 namespace Batch
 {

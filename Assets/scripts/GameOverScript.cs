@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SocialPlatforms;
-using BalloonQuest;
+using MrBalloony;
 using System.Collections;
 using ChartboostSDK;
 

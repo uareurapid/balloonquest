@@ -32,7 +32,11 @@ public class ScrollingScript : MonoBehaviour
 	/// </summary>
 	public bool isLooping = false;
 	
-	private List<SpriteRenderer> backgroundPart;
+	private List<Renderer> backgroundPart;
+
+	//extend to mesh renderer as well
+	//private List<MeshRenderer> backgroundPartMesh;
+
 	private Vector2 repeatableSize;
 	
 	void Start()
@@ -49,7 +53,8 @@ public class ScrollingScript : MonoBehaviour
 			//---------------------------------------------------------------------------------
 			
 			// Get all part of the layer
-			backgroundPart = new List<SpriteRenderer>();
+			backgroundPart = new List<Renderer>();
+			//backgroundPartMesh = new List<MeshRenderer>();
 			
 			for (int i = 0; i < transform.childCount; i++)
 			{
@@ -61,18 +66,15 @@ public class ScrollingScript : MonoBehaviour
 				{
 					backgroundPart.Add(r);
 				}
-				//if this child has more childs, check their sprite renderers too
-				/*if(child.childCount > 0) {
-					for (int j = 0; j < child.childCount; j++) {
-						Transform innerChild = child.GetChild(j);
-						SpriteRenderer r2 = innerChild.GetComponent <SpriteRenderer>();
-						if (r2 != null)
-						{
-							backgroundPart.Add(r2);
-						}
-					}
-
-				}*/
+				else {
+				//maybe a mesh renderer?
+				 MeshRenderer mesh = child.GetComponent<MeshRenderer>();
+				 if(mesh!=null){
+				   Debug.Log("ADDING A MESH RENDERER");
+				   backgroundPart.Add(mesh);
+				 }
+				}
+		
 				
 			}
 			
@@ -155,7 +157,7 @@ public class ScrollingScript : MonoBehaviour
 			}
 			
 			// Get the first object
-			SpriteRenderer firstChild = backgroundPart.FirstOrDefault();
+			Renderer firstChild = backgroundPart.FirstOrDefault();
 			
 			if (firstChild != null)
 			{
@@ -210,9 +212,9 @@ public class ScrollingScript : MonoBehaviour
 		}
 	}
 
-	List<SpriteRenderer> AddChildsToList(Transform transform) {
+	List<Renderer> AddChildsToList(Transform transform) {
 
-		List<SpriteRenderer> backgrounds = new List<SpriteRenderer>();
+		List<Renderer> backgrounds = new List<Renderer>();
 			
 			for (int i = 0; i < transform.childCount; i++)
 			{
@@ -223,6 +225,13 @@ public class ScrollingScript : MonoBehaviour
 				if (r != null)
 				{
 					backgrounds.Add(r);
+				}
+				else {
+				//maybe a mesh renderer?
+				 MeshRenderer mesh = child.GetComponent<MeshRenderer>();
+				 if(mesh!=null){
+				   backgroundPart.Add(mesh);
+				 }
 				}
 		
 	        }

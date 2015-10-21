@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using BalloonQuest;
+using MrBalloony;
 
 public class Lightning : MonoBehaviour {
 

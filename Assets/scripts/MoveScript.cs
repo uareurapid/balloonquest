@@ -204,8 +204,8 @@ public class MoveScript : MonoBehaviour
        }
 	   else if(!revert && ( AllowRevertDirection() &&  HasLimitedMovementInterval() ) ) {
 	
-		    CheckPositions();
-		    if(revert) {
+			CheckPositions();
+		   if(revert) {
 
 		       if(limitedMovementXInterval>0) {
 					// 1 - revert current direction on x axis
@@ -216,19 +216,19 @@ public class MoveScript : MonoBehaviour
 					direction.y = direction.y*-1;
 		       }
 				
-
-		    }
-
-			// 3 - Define new movement, based on new direction
-			movement = new Vector2(speed.x * direction.x, speed.y * direction.y);
-			revert = false;
+				// 3 - Define new movement, based on new direction
+				movement = new Vector2(
+					speed.x * direction.x,
+					speed.y * direction.y);
+				revert = false;
+		   }
 		
 			
 		}
 
 	  else if(allowMoveIfNotVisible && allowRevertXDirection && revert) {
 	     
-				// 1 - revert current direction on x axis
+			// 1 - revert current direction on x axis
 	            direction.x = direction.x*-1;
 				// 3 - Define new movement, based on new direction
 				movement = new Vector2(
@@ -309,7 +309,10 @@ public class MoveScript : MonoBehaviour
 		// Apply movement to the rigidbody
 	    //check if in camera
 		if( (allowMoveIfNotVisible || isVisible || wasMovementTriggeredByOther) && !stopMovement  ) {
-			 GetComponent<Rigidbody2D>().velocity = movement;
+			 Rigidbody2D body = GetComponent<Rigidbody2D>();
+		     Vector2 vel = new Vector2(body.velocity.x,movement.y);
+			 body.velocity = vel;
+			//body.velocity = movement;
 		}
 		
 	}
@@ -370,10 +373,10 @@ public class MoveScript : MonoBehaviour
 		// and z positive??
 
 		Vector3 objectPos = Camera.main.WorldToViewportPoint(movementTrigger.transform.position);
-		Debug.Log ("Position of the movement Trigger: " + objectPos);
+		//Debug.Log ("Position of the movement Trigger: " + objectPos);
 		bool trigger = (objectPos.x >= 0f) && (objectPos.x <= 1f) && (objectPos.y >= 0f) && (objectPos.y <= 1f);
 		if (trigger) {
-			Debug.Log("Trigger position:" + objectPos);
+			//Debug.Log("Trigger position:" + objectPos);
 			wasMovementTriggeredByOther = true;//this triggered the movement, so independent of other settings it can move now
 		}
 		return trigger;

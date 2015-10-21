@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using BalloonQuest;
+using MrBalloony;
 
 
 /// <summary>
@@ -640,6 +640,7 @@ public class PlayerScript : MonoBehaviour
 	    	GetComponent<PolygonCollider2D> ().enabled = true;
 	    	soundEffects.PlayPowerupSound();
 
+			gem.PlayPowerupEffect();
 	    	//add the balloon script
 	    	counter.AddGiftGameObjectToPlayer(this);
 
@@ -741,9 +742,9 @@ public class PlayerScript : MonoBehaviour
 			controller.DisableGameElements(true);
 
 			if(level < max) {
-				//Go to next level in 2 seconds!
-
-				hero.StartMovingTowardsSign();
+				//Only if i already opened the chest
+				if(hero.HasOpenedChest())
+					hero.StartMovingTowardsSign();
 				//Play some animation
 				controller.FinishLevel();
 
@@ -769,14 +770,11 @@ public class PlayerScript : MonoBehaviour
 
 //todo also play some nice sounds
 	void PlayFireworks() {
-		Debug.Log ("PlayFireworks now!!");
 		GameObject fireworks = GameObject.FindGameObjectWithTag ("Fireworks");
 		if (fireworks != null) {
-			Debug.Log ("ACTIVATE Fireworks now!!");
 			//fireworks.SetActive(true);
 			ActivateScript script = fireworks.GetComponent<ActivateScript>();
 			if(script!=null) {
-				Debug.Log ("CALLING ACTIVATE Fireworks now!!");
 				script.Activate();
 			}
 		}
@@ -801,7 +799,10 @@ public class PlayerScript : MonoBehaviour
 	}
 
     void LoadNextLevel() {
-		Application.LoadLevel("Level" + controller.GetNextLevel());
+        PlayerPrefs.SetInt(GameConstants.NEXT_SCENE_KEY,controller.GetNextLevel());
+        PlayerPrefs.Save();
+		Application.LoadLevel(GameConstants.NEXT_SCENE_KEY);
+		//Application.LoadLevel("Level" + controller.GetNextLevel())
 	}
 
 

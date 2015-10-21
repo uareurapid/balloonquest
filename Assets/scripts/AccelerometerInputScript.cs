@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using BalloonQuest;
+using MrBalloony;
 
 //cool stuff here too: http://forum.unity3d.com/threads/understanding-the-gyroscope.205267/
 public class AccelerometerInputScript : MonoBehaviour {

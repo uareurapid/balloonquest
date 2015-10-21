@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using BalloonQuest;
+using MrBalloony;
 
 public class LevelChangeListener : MonoBehaviour {
 
@@ -41,7 +41,12 @@ public class LevelChangeListener : MonoBehaviour {
 			if(isMobilePlatform) {
 				Handheld.StartActivityIndicator();
 			}
-			Application.LoadLevel ("Level" + levelTouched);
+
+
+			//Application.LoadLevel ("Level" + levelTouched);
+			PlayerPrefs.SetInt(GameConstants.NEXT_SCENE_KEY,levelTouched);
+			PlayerPrefs.Save();
+			Application.LoadLevel(GameConstants.NEXT_SCENE_KEY);
 		
 		}	
 

@@ -26,9 +26,12 @@ public class SoundEffectsHelper : MonoBehaviour
 	public AudioClip flipTimeSound;
 	public AudioClip successSound;
 	public AudioClip earthQuakeSound;
+	public AudioClip teleportSound;
+
 		//todo credit Freesound.org - "Energy Weapon 001.wav" by DJ Chronos
 		//Freesound.org - "Medium Explosion.wav" by ryansnook
 		//Freesound.org - "Distant explosion.wav" by juskiddink
+	//https://www.freesound.org/people/fins/sounds/146729/
 	
 	void Awake()
 	{
@@ -61,6 +64,11 @@ public class SoundEffectsHelper : MonoBehaviour
 	public void PlaySuccessSound()
 	{
 		MakeSound(successSound);
+	}
+
+	public void PlayTeleportSound()
+	{
+		MakeSound(teleportSound);
 	}
 
 	public void PlayCountdownSound()
@@ -136,8 +144,8 @@ public class SoundEffectsHelper : MonoBehaviour
 	/// <param name="originalClip"></param>
 	private void MakeSound(AudioClip originalClip)
 	{
-		// As it is not 3D audio clip, position doesn't matter.
-		AudioSource.PlayClipAtPoint(originalClip, transform.position);
+		//play at the camera position, otherwise you cannot hear it
+		AudioSource.PlayClipAtPoint(originalClip, Camera.main.transform.position,1f);
 	}
 
 	//initialization

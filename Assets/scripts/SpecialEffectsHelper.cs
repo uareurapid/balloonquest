@@ -9,7 +9,7 @@ public class SpecialEffectsHelper : MonoBehaviour
 	/// Singleton
 	/// </summary>
 	private static SpecialEffectsHelper instance;
-
+	public bool alwaysOnFrontOfCamera = true; 
 
 	public ParticleSystem hitEffect;
 	public ParticleSystem landEffect;
@@ -31,6 +31,11 @@ public class SpecialEffectsHelper : MonoBehaviour
 	public ParticleSystem pointsEffect5Points;
 	//10
 	public ParticleSystem pointsEffect10Points;
+
+
+	public ParticleSystem powerupRed;
+	public ParticleSystem powerupGreen;
+	public ParticleSystem powerupBlue;
 
 	
 	void Awake()
@@ -84,6 +89,16 @@ public class SpecialEffectsHelper : MonoBehaviour
 	
 	public void PlayJellySoulEffect(Vector3 position) {
 		instantiate(soulEffect, position);
+	}
+
+	public void PlayPowerupRed(Vector3 position) {
+		instantiate(powerupRed, position);
+	}
+	public void PlayPowerupGreen(Vector3 position) {
+		instantiate(powerupGreen, position);
+	}
+	public void PlayPowerupBlue(Vector3 position) {
+		instantiate(powerupBlue, position);
 	}
 
 	public void PlayTouchdownEffect(Vector3 position) {
@@ -146,6 +161,9 @@ public class SpecialEffectsHelper : MonoBehaviour
 	/// <returns></returns>
 	private ParticleSystem instantiate(ParticleSystem prefab, Vector3 position)
 	{
+	    if(alwaysOnFrontOfCamera)
+	    	position.z = -5f; //make sure this is in front of all stull
+
 		ParticleSystem newParticleSystem = Instantiate(
 			prefab,
 			position,
