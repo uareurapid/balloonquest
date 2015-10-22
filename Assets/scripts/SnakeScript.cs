@@ -18,6 +18,7 @@ public class SnakeScript : MonoBehaviour {
 	}
 
 	void OnBecameVisible() {
+		Debug.Log("OnBecameVisible!!");
 		if(isVisible) {
 			return; //UNITY BUG
 		}
@@ -41,6 +42,7 @@ public class SnakeScript : MonoBehaviour {
 	}
 
 	void EnableMovement() {
+	  Debug.Log("enable movement!!");
 		MoveScript move = GetComponent<MoveScript> ();
 		if (move != null) {
 			move.enabled = true;
@@ -49,7 +51,7 @@ public class SnakeScript : MonoBehaviour {
 	
 	//TODO; IS NOT TURNING BACK ANYMORE
 	void OnBecameInvisible (){
-		
+		Debug.Log("OnBecameInvisible!!");
 		if(!isVisible) {
 			return;
 		}

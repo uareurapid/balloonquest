@@ -47,7 +47,7 @@ public class CameraFollow : MonoBehaviour
 		float targetX = transform.position.x;
 		float targetY = transform.position.y;
 
-		Debug.Log("CURRENT Y POSITION: " + transform.position.y);
+		//Debug.Log("CURRENT Y POSITION: " + transform.position.y);
 
 		// If the player has moved beyond the x margin...
 		if(CheckXMargin())

@@ -94,10 +94,10 @@ public class TreasureChestScript : MonoBehaviour {
 			  activateFlash.Activate();
 			}
 	        //change the colour
-			SpriteMaterialChangerScript mat = emeraldObj.GetComponent<SpriteMaterialChangerScript>();
-			if(mat!=null) {
-				mat.enabled = true;
-	        	mat.Swap();
+			EmeraldLineColor color = emeraldObj.GetComponent<EmeraldLineColor>();
+			UnityEngine.UI.Image image = emeraldObj.GetComponent<UnityEngine.UI.Image>();
+			if(color!=null && image!=null) {
+			  image.color = color.originalColor;
 			}
 	        
 	      

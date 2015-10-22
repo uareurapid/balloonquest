@@ -310,9 +310,16 @@ public class MoveScript : MonoBehaviour
 	    //check if in camera
 		if( (allowMoveIfNotVisible || isVisible || wasMovementTriggeredByOther) && !stopMovement  ) {
 			 Rigidbody2D body = GetComponent<Rigidbody2D>();
-		     Vector2 vel = new Vector2(body.velocity.x,movement.y);
-			 body.velocity = vel;
-			//body.velocity = movement;
+			 if(gameObject.tag!=null && gameObject.CompareTag("Player")) {
+			   //just move on the y axis
+				Vector2 vel = new Vector2(body.velocity.x,movement.y);
+			 	body.velocity = vel;
+			 }
+			 else {
+				body.velocity = movement;
+			 }
+		     
+			
 		}
 		
 	}

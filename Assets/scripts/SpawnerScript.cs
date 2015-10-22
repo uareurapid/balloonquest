@@ -21,7 +21,7 @@ public class SpawnerScript : MonoBehaviour
     public int maxSpawnsSameTime = 1;
 	public int minSpawnsSameTime = 1;
     
-	Vector3 newPosition = new Vector3(0f,0f,0f);
+	
 	//margin regarding the transform position
 	public int marginUp = 5;
 	public int marginDown = 5;
@@ -109,7 +109,10 @@ public class SpawnerScript : MonoBehaviour
 				spawnedIndex = Random.Range(0,enemies.Length);
 			}
 	
-				  float randomX = Random.Range(transform.position.x - marginLeft, transform.position.x + marginRight);
+				  	float randomX = Random.Range(transform.position.x - marginLeft, transform.position.x + marginRight);
+
+					Vector3 newPosition = new Vector3(0f,0f,0f);
+
 					newPosition.x = randomX;
 					newPosition.y = transform.position.y;
 					newPosition.z = transform.position.z;
