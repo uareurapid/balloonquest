@@ -37,7 +37,10 @@ public class CameraFollow : MonoBehaviour
 
 	void FixedUpdate ()
 	{
-		TrackPlayer();
+		if(player!=null){
+		   //player could have been destroyed already, better check
+		   TrackPlayer();
+		}
 	}
 	
 	

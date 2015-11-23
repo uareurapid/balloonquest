@@ -70,18 +70,23 @@ public class EnemyScript : MonoBehaviour
 	
 	void OnBecameVisible() {
 
-		isVisible = true;
-		//if(GameControllerScript.Instance.IsGameOver()) {
-		//  isVisible = false;
-		//}
+	  if(isVisible)
+	    return;
+
+	  isVisible = true;
+	
 	}
 	
 	void OnBecameInvisible() {
-		
+
+     if(!isVisible) 
+       return;
+
 		if(isVisible && autoDestroy) {
+		  isVisible = false;
 		  Destroy(gameObject);
 		}
-		isVisible = false;
+
 		
 	}
 

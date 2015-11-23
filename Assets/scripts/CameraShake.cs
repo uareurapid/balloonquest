@@ -75,6 +75,13 @@ public class CameraShake : MonoBehaviour
 			shakeDuration = 0f;
 			camTransform.localPosition = originalPos;
 			shakeEnabled = false;
+
+			//Stop shaking
+			FallenTreeScript fall =	gameObject.GetComponent<FallenTreeScript>();
+		    if(fall!=null) {
+		        fall.prepareFallingSequence();
+
+		    }
 	
 		}
 	  }
@@ -121,7 +128,6 @@ public class CameraShake : MonoBehaviour
 	  if(gameObject.tag!=null && gameObject.CompareTag("MainCamera")) {
 	  //now shake also the other objects with same script, at the same time we shake the camera
 		 CameraShake[] otherShakyObjects = GameObject.FindObjectsOfType<CameraShake>();
-		 Debug.Log("ENCONTREI NUM: " + otherShakyObjects.Length);
 		 foreach(CameraShake obj in otherShakyObjects) {
 		   string tag = obj.gameObject.tag;
 		   if(tag!=null && tag.Equals("MainCamera")) {
@@ -130,12 +136,8 @@ public class CameraShake : MonoBehaviour
 		   }
 		   else {
 		    
-		    obj.EnableShake();//enable shake on th eother object as well
-			FallenTreeScript fall =	obj.gameObject.GetComponent<FallenTreeScript>();
-		    if(fall!=null && fall.IsVisible()) {
-		        Debug.Log("enable fallen tree on another one");
-				fall.enabled = true;
-		    }
+		    obj.EnableShake();//enable shake on the other object as well
+			
 		   }
 		 }
 	  }

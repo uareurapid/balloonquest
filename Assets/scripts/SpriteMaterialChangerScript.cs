@@ -14,15 +14,15 @@ public class SpriteMaterialChangerScript : MonoBehaviour {
     private int counter = 0;
     private SpriteRenderer[] rendererArray;
 	public bool affectsOnlyCurrentObject = false;
+	public bool canSwap = true;
 	// Use this for initialization
 	void Start () {
 
-	if(!affectsOnlyCurrentObject)
-	 	rendererArray = GameObject.FindObjectsOfType<SpriteRenderer>();
-
-	 currentMaterialIndex = 0;
-	 counter = 0;
-	 InvokeRepeating("Swap",startDelay,swapInterval);
+	if(!affectsOnlyCurrentObject && canSwap)
+	 	 rendererArray = GameObject.FindObjectsOfType<SpriteRenderer>();
+		 currentMaterialIndex = 0;
+		 counter = 0;
+		 InvokeRepeating("Swap",startDelay,swapInterval);
 	   
 	}
 	
@@ -48,7 +48,10 @@ public class SpriteMaterialChangerScript : MonoBehaviour {
 		if (affectsOnlyCurrentObject) {
 			SpriteRenderer rend = GetComponent<SpriteRenderer> ();
 			if (rend != null) {
+
 				rend.material = currentMaterial;//reset also the color
+
+
 				if (maxSwaps==counter+1 && currentMaterial == defaultSpritesMaterial) {
 
 					//check if we have a reference to the original color
@@ -96,5 +99,10 @@ public class SpriteMaterialChangerScript : MonoBehaviour {
 
 
 	  
+	}
+
+	public void EnableSwap() {
+		canSwap = true;
+		InvokeRepeating("Swap",startDelay,swapInterval);
 	}
 }

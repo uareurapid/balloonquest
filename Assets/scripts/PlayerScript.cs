@@ -1025,6 +1025,12 @@ public class PlayerScript : MonoBehaviour
 		gameObject.GetComponent<PolygonCollider2D> ().enabled = false;
 	}
 
+	void ReleaseParachute() {
+		GameObject parachute = GameObject.FindGameObjectWithTag("Parachute");
+		parachute.GetComponent<SpriteRenderer> ().enabled = false;
+		parachute.GetComponent<CircleCollider2D> ().enabled = false;
+	}
+
 	//this is here, because the idea is:
 	//if player touched ground out of camera, he would come walking to the center of the screen
 	//of the camera before passing to next level
@@ -1050,9 +1056,7 @@ public class PlayerScript : MonoBehaviour
 			fx.PlayJellyHitDeadEffect(transform.position);
 		}
 
-		GameObject parachute = GameObject.FindGameObjectWithTag("Parachute");
-		parachute.GetComponent<SpriteRenderer> ().enabled = false;
-		parachute.GetComponent<CircleCollider2D> ().enabled = false;
+		ReleaseParachute();
 		//make him fall to the ground
 		EnableGravityScale ();
 

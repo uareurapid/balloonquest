@@ -6,6 +6,7 @@ public class FallenTreeScript : MonoBehaviour {
 	//seconds to fall, delay
 	public float fallDelay = 2.0f;
 	private bool isVisible = false;
+	public bool fallOnlyIfVisible = true;
 	public bool applyDelayOnlyVisible = true;//by default only start counting for fall, if visible
 	public bool applyFallRotation = true;
 	public float fallRotationSpeed = 10.0f;
@@ -20,7 +21,7 @@ public class FallenTreeScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		isFalling = false;
-		if (applyDelayOnlyVisible == false) {//if false apply delay immediatelly
+		if (applyDelayOnlyVisible == false && !fallOnlyIfVisible) {//if false apply delay immediatelly
 			if(fallDelay>0f){
 				Invoke ("StartFalling", fallDelay);
 			}
@@ -34,6 +35,20 @@ public class FallenTreeScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	
+	}
+
+	public void prepareFallingSequence() {
+
+	  if(fallOnlyIfVisible) {
+	    if(isVisible) {
+			if(fallDelay>0f){
+				Invoke ("StartFalling", fallDelay);
+			}
+			else {
+			    StartFalling();
+			}
+	    }
+	  }
 	}
 
 	void FixedUpdate() {
@@ -55,24 +70,33 @@ public class FallenTreeScript : MonoBehaviour {
 	//also public to allow calls from other objects
 	public void StartFalling() {
 
-		isFalling = true;
-		AudioSource audio = GetComponent<AudioSource> ();
-		if (audio != null && !audio.isPlaying ) {
-			audio.Play();
+		if(!isFalling) {
+			isFalling = true;
+			AudioSource audio = GetComponent<AudioSource> ();
+			if (audio != null && !audio.isPlaying ) {
+				audio.Play();
+			}
+
+			Rigidbody2D body = GetComponent<Rigidbody2D> ();
+			if (body != null) {
+				body.gravityScale = 1.0f;
+				body.isKinematic = false;
+			}
+
+			//check if any collider needs to be enabled, only when fall starts
+			PolygonCollider2D collider = GetComponent<PolygonCollider2D>();
+			if(collider!=null && collider.enabled==false) {
+			  collider.enabled = true;
+			}
 		}
 
-		Rigidbody2D body = GetComponent<Rigidbody2D> ();
-		if (body != null) {
-			body.gravityScale = 1.0f;
-			body.isKinematic = false;
-		}
 	}
 
 	void OnBecameVisible() {
 		if (!isVisible) {
 			isVisible = true;
 			isFalling = false;
-			if(applyDelayOnlyVisible) {//start counting
+			if(applyDelayOnlyVisible && fallOnlyIfVisible && !isFalling) {//start counting
 
 			    if(visibilityCounter==0) {
 					StartFallingAfterDelay();

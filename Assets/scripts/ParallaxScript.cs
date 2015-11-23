@@ -12,6 +12,11 @@ public class ParallaxScript : MonoBehaviour {
 	  xPosition = Camera.main.transform.position.x;
 	  yPosition = Camera.main.transform.position.y;
 	  newPosition = new Vector3(transform.position.x,transform.position.y,transform.position.z);
+
+	  //just in case we do something stupid on the editor!
+	  if(offset==0) {
+	    offset = 1;
+	  }
 	}
 	
 	// Update is called once per frame
