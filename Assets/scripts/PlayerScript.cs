@@ -715,8 +715,11 @@ public class PlayerScript : MonoBehaviour
 		    maxSpeed = maxSpeed / 2;
 		    moveForce = moveForce / 2;
 
-		    if(hasBalloon || hasParachute) {
+		    if(hasBalloon) {
 		     ReleaseBalloon();
+		    }
+		    else if(hasParachute) {
+		     ReleaseParachute();
 		    }
 
 			//play effects

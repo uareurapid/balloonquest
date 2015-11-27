@@ -81,4 +81,8 @@ public class PickupCoinScript : MonoBehaviour {
 		player.IncreaseCoins(1);
 		Destroy(gameObject);
 	}
+
+	void OnDestroy() {
+    Debug.Log("Destroying coin");
+   }
 }

@@ -129,6 +129,9 @@ public class GemScript : MonoBehaviour {
 	}//if scripts!=null
 
    }
+   void OnDestroy() {
+    Debug.Log("Destroying gem");
+   }
 
 
 }

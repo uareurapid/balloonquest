@@ -1073,6 +1073,7 @@ public class GameControllerScript : MonoBehaviour {
 		DisableSpawning();
 		DisableCameraShake();
 		DisablePunchScripts();
+	
 	}
 
 	public void DisablePunchScripts() {
@@ -1087,6 +1088,7 @@ public class GameControllerScript : MonoBehaviour {
 	    if(Camera.main!=null) {
 			CameraShake shake = Camera.main.GetComponent<CameraShake> ();
 			if (shake != null) {
+				shake.DisableShake();
 				shake.enabled = false;
 			}
 	    }

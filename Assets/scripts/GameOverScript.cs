@@ -265,9 +265,11 @@ public class GameOverScript : MonoBehaviour
 				
 					int score = PlayerPrefs.GetInt (GameConstants.HIGH_SCORE_KEY,1);
 					int best = PlayerPrefs.GetInt (GameConstants.BEST_SCORE_KEY,1);
+
+					GUI.color = Color.black;
 					//try to keep the scores aligned
 					if(!scoresHidden) {
-						GUI.Label (new Rect(width/2-60, height/2-250, 300, 60), score < 10 ? " "+ score : score.ToString(),style);
+						GUI.Label (new Rect(width/2-60, height/2-120, 300, 60), score < 10 ? " "+ score : score.ToString(),style);
 					}
 
 
@@ -275,7 +277,7 @@ public class GameOverScript : MonoBehaviour
 					//
 					if (!blinkOnBestScore && !scoresHidden) { 
 						//Just write it there!
-						GUI.Label (new Rect (width / 2 - 60, height / 2 - 160, 300, 60), best < 10 ? " " + best : best.ToString (), style);
+						GUI.Label (new Rect (width / 2 - 60, height / 2 - 30, 300, 60), best < 10 ? " " + best : best.ToString (), style);
 					}//else do not print it
 					
 					#if UNITY_ANDROID && !UNITY_EDITOR

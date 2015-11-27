@@ -11,8 +11,13 @@ public class SpawnerScript : MonoBehaviour
 	//the parent of the spawned child
 	public Transform spawnedParent;
 
+	//a reference Object, to spawn at the same location, or calculated!
+	public Transform spawnReferencePoint;
+	//the distance in y to the referece point
+	public float yDistanceToReferencePoint = 0;
+
 	public Texture2D[] thumbnails;
-	
+
     public bool canSpawn = false;
     
     //index of the next thumbnail
@@ -41,22 +46,17 @@ public class SpawnerScript : MonoBehaviour
 	//aux var
 	private bool spawnOnHold = false;
 
+
 	void Start ()
 	{
-		// Start calling the Spawn function repeatedly after a delay .
-		//skin = Resources.Load("GUISkin") as GUISkin;
-		GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
+
+		/*GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
 		if(scripts!=null) {
 
 		}
 		else {
 
-		}
-		//Position of the spawner
-		//transform.position = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width/2,Screen.height+10f,transform.position.z));
-		//save the original position (world position);
-		//originalPosition = Camera.main.WorldToScreenPoint(transform.position);
-		// transform.position;
+		}*/
 
 		InvokeRepeating("Spawn",spawnDelay,spawnTime);
 	}
@@ -68,8 +68,6 @@ public class SpawnerScript : MonoBehaviour
 	
 	void SpawnFirstThumbnail() {
 
-
-		
 		
 	}
 
@@ -108,13 +106,24 @@ public class SpawnerScript : MonoBehaviour
 			if(enemies.Length>1) {
 				spawnedIndex = Random.Range(0,enemies.Length);
 			}
-	
+					//TODO, i´m not considering Y
 				  	float randomX = Random.Range(transform.position.x - marginLeft, transform.position.x + marginRight);
 
 					Vector3 newPosition = new Vector3(0f,0f,0f);
 
 					newPosition.x = randomX;
-					newPosition.y = transform.position.y;
+
+					if(spawnReferencePoint!=null && yDistanceToReferencePoint !=0) {
+						//the position of the reference point, if any
+						Vector3 referencePosition = spawnReferencePoint.position;
+						newPosition.y = referencePosition.y + yDistanceToReferencePoint; //yDistanceToReferencePoint could be negative
+					  	Debug.Log("reference position: " +  referencePosition);
+						Debug.Log("spawning at Y position: " +  newPosition.y);
+					}
+					else {
+						newPosition.y = transform.position.y;
+					}
+
 					newPosition.z = transform.position.z;
 
 	        		//the spawned object will have the same rotation of the spawner object itself

@@ -20,6 +20,9 @@ public bool resetPositionOnMax = false;
 public float startDelay = 0;
 public bool lockMovement = false;
 
+//public bool autoDestroy = false;
+private bool isVisible = false;
+
 private float originalZPosition = 0f;
 
 	// Use this for initialization
@@ -120,6 +123,24 @@ private float originalZPosition = 0f;
 
 	public void UnlockMovement() {
 	  lockMovement = false;
+	}
+
+	void OnBecameVisible() {
+	  if(isVisible)
+	    return;
+
+	  isVisible = true;
+	}
+
+	void OnBecameInvisible() {
+	  if(!isVisible)
+	    return;
+
+	  isVisible = false;
+	  //destroy if became invisible, and not to be reset
+	  //if(autoDestroy && !resetPositionOnMax) {
+	  //  Destroy(gameObject);
+	  //}
 	}
 	
 }

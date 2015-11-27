@@ -10,5 +10,7 @@ Assets/Ferr/2DTerrain/TerrainMaterials/CaveTerrainMaterial.prefab
 Assets/Ferr/2DTerrain/TerrainMaterials/GreyRockTerrainMaterial.prefab
 Assets/Ferr/2DTerrain/TerrainMaterials/BrownRocksMossyTerrainMaterial.prefab
 Assets/Ferr/2DTerrain/TerrainMaterials/SnowDirtTerrainMaterial.prefab
+Assets/Ferr/2DTerrain/TerrainMaterials/YellowRocksWavyTerrainMaterial.prefab
+Assets/Ferr/2DTerrain/TerrainMaterials/YellowRocksTerrainMaterial.prefab
 
 [Ferr2DT_PathTerrain]

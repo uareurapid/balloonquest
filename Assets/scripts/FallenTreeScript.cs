@@ -37,8 +37,9 @@ public class FallenTreeScript : MonoBehaviour {
 	
 	}
 
+	//called when the camera stops shaking!
 	public void prepareFallingSequence() {
-
+		Debug.Log("prepareFallingSequence");
 	  if(fallOnlyIfVisible) {
 	    if(isVisible) {
 			if(fallDelay>0f){
@@ -48,6 +49,16 @@ public class FallenTreeScript : MonoBehaviour {
 			    StartFalling();
 			}
 	    }
+	  }
+	  else {
+			if(fallDelay>0f){
+			//fall after initial delay
+				Invoke ("StartFalling", fallDelay);
+			}
+			else {
+			//start falling immediately
+			    StartFalling();
+			}
 	  }
 	}
 
@@ -95,7 +106,7 @@ public class FallenTreeScript : MonoBehaviour {
 	void OnBecameVisible() {
 		if (!isVisible) {
 			isVisible = true;
-			isFalling = false;
+			//isFalling = false;
 			if(applyDelayOnlyVisible && fallOnlyIfVisible && !isFalling) {//start counting
 
 			    if(visibilityCounter==0) {
