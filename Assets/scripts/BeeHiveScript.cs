@@ -4,6 +4,8 @@ using System.Collections;
 public class BeeHiveScript : MonoBehaviour {
 
 	private bool isVisible = false;
+	//destroy on became invisible;
+	public bool autoDestroy = true;
 
 	// Use this for initialization
 	void Start () {
@@ -20,6 +22,11 @@ public class BeeHiveScript : MonoBehaviour {
 			return;
 		}
 		isVisible = false;
+		MakeBeesAttack();
+		if(autoDestroy) {
+			//destroy the hive
+			Destroy(gameObject);
+		}
 
 	}
 	
@@ -35,16 +42,19 @@ public class BeeHiveScript : MonoBehaviour {
 
 	//the fallen script is set to autodestroy object on beehives
 	void OnDestroy() {
-		MakeBeesAttack();
+		//MakeBeesAttack();
 	}
 
 	void MakeBeesAttack() {
-		GameObject[] bees = GameObject.FindGameObjectsWithTag ("Bee");
+	    //get all bees that belong to this hive
+		BeeScript[] bees = gameObject.GetComponentsInChildren<BeeScript>();// ("Bee");
 		Debug.Log ("FOUND " + bees.Length + " bees!");
-		foreach (GameObject bee in bees) {
-			BeeScript scr = bee.GetComponent<BeeScript>();
-			scr.Attack(true);
+		foreach (BeeScript bee in bees) {
+		    //get them out of the hive
+			bee.gameObject.transform.SetParent(gameObject.transform.parent);
+			bee.Attack(true);
 		}
+
 
 	}
 

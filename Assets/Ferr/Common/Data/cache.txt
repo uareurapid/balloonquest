@@ -12,5 +12,6 @@ Assets/Ferr/2DTerrain/TerrainMaterials/BrownRocksMossyTerrainMaterial.prefab
 Assets/Ferr/2DTerrain/TerrainMaterials/SnowDirtTerrainMaterial.prefab
 Assets/Ferr/2DTerrain/TerrainMaterials/YellowRocksWavyTerrainMaterial.prefab
 Assets/Ferr/2DTerrain/TerrainMaterials/YellowRocksTerrainMaterial.prefab
+Assets/Ferr/2DTerrain/TerrainMaterials/IceaTerrainMaterial.prefab
 
 [Ferr2DT_PathTerrain]

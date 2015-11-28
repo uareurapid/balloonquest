@@ -120,6 +120,6 @@ public class BombScript : MonoBehaviour
 
 
 		// Destroy the bomb itself.
-		//Destroy (gameObject);
+		Destroy (gameObject);
 	}
 }

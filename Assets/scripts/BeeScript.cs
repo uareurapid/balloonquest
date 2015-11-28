@@ -21,13 +21,18 @@ public class BeeScript : MonoBehaviour {
 
 		isAttacking = attack;
 		if(isAttacking) {
-		    GetComponent<Animator>().enabled = true;//show blinking
+			Animator anim = GetComponent<Animator>();//show blinking
+			anim.enabled = true;
+			anim.StartPlayback();
 			GetComponent<EnemyScript>().enabled = true;//behave as enemy
 			GetComponent<CircleCollider2D>().enabled = true;
 			Invoke("StopAttack",attackDuration);
 		}
 		else {
-			GetComponent<Animator>().enabled = false;
+			
+			Animator anim = GetComponent<Animator>();
+			anim.Stop();
+			anim.enabled = false;
 			GetComponent<EnemyScript>().enabled = false;
 			GetComponent<CircleCollider2D>().enabled = false;
 		}
