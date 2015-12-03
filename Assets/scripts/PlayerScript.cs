@@ -165,6 +165,7 @@ public class PlayerScript : MonoBehaviour
 		DisableGravityScale();
 		EnableMoveScript();
 		ShowPlatform();
+		landingPlatform.ResetHealthBar();
 		isFalling = false;
 		jump = false;
 

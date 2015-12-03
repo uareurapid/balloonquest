@@ -67,6 +67,11 @@ public class LandingPlatform : MonoBehaviour {
 		healthbar.SetMaxHealth(platformLifetime);
 	}
 
+	public void ResetHealthBar() {
+	  currentPlatformLifetime = platformLifetime;
+	  StartCountdownDestruction();
+	}
+
 	//only for time
 	public void StartCountdownDestruction() {
 	  if(startDestroying)
