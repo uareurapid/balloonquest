@@ -6,6 +6,12 @@ public class LandingPlatform : MonoBehaviour {
     public bool isDetachable = false;
 	PlayerScript player;
 	BoxCollider2D colliderBox;
+
+	public float platformLifetime = 15f; //15 seconds
+	private float currentPlatformLifetime = 15f; //15 seconds
+	private bool startDestroying = false;
+
+	HealthBar healthbar = null;
 	// Use this for initialization
 	void Start () {
 
@@ -15,6 +21,14 @@ public class LandingPlatform : MonoBehaviour {
 	 }
 
 	 colliderBox = GetComponent<BoxCollider2D>();
+	 startDestroying = false;
+
+	 currentPlatformLifetime = platformLifetime;
+
+		GameObject bar = GameObject.FindGameObjectWithTag("HealthBar");
+		if(bar!=null) {
+		   healthbar = bar.GetComponent<HealthBar>();
+		}
 
 	}
 	
@@ -22,10 +36,44 @@ public class LandingPlatform : MonoBehaviour {
 	void Update () {
 
 	  if(colliderBox!=null && player!=null) {
-	    colliderBox.enabled = (player.IsPlayerFalling() && !player.PlayerHasBalloon());
+	    colliderBox.enabled = true;// (player.IsPlayerFalling() && !player.PlayerHasBalloon());
+	  }
+
+	  if(startDestroying) {
+		startDestroying = false;//avoid call this part again
+		InvokeRepeating("DecreaseSecondsCounter",1.0f,1.0f);
 	  }
 	}
-	
+
+	public void DecreaseSecondsCounter() {
+	  currentPlatformLifetime-=1f;
+		if(currentPlatformLifetime < 0f) {
+			currentPlatformLifetime = 0f;
+			CancelInvoke("DecreaseSecondsCounter");
+			player.BurstStandingPlatform();
+	  }
+
+		UpdateHealthBar(currentPlatformLifetime);
+	  
+	}
+
+	public void UpdateHealthBar(float currentValue) {
+
+		healthbar.SetCurrentHealth(currentValue);
+
+	}
+
+	public void SetHealthBar() {
+		healthbar.SetMaxHealth(platformLifetime);
+	}
+
+	//only for time
+	public void StartCountdownDestruction() {
+	  if(startDestroying)
+	    return;
+
+	  startDestroying = true;
+	}
 	
 	void OnCollisionEnter2D(Collision2D collision)
 	{
@@ -34,12 +82,14 @@ public class LandingPlatform : MonoBehaviour {
 		
 	}
 
-	private void HandleCollision(GameObject gameObject) {
+	private void HandleCollision(GameObject collisionObject) {
+		Debug.Log("COLISION LANDING");
+		HeroScript playerObj = collisionObject.GetComponent<HeroScript>();
+		if(playerObj!=null /*&& playerObj.IsPlayerFalling()*/) {
 
-		PlayerScript playerObj = gameObject.GetComponent<PlayerScript>();
-		if(playerObj!=null && playerObj.IsPlayerFalling()) {
-			playerObj.PlayerLandedOnPlatform(true);
-		}//otherwise ignore
+			player.PlayerLandedOnPlatform();
+			Destroy(gameObject);
+		}
 
 	}
 

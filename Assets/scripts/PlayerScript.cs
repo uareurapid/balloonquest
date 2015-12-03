@@ -21,6 +21,7 @@ public class PlayerScript : MonoBehaviour
 	public Texture2D failSafeIcon;
 	private Rect failSafeRect;
 	private bool failSafeUsed = false;
+	private bool umbrellaUsed = false;
 
 	public Sprite defaultBalloon;
 	public Sprite balloonOne;
@@ -32,6 +33,9 @@ public class PlayerScript : MonoBehaviour
 
 
 	public Sprite colouredBalloon;
+
+	//the user can move while standing on platform, along with her;
+	private LandingPlatform landingPlatform;
 
 
 
@@ -54,6 +58,7 @@ public class PlayerScript : MonoBehaviour
 
 	public float maxSpeed = 0.5f;
 	public float moveForce = 200f;
+	public float jumpForce = 200f;
 	public float moveSpeed = 0.5f;
 
 	private bool isMobilePlatform = false;
@@ -76,11 +81,13 @@ public class PlayerScript : MonoBehaviour
 
 	private bool hasBalloon = true;
 	private bool hasParachute = false;
+	private bool hasUmbrella = false;
 
 	private GameObject scripts;
 	private static RuntimePlatform platform;
 	SoundEffectsHelper soundEffects;
-	private bool isStandingOnPlatform = false;
+	//always start on platform
+	private bool isStandingOnPlatform = true;
 
 	private bool hasRedGemGift = false;
 	private bool hasGreenGemGift = false;
@@ -88,7 +95,8 @@ public class PlayerScript : MonoBehaviour
 
 	private HeroScript hero;
 
-	private bool isJumping = false;
+	private bool jump = false;
+
 
 	void Start() {
 
@@ -109,6 +117,8 @@ public class PlayerScript : MonoBehaviour
 
 		hasParachute = false;
 		failSafeUsed = false;
+		umbrellaUsed = false;
+		hasUmbrella = false;
 		hasBalloon = true;
 
 		platform = Application.platform;
@@ -127,6 +137,9 @@ public class PlayerScript : MonoBehaviour
 		hasRedGemGift = false;
 	    hasGreenGemGift = false;
 	    hasBlueGemGift = false;
+
+	    GameObject obj = GameObject.FindGameObjectWithTag("StandingPlatform");
+		landingPlatform = obj.GetComponent<LandingPlatform>();
 		
 	}
 
@@ -147,11 +160,18 @@ public class PlayerScript : MonoBehaviour
 		return isStandingOnPlatform;
 	}
 
-	public void PlayerLandedOnPlatform(bool landed) {
-		isStandingOnPlatform = landed;
-		if(isStandingOnPlatform && !hasParachute && !hasBalloon) {
+	public void PlayerLandedOnPlatform() {
+		isStandingOnPlatform = true;
+		DisableGravityScale();
+		EnableMoveScript();
+		ShowPlatform();
+		isFalling = false;
+		jump = false;
+
+		if(isStandingOnPlatform && !hasParachute/* && !hasBalloon*/) {
 		  canMove = true;
 		}
+
 	}
 	
 	void Awake() {
@@ -159,12 +179,16 @@ public class PlayerScript : MonoBehaviour
 		
 	}
 
+	public LandingPlatform GetLandingPlatform() {
+	  return landingPlatform;
+	}
+
 
 	public void EnableGravityScale() {
 		Rigidbody2D rig = GetComponent<Rigidbody2D>();
 		if(rig!=null) {
 			rig.gravityScale =1.0f;
-			canMove = false;
+			//canMove = false;
 		}
 	}
 
@@ -348,28 +372,27 @@ public class PlayerScript : MonoBehaviour
 				}
 
 
-				if(hasLanded && jumpingInput>0 && !isJumping ) {
-				  
-				  Jump();
+				if(jumpingInput>0 && !jump && !isFalling && isStandingOnPlatform ) {
+
+				  //can jump
+				  jump = true;
+
 				}
-
-				
-				if( (isJumping && canMove) || (moving && canMove) ) {
-
 			
-					// The Speed animator parameter is set to the absolute value of the horizontal input.
-					//anim.SetFloat("Speed", Mathf.Abs(h));
-					
+				
+				if( (jump && canMove) || (moving && canMove) ) {
+
 					// If the player is changing direction (h has a different sign to velocity.x) or hasn't reached maxSpeed yet...
 					if(input * GetComponent<Rigidbody2D>().velocity.x < maxSpeed)
 						// ... add a force to the player.
 						GetComponent<Rigidbody2D>().AddForce(Vector2.right * input * moveForce);
 					
+					
 					// If the player's horizontal velocity is greater than the maxSpeed...
 					if(Mathf.Abs(GetComponent<Rigidbody2D>().velocity.x) > maxSpeed)
 						// ... set the player's velocity to the maxSpeed in the x axis.
 						GetComponent<Rigidbody2D>().velocity = new Vector2(Mathf.Sign(GetComponent<Rigidbody2D>().velocity.x) * maxSpeed, GetComponent<Rigidbody2D>().velocity.y);
-					
+
 					// If the input is moving the player right and the player is facing left...
 					if(input > 0 && !facingRight)
 						// ... flip the player.
@@ -379,9 +402,22 @@ public class PlayerScript : MonoBehaviour
 						// ... flip the player.
 						Flip();
 
-					if(isJumping) {
-						if(jumpingInput * GetComponent<Rigidbody2D>().velocity.y < maxSpeed)
-							GetComponent<Rigidbody2D>().AddForce(Vector2.up * jumpingInput * moveForce);
+					if(jump && !isFalling && isStandingOnPlatform) {
+					   Debug.Log("JUMP");
+					   GetComponent<Rigidbody2D>().AddForce(new Vector2(0f, jumpForce));
+
+					    
+
+						//if(jumpingInput * GetComponent<Rigidbody2D>().velocity.y < maxSpeed)
+						//	GetComponent<Rigidbody2D>().AddForce(Vector2.up * jumpingInput * jumpForce);
+
+						  DisableMoveScript();
+						  EnableGravityScale();
+						  HidePlatform();
+						  isStandingOnPlatform = false;
+						  isFalling = true;
+						  jump = false;
+
 					}
 				}
 				
@@ -423,7 +459,41 @@ public class PlayerScript : MonoBehaviour
 				
 		
 	}
+	//TODO check also the particles
+	void HidePlatform() {
+	 landingPlatform.GetComponent<SpriteRenderer>().enabled = false;
+	 ParticleSystem[] particles = landingPlatform.GetComponentsInChildren<ParticleSystem>();
+	 foreach(ParticleSystem part in particles) {
+	   part.Stop();
+	 }
+	 //explode it
+		if(scripts!=null) {
+			SpecialEffectsHelper effects = scripts.GetComponentInChildren<SpecialEffectsHelper>();
+			if(effects!=null) {
+				effects.PlayExplosionEffect(landingPlatform.transform.position);
+			}
+							
+	    }
 
+	}
+
+	void ShowPlatform() {
+	  landingPlatform.GetComponent<SpriteRenderer>().enabled = true;
+	  ParticleSystem[] particles = landingPlatform.GetComponentsInChildren<ParticleSystem>();
+	  foreach(ParticleSystem part in particles) {
+	    part.Play();
+	  }
+	}
+
+	void DisableMoveScript() {
+	  MoveScript script =  GetComponent<MoveScript>();
+	  script.enabled = false;
+	}
+
+	void EnableMoveScript() {
+	  MoveScript script =  GetComponent<MoveScript>();
+	  script.enabled = true;
+	}
 	
 	
 	public static Vector3 ClampVector3(Vector3 vec, Vector3 min, Vector3 max)
@@ -458,6 +528,15 @@ public class PlayerScript : MonoBehaviour
 	public void AddFailsafeParachute() {
 		
 		hasParachute = true;
+		SpecialEffectsHelper effects = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
+		if (effects != null) {
+			effects.PlayJElectricityEffect(transform.position);
+		}
+	}
+
+	public void AddUmbrella() {
+		
+		hasUmbrella = true;
 		SpecialEffectsHelper effects = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
 		if (effects != null) {
 			effects.PlayJElectricityEffect(transform.position);
@@ -499,11 +578,13 @@ public class PlayerScript : MonoBehaviour
 	}
 
 	void PerformUpdate(GameObject collisionObject) {
+
+	Debug.Log("PERFORM UPDATE");
 		
 		EnemyScript enemy = collisionObject.GetComponent<EnemyScript> ();
 		//collided with enemy
 		if ( (enemy != null && IsPlayerAlive()) && !IsPlayerFallingToLand() ) {
-
+			Debug.Log("PERFORM UPDATE!!!!!");
 		    //do not handle grounded enemy collisions
 			if(PlayerTouchedGround()){
 			  return;
@@ -530,6 +611,15 @@ public class PlayerScript : MonoBehaviour
 			}
 			else if (PlayerHasParachute ()) {
 				BurstParachute ();
+				if(enemy.isBurner) {
+					GetHero().BurnHero(false);
+				}
+				else {
+					GetHero().BlinkWhenHit();
+				}
+			}
+			else if (PlayerHasUmbrella ()) {
+				BurstUmbrella ();
 				if(enemy.isBurner) {
 					GetHero().BurnHero(false);
 				}
@@ -754,8 +844,8 @@ public class PlayerScript : MonoBehaviour
 			}
 
 		}//has landed && isJumping
-		else if(isJumping) {
-		  isJumping = false;
+		else if(jump) {
+		  jump = false;
 		}
 
 	    
@@ -946,11 +1036,6 @@ public class PlayerScript : MonoBehaviour
 		}
 	}
 
-	public void Jump(){
-	  isJumping = true;
-	  EnableGravityScale();
-	}
-
 	//disable player movement
 	public void DisableMovement() {
 		canMove = false;
@@ -1007,6 +1092,11 @@ public class PlayerScript : MonoBehaviour
 			//isFalling and isLanding
 			EnableParachute ();
 		} 
+		if (hasUmbrella) {
+			//enable parachute sprite, will reset the vars:
+			//isFalling and isLanding
+			EnableUmbrella();
+		} 
 		else {
 			//make him fall to the ground
 			EnableGravityScale ();
@@ -1022,16 +1112,32 @@ public class PlayerScript : MonoBehaviour
 		return hasParachute;
 	}
 
+	public bool PlayerHasUmbrella() {
+		return hasUmbrella;
+	}
+
 	//disable the render and the collider
 	void ReleaseBalloon() {
 		gameObject.GetComponent<SpriteRenderer> ().enabled = false;
 		gameObject.GetComponent<PolygonCollider2D> ().enabled = false;
 	}
 
+	public void ReleaseStandingPlatform() {
+		//GameObject parachute = GameObject.FindGameObjectWithTag("Parachute");
+		landingPlatform.GetComponent<SpriteRenderer> ().enabled = false;
+		landingPlatform.GetComponent<BoxCollider2D> ().enabled = false;
+	}
+
 	void ReleaseParachute() {
 		GameObject parachute = GameObject.FindGameObjectWithTag("Parachute");
 		parachute.GetComponent<SpriteRenderer> ().enabled = false;
 		parachute.GetComponent<CircleCollider2D> ().enabled = false;
+	}
+
+	void ReleaseUmbrella() {
+		GameObject umbrella = GameObject.FindGameObjectWithTag("Umbrella");
+		umbrella.GetComponent<SpriteRenderer> ().enabled = false;
+		umbrella.GetComponent<PolygonCollider2D> ().enabled = false;
 	}
 
 	//this is here, because the idea is:
@@ -1068,6 +1174,42 @@ public class PlayerScript : MonoBehaviour
 		hasParachute = false;
 	}
 
+	public void BurstUmbrella() {
+
+		//play effects
+		SpecialEffectsHelper fx = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
+		if (fx != null) {
+			fx.PlayJellyHitDeadEffect(transform.position);
+		}
+
+		ReleaseUmbrella();
+		//make him fall to the ground
+		EnableGravityScale ();
+
+		isFalling = true;
+		isLanding = false;
+		hasUmbrella = false;
+	}
+
+	public void BurstStandingPlatform() {
+
+		//play effects
+		SpecialEffectsHelper fx = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
+		if (fx != null) {
+			fx.PlayJellyHitDeadEffect(transform.position);
+		}
+
+		ReleaseStandingPlatform();
+		//make him fall to the ground
+		EnableGravityScale ();
+
+		GetComponent<MoveScript>().enabled = false;
+
+		isFalling = true;
+		isLanding = false;
+		hasParachute = false;
+	}
+
 	//called from the ground script
 	public void MakePlayerFallToLand() {
 		EnableGravityScale ();
@@ -1082,6 +1224,18 @@ public class PlayerScript : MonoBehaviour
 			parachute.GetComponent<SpriteRenderer>().enabled = true;
 			parachute.GetComponent<CircleCollider2D> ().enabled = true;
 			failSafeUsed = true;
+		}
+
+		isFalling = false;
+		isLanding = false;
+	}
+
+	private void EnableUmbrella() {
+		GameObject umbrella = GameObject.FindGameObjectWithTag("Umbrella");
+		if(umbrella!=null) {
+			umbrella.GetComponent<SpriteRenderer>().enabled = true;
+			umbrella.GetComponent<PolygonCollider2D> ().enabled = true;
+			umbrellaUsed = true;
 		}
 
 		isFalling = false;

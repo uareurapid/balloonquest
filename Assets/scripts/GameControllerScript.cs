@@ -740,7 +740,10 @@ public class GameControllerScript : MonoBehaviour {
 			StartMusic();
 		}
 
-
+		if(player!=null) {
+		  player.GetLandingPlatform().SetHealthBar();
+		  player.GetLandingPlatform().StartCountdownDestruction();
+		}
 
 		if(currentLevel==1) {
 		  //if we are on level 1, clear the history

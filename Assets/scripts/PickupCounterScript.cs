@@ -7,6 +7,8 @@ public class PickupCounterScript : MonoBehaviour {
 	public Font font;
 	public int fontSize;
 	public Texture2D icon;
+	//shows in UI, even if value is 0
+	public bool showIfNone = true;
 
 	//something that we instantiate and add to player object
 	public GameObject transformGift = null;

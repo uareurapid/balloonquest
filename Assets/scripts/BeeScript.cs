@@ -26,6 +26,7 @@ public class BeeScript : MonoBehaviour {
 			anim.StartPlayback();
 			GetComponent<EnemyScript>().enabled = true;//behave as enemy
 			GetComponent<CircleCollider2D>().enabled = true;
+			GetComponent<AudioSource>().Play();
 			Invoke("StopAttack",attackDuration);
 		}
 		else {
@@ -35,6 +36,7 @@ public class BeeScript : MonoBehaviour {
 			anim.enabled = false;
 			GetComponent<EnemyScript>().enabled = false;
 			GetComponent<CircleCollider2D>().enabled = false;
+			GetComponent<AudioSource>().Stop();
 		}
 	}
 

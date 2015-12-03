@@ -50,7 +50,7 @@ public class BalloonScript : MonoBehaviour {
 	    Destroy(this);
 	  }
 	  else if(startDestroying) {
-		Debug.Log("DECREASING TIMER SINCE NOW");
+		//Debug.Log("DECREASING TIMER SINCE NOW");
 	    startDestroying = false;//avoid call this part again
 		InvokeRepeating("DecreaseSecondsCounter",1.0f,1.0f);
 	  }

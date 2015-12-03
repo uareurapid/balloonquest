@@ -12,6 +12,9 @@ public class FallenTreeScript : MonoBehaviour {
 	public float fallRotationSpeed = 10.0f;
 	public int fallRotationDirection = 1;//either 1 (left) or -1 (right)
 
+	//turn on enemy script on falling
+	public bool isEnemyOnlyIfFalling = false;
+
 	//if this is greater than 0 and apply delay only if visible is set to true..
 	//we count (decrease) vivibility counter and only apply the delay when reach 0
 	public int visibilityCounter = 0;
@@ -92,6 +95,14 @@ public class FallenTreeScript : MonoBehaviour {
 			if (body != null) {
 				body.gravityScale = 1.0f;
 				body.isKinematic = false;
+			}
+
+			//only enable when falling, so can't collide before fall starts
+			if(isEnemyOnlyIfFalling) {
+			  EnemyScript enemy = GetComponent<EnemyScript>();
+			  if(enemy!=null) {
+			    enemy.enabled = true;
+			  }
 			}
 
 			//check if any collider needs to be enabled, only when fall starts
