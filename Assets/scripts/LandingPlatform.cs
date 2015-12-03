@@ -88,7 +88,6 @@ public class LandingPlatform : MonoBehaviour {
 	}
 
 	private void HandleCollision(GameObject collisionObject) {
-		Debug.Log("COLISION LANDING");
 		HeroScript playerObj = collisionObject.GetComponent<HeroScript>();
 		if(playerObj!=null /*&& playerObj.IsPlayerFalling()*/) {
 
