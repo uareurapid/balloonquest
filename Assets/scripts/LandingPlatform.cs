@@ -68,6 +68,7 @@ public class LandingPlatform : MonoBehaviour {
 	}
 
 	public void ResetHealthBar() {
+	  CancelInvoke("DecreaseSecondsCounter");
 	  currentPlatformLifetime = platformLifetime;
 	  StartCountdownDestruction();
 	}
@@ -88,8 +89,10 @@ public class LandingPlatform : MonoBehaviour {
 	}
 
 	private void HandleCollision(GameObject collisionObject) {
+
 		HeroScript playerObj = collisionObject.GetComponent<HeroScript>();
-		if(playerObj!=null /*&& playerObj.IsPlayerFalling()*/) {
+		//if i'm already on a platform then ignore the collision
+		if(playerObj!=null && player!=null && !player.IsPlayerStandingOnPlatform()) {
 
 			player.PlayerLandedOnPlatform();
 			Destroy(gameObject);

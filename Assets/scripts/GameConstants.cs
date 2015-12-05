@@ -28,8 +28,8 @@ namespace MrBalloony
 
 				public const int METERS_BOUNDARY_TO_MOVE_GROUND = 50;//50/5 = 10 seconds
 
-				public const int STARTING_POINT_IN_METERS = 1000;
-				public const int DEBUG_STARTING_POINT_IN_METERS = 200;
+				public const int STARTING_TIME_IN_SECONDS = 300;
+				public const int DEBUG_STARTING_TIME_IN_SECONDS = 60;
 				public const int METERS_STEP = 5;//could be 4 in prod, 3 minimum
 
 				public const int NUM_LEVELS_PER_WORLD = 1;

@@ -54,11 +54,11 @@ public class BombScript : MonoBehaviour
 		foreach(Collider2D en in elements)
 		{
 			// Check if it has a rigidbody (since there is only one per enemy, on the parent).
-			Rigidbody2D rb = en.GetComponent<Rigidbody2D>();
-			
+			Rigidbody2D rb = en.GetComponentInParent<Rigidbody2D>();
+			//for some reason only detects the hero object and the standing platform
+			//so i need to get the rigibody on the parent (Player object)
 			if(rb != null )
 			{
-			
 				//TODO apply force only left /right
 				//put them in the same y
 				Vector3 bombPosition = transform.position;
@@ -72,6 +72,7 @@ public class BombScript : MonoBehaviour
 				rb.AddForce(force);
 
 			}
+	
 		}
 
 		// Set the explosion effect's position to the bomb's position and play the particle system.

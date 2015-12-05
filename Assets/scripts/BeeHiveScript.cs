@@ -48,7 +48,6 @@ public class BeeHiveScript : MonoBehaviour {
 	void MakeBeesAttack() {
 	    //get all bees that belong to this hive
 		BeeScript[] bees = gameObject.GetComponentsInChildren<BeeScript>();// ("Bee");
-		Debug.Log ("FOUND " + bees.Length + " bees!");
 		foreach (BeeScript bee in bees) {
 		    //get them out of the hive
 			bee.gameObject.transform.SetParent(gameObject.transform.parent);
@@ -73,8 +72,10 @@ public class BeeHiveScript : MonoBehaviour {
 
 	void CheckIfPlayer(GameObject collisionObject){
 
-		PlayerScript player = collisionObject.GetComponent<PlayerScript>();
-		if(player!=null) {
+		string tag = collisionObject.tag;
+
+		if(tag!=null
+			&& (tag.Equals("Player") || tag.Equals("Hero") || tag.Equals("StandingPlatform") ) ){
 
 		    ShakeScript shake = GetComponent<ShakeScript>();
 		    if(shake!=null) {

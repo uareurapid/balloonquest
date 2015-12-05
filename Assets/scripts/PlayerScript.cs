@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using MrBalloony;
 
 
@@ -144,7 +145,7 @@ public class PlayerScript : MonoBehaviour
 	}
 
 	public void ResetDefaultSprite() {
-	  GetComponent<SpriteRenderer>().sprite = defaultBalloon;
+	  //GetComponent<SpriteRenderer>().sprite = defaultBalloon;
 	  //reset these as well
 	  hasRedGemGift = false;
 	  hasGreenGemGift = false;
@@ -168,6 +169,8 @@ public class PlayerScript : MonoBehaviour
 		landingPlatform.ResetHealthBar();
 		isFalling = false;
 		jump = false;
+		//disable the colliders again
+		DisableTerrainColliders();
 
 		if(isStandingOnPlatform && !hasParachute/* && !hasBalloon*/) {
 		  canMove = true;
@@ -404,10 +407,8 @@ public class PlayerScript : MonoBehaviour
 						Flip();
 
 					if(jump && !isFalling && isStandingOnPlatform) {
-					   Debug.Log("JUMP");
+	
 					   GetComponent<Rigidbody2D>().AddForce(new Vector2(0f, jumpForce));
-
-					    
 
 						//if(jumpingInput * GetComponent<Rigidbody2D>().velocity.y < maxSpeed)
 						//	GetComponent<Rigidbody2D>().AddForce(Vector2.up * jumpingInput * jumpForce);
@@ -418,6 +419,8 @@ public class PlayerScript : MonoBehaviour
 						  isStandingOnPlatform = false;
 						  isFalling = true;
 						  jump = false;
+
+						  EnableTerrainColliders();
 
 					}
 				}
@@ -460,6 +463,33 @@ public class PlayerScript : MonoBehaviour
 				
 		
 	}
+
+	//enables terrain colliders, so player can stand there
+	public void EnableTerrainColliders() {
+
+		Ferr2DT_PathTerrain[] terrains = GameObject.FindObjectsOfType<Ferr2DT_PathTerrain>();
+		foreach(Ferr2DT_PathTerrain terrain in terrains) {
+			List<Collider2D> colliders = terrain.GetAllTerrainColliders();
+			foreach(Collider2D collider in colliders) {
+			  collider.enabled = true;
+			}
+		}
+
+	}
+
+	//enables terrain colliders, so player can stand there
+	public void DisableTerrainColliders() {
+
+		Ferr2DT_PathTerrain[] terrains = GameObject.FindObjectsOfType<Ferr2DT_PathTerrain>();
+		foreach(Ferr2DT_PathTerrain terrain in terrains) {
+			List<Collider2D> colliders = terrain.GetAllTerrainColliders();
+			foreach(Collider2D collider in colliders) {
+			  collider.enabled = false;
+			}
+		}
+
+	}
+
 	//TODO check also the particles
 	void HidePlatform() {
 	 landingPlatform.GetComponent<SpriteRenderer>().enabled = false;
@@ -775,7 +805,8 @@ public class PlayerScript : MonoBehaviour
 				image.sprite = blueBalloon;
 			}
 			else {
-				image.sprite = defaultBalloon;
+				//the landing platform sprite
+				image.sprite = landingPlatform.GetComponent<SpriteRenderer>().sprite;
 			}
 		}
 

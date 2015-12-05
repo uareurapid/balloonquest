@@ -92,7 +92,14 @@ public class GameControllerScript : MonoBehaviour {
 	private int countDown = 3;
 	//display time
 
-	public int elapsedMissionMeters;
+	public int missionTimeInSeconds;
+
+	//number of minutes to complete the mission
+	private int missionTimeInMinutes = 0;
+	//display time
+	private int elapsedMissionMinutes = 0;
+	private int elapsedMissionSeconds = 0;
+	private int totalRemainingMissionTimeInSeconds = 0;
 	
 	//show in app for level xxx?
 	private bool showUnlockLevel = true;
@@ -170,7 +177,16 @@ public class GameControllerScript : MonoBehaviour {
 
 
 		//seconds to display
-	    elapsedMissionMeters = isDebug ? GameConstants.DEBUG_STARTING_POINT_IN_METERS : GameConstants.STARTING_POINT_IN_METERS;
+	    missionTimeInSeconds = isDebug ? GameConstants.DEBUG_STARTING_TIME_IN_SECONDS : GameConstants.STARTING_TIME_IN_SECONDS;
+
+		missionTimeInMinutes = (int)missionTimeInSeconds / 60 ;
+
+		//minutes to display
+		elapsedMissionMinutes = missionTimeInMinutes;
+		//seconds to display
+	    elapsedMissionSeconds = (int)missionTimeInSeconds % 60;
+
+		totalRemainingMissionTimeInSeconds = missionTimeInSeconds;
 
 		CheckPause();
 
@@ -230,7 +246,7 @@ public class GameControllerScript : MonoBehaviour {
 		StartCountdown ();
 
 		metersHealtBarScript = metersHealthBar.GetComponent<JetpackBar>();
-		metersHealtBarScript.SetMaxValue(elapsedMissionMeters);
+		metersHealtBarScript.SetMaxValue(missionTimeInSeconds);
 		//metersHealtBarScript.SetCurrentValue(elapsedMissionMeters);
 	}
 
@@ -352,36 +368,74 @@ public class GameControllerScript : MonoBehaviour {
 		
 	
 	//invoked every second
-	void CheckElapsedMeters() {
+	/*void CheckElapsedMeters() {
 
 		if(!isGamePaused && player!=null && player.IsPlayerAlive()) {
 
 		  //do not go under 0
-		  if(elapsedMissionMeters > 0) {
-			if(elapsedMissionMeters <= 5) {
+		  if(missionTimeInSeconds > 0) {
+			if(missionTimeInSeconds <= 5) {
 			    //on 5 start counting 1 by one, until reach 0
-			    elapsedMissionMeters-=1;
+			    missionTimeInSeconds-=1;
 		    }
 		    else {
-				elapsedMissionMeters-=GameConstants.METERS_STEP;
+				missionTimeInSeconds-=GameConstants.METERS_STEP;
 		    }
 		 }
 
 
-		  metersHealtBarScript.SetCurrentValue(elapsedMissionMeters);
+		  metersHealtBarScript.SetCurrentValue(missionTimeInSeconds);
 													
 		}//if !gamePaused
 
-		//TODO this should be configurable
-		/*if (elapsedMissionMeters <= GameConstants.METERS_BOUNDARY_TO_MOVE_GROUND && !movedGround) {
-			GameObject ground = GameObject.FindGameObjectWithTag("Ground");
-			if(ground!=null) {
-				MovingPlatformScript move = ground.GetComponent<MovingPlatformScript>();
-				move.enabled = true;
-				//avoid that we enable this once more!
-				movedGround = true;
-			}
-		}*/
+		
+	}*/
+
+	//invoked every second
+	void CheckMissionTime() {
+
+	if(!isGamePaused && player!=null && player.IsPlayerAlive()) {
+
+	 totalRemainingMissionTimeInSeconds -=1;
+
+
+		//time is up! player dead!
+	    if(elapsedMissionMinutes==0 && elapsedMissionSeconds==0) {
+	       //dead for good!!!!
+	       player.HandleLooseAllLifes();
+	    }
+	    else {
+					
+					bool changeMinutes = false;
+					elapsedMissionSeconds-=1;
+					
+					if(elapsedMissionSeconds<0) {
+						
+						if(elapsedMissionMinutes>0) {
+							elapsedMissionSeconds = 59;
+							changeMinutes = true;
+						}
+						else {
+						 changeMinutes = false;
+						 elapsedMissionSeconds = 0;
+						}
+						
+					}
+					
+					if(changeMinutes && elapsedMissionMinutes>0) {
+						elapsedMissionMinutes-=1;
+					}
+	    }
+	 
+		
+		
+		
+	 //}
+		 
+						
+	 }//if !gamePaused
+		
+		
 		
 	}
 	/**
@@ -743,6 +797,10 @@ public class GameControllerScript : MonoBehaviour {
 		if(player!=null) {
 		  player.GetLandingPlatform().SetHealthBar();
 		  player.GetLandingPlatform().StartCountdownDestruction();
+		  //disable the terrain colliders
+		  player.DisableTerrainColliders();
+
+
 		}
 
 		if(currentLevel==1) {
@@ -753,8 +811,9 @@ public class GameControllerScript : MonoBehaviour {
 				//CancelInvoke("IncreaseTimeForHowToTexture");
 			}
 		}
-		
-		InvokeRepeating("CheckElapsedMeters", 1.0f, 0.5f);
+
+		InvokeRepeating("CheckMissionTime", 1.0f, 1.0f);
+		//InvokeRepeating("CheckElapsedMeters", 1.0f, 0.5f);
 			
 	 }
 
@@ -776,7 +835,7 @@ public class GameControllerScript : MonoBehaviour {
 	}
 
 	public void SaveScores() {
-		int metersDone = GameConstants.STARTING_POINT_IN_METERS - elapsedMissionMeters;
+		int metersDone = GameConstants.STARTING_TIME_IN_SECONDS - missionTimeInSeconds;
 		PlayerPrefs.SetInt (GameConstants.HIGH_SCORE_KEY, metersDone);
 		int bestScore = PlayerPrefs.GetInt (GameConstants.BEST_SCORE_KEY, metersDone);
 
@@ -816,12 +875,34 @@ public class GameControllerScript : MonoBehaviour {
 		        GUI.matrix = svMat;
 
 				if(!isGameOver) {
-					if(elapsedMissionMeters>0 && !isLevelComplete) {
-						metersCounter.text = elapsedMissionMeters +" meters!";
+
+
+					if (elapsedMissionMinutes>=1) {
+					    if(elapsedMissionSeconds>=10) {
+							metersCounter.text = " 0" + elapsedMissionMinutes +":" + elapsedMissionSeconds;
+						}
+					    else {
+							metersCounter.text = " 0" + elapsedMissionMinutes +":0" + elapsedMissionSeconds;
+						}
+						
 					}
 					else {
-					    metersCounter.text = "";
+					   if(elapsedMissionSeconds>=10) {
+						    metersCounter.text = " 0:" + elapsedMissionSeconds;
+						}
+					   else {
+					   
+							metersCounter.text =" 0:0" + elapsedMissionSeconds;
+						}
+						
 					}
+
+					//if(missionTimeInSeconds>0 && !isLevelComplete) {
+					//	metersCounter.text = missionTimeInSeconds +" meters!";
+					//}
+					//else {
+					//    metersCounter.text = "";
+					//}
 
 				    if(isLevelComplete) {
 					    //unlock some achievement here maybe

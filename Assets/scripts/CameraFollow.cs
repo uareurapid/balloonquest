@@ -13,7 +13,7 @@ public class CameraFollow : MonoBehaviour
 
 	private Transform player;		// Reference to the player's transform.
 
-
+	private bool cameraMoved = false;
 	void Awake ()
 	{
 		// Setting up the reference.
@@ -30,8 +30,13 @@ public class CameraFollow : MonoBehaviour
 
 	bool CheckYMargin()
 	{
+		cameraMoved = Mathf.Abs(transform.position.y - player.position.y) > yMargin;
 		// Returns true if the distance between the camera and the player in the y axis is greater than the y margin.
-		return Mathf.Abs(transform.position.y - player.position.y) > yMargin;
+		return cameraMoved;
+	}
+
+	public bool CameraMoved() {
+	  return cameraMoved;
 	}
 
 

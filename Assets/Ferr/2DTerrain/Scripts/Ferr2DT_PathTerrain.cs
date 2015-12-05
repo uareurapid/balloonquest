@@ -160,6 +160,10 @@ public class Ferr2DT_PathTerrain : MonoBehaviour, Ferr2D_IPath {
 	/// </summary>
 	public PhysicsMaterial2D physicsMaterial2D = null;
 
+	//TODO added PC
+	List<Collider2D> terrainColliders;
+
+
     public bool  collidersLeft     = true;
     public bool  collidersRight    = true;
     public bool  collidersTop      = true;
@@ -483,8 +487,9 @@ public class Ferr2DT_PathTerrain : MonoBehaviour, Ferr2D_IPath {
 				}
 			}
 		}
-		
-		
+
+		terrainColliders = new List<Collider2D>(colliders.Count);
+
 		for (int i=0; i<colliders.Count; i+=1) {
 
 			colliders[i].isTrigger      = isTrigger;
@@ -492,8 +497,18 @@ public class Ferr2DT_PathTerrain : MonoBehaviour, Ferr2D_IPath {
 			#if UNITY_5
 			colliders[i].usedByEffector = usedByEffector;
 			#endif
+
+			terrainColliders.Add(colliders[i]);
+
+
 		}
+
 	}
+
+	public List<Collider2D> GetAllTerrainColliders() {
+	  return terrainColliders;
+	}
+
 	private List<Vector2>       ExpandColliderPath(List<Vector2> aList, float aAmount) {
 		int count = aList.Count;
 		for (int i = count - 1; i >= 0; i--) {
