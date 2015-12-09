@@ -835,14 +835,25 @@ public class GameControllerScript : MonoBehaviour {
 	}
 
 	public void SaveScores() {
-		int metersDone = GameConstants.STARTING_TIME_IN_SECONDS - missionTimeInSeconds;
-		PlayerPrefs.SetInt (GameConstants.HIGH_SCORE_KEY, metersDone);
-		int bestScore = PlayerPrefs.GetInt (GameConstants.BEST_SCORE_KEY, metersDone);
+
+	  int points = 0 ;
+		GameObject levelScore = GameObject.FindGameObjectWithTag("LevelScore");
+		if(levelScore!=null) {
+			UnityEngine.UI.Text txtScore =levelScore.GetComponent<UnityEngine.UI.Text>();
+		    if(txtScore!=null) {
+		       points = int.Parse(txtScore.text);
+
+		      }
+		}
+		int secondsElapsed = GameConstants.STARTING_TIME_IN_SECONDS - elapsedMissionSeconds;
+		int highScore = secondsElapsed + points;
+		PlayerPrefs.SetInt (GameConstants.HIGH_SCORE_KEY, highScore );
+		int bestScore = PlayerPrefs.GetInt (GameConstants.BEST_SCORE_KEY, highScore);
 
 		//if now i have a better score
-		if (metersDone > bestScore) {
+		if (highScore > bestScore) {
 
-			bestScore = metersDone;
+			bestScore = highScore;
 			//we have a new best score!
 		}
 		PlayerPrefs.SetInt (GameConstants.BEST_SCORE_KEY, bestScore);

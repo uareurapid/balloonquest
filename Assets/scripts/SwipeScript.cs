@@ -88,21 +88,21 @@ public class SwipeScript : MonoBehaviour {
 							}
 						}
 						
-						//
-						/*if(swipeType.y != 0.0f ){
+
+						if(swipeType.y != 0.0f ){
 							if(swipeType.y > 0.0f){
 								// MOVE UP
-								if(player.IsDescendingLadder() || player.IsOnLadder()) {
-								  player.StartClibing();
+								if( player.IsPlayerStandingOnPlatform() || player.IsPlayerGrounded() 
+								  || player.IsPlayerLanded() ) {
+								  		
+	
+					   		    player.PerformJump();
+
+
 								}
 								
-							}else{
-								// MOVE DOWN
-								if(player.IsClibingLadder()) {
-								  player.StartDescending();
-								}//else crouch for instance??
 							}
-						}*/
+						}
 						
 						
 					}
@@ -147,25 +147,21 @@ public class SwipeScript : MonoBehaviour {
 							}
 							player.PlayMoveEffect();
 						}
-						/*else {
-						  player.PlayerStationary();
-						}*/
-						
-						/*if(swipeType.y != 0.0f ){
+
+						if(swipeType.y != 0.0f ){
 							if(swipeType.y > 0.0f){
 								// MOVE UP
-								if(!player.IsOnLadder()) {
-									Debug.Log("GO JUMP");
-								  player.Jump();
+								if( player.IsPlayerStandingOnPlatform() || player.IsPlayerGrounded() 
+								  || player.IsPlayerLanded() ) {
+								  		
+	
+					   		    player.PerformJump();
+
+
 								}
-								else {
-									Debug.Log("GO CLIBING");
-								  player.StartClibing();
-								}
-							}else{
-								// MOVE DOWN
+								
 							}
-						}*/
+						}
 						
 					}
 					

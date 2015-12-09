@@ -67,7 +67,6 @@ public class HeroScript : MonoBehaviour {
 		if ( (enemy != null && player != null) 
 			&& player.IsPlayerAlive() && !player.IsPlayerFallingToLand() ) {
 
-			Debug.Log("COLLIDED HERO");
 			//do not handle grounded enemy collisions
 			if(player.PlayerTouchedGround()){
 			  return;

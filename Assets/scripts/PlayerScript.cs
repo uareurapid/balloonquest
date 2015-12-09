@@ -23,6 +23,7 @@ public class PlayerScript : MonoBehaviour
 	private Rect failSafeRect;
 	private bool failSafeUsed = false;
 	private bool umbrellaUsed = false;
+	private bool isGrounded = false;
 
 	public Sprite defaultBalloon;
 	public Sprite balloonOne;
@@ -38,7 +39,7 @@ public class PlayerScript : MonoBehaviour
 	//the user can move while standing on platform, along with her;
 	private LandingPlatform landingPlatform;
 
-
+	private bool hasKey = false;
 
 	private bool isVisible = true;
 
@@ -130,7 +131,7 @@ public class PlayerScript : MonoBehaviour
 		ground = GetGround ();
 
 		hero = GetHero();
-
+		hasKey = false;
 		isFalling = false;
 		isLanding = false;
 
@@ -153,6 +154,11 @@ public class PlayerScript : MonoBehaviour
 
 	  ChangeAvatar(false,false,false);
 
+	}
+
+	//the key to open the chest!
+	public bool HasChestKey() {
+	  return hasKey;
 	}
 
 	//check if we are on a platform
@@ -266,6 +272,17 @@ public class PlayerScript : MonoBehaviour
 	  if(!isDead) {
 		HandleLooseAllLifes();
 		Handheld.Vibrate();
+		if(isStandingOnPlatform) {
+		   ParticleSystem [] particles = landingPlatform.gameObject.GetComponentsInChildren<ParticleSystem>();
+		   foreach(ParticleSystem part in particles) {
+		     if(part.isPlaying) {
+		       part.Stop();
+		     }
+		     else {
+		       part.Play();
+		     }
+		  }
+		}
 	  }
 	}
 
@@ -376,7 +393,7 @@ public class PlayerScript : MonoBehaviour
 				}
 
 
-				if(jumpingInput>0 && !jump && !isFalling && isStandingOnPlatform ) {
+				if(jumpingInput>0 && !jump && !isFalling && (isStandingOnPlatform || isGrounded) ) {
 
 				  //can jump
 				  jump = true;
@@ -406,21 +423,9 @@ public class PlayerScript : MonoBehaviour
 						// ... flip the player.
 						Flip();
 
-					if(jump && !isFalling && isStandingOnPlatform) {
+					if(jump && !isFalling && (isStandingOnPlatform || isGrounded) ) {
 	
-					   GetComponent<Rigidbody2D>().AddForce(new Vector2(0f, jumpForce));
-
-						//if(jumpingInput * GetComponent<Rigidbody2D>().velocity.y < maxSpeed)
-						//	GetComponent<Rigidbody2D>().AddForce(Vector2.up * jumpingInput * jumpForce);
-
-						  DisableMoveScript();
-						  EnableGravityScale();
-						  HidePlatform();
-						  isStandingOnPlatform = false;
-						  isFalling = true;
-						  jump = false;
-
-						  EnableTerrainColliders();
+					   PerformJump();
 
 					}
 				}
@@ -462,6 +467,23 @@ public class PlayerScript : MonoBehaviour
 		  }
 				
 		
+	}
+
+	public void PerformJump() {
+
+		GetComponent<Rigidbody2D>().AddForce(new Vector2(0f, jumpForce));
+
+		DisableMoveScript();
+		EnableGravityScale();
+		if(isStandingOnPlatform)
+			HidePlatform();
+
+		isStandingOnPlatform = false;
+	    isFalling = true;
+		jump = false;
+		isGrounded = false;
+
+		EnableTerrainColliders();
 	}
 
 	//enables terrain colliders, so player can stand there
@@ -677,11 +699,62 @@ public class PlayerScript : MonoBehaviour
 	
 				
 		}
+		else if(collisionObject.GetComponent<GoldenKeyScript>()!=null) {
+		  hasKey = true;
+		  Destroy(collisionObject);
+		}
+		//not on platform, maybe collided with terrain
+		else if(!isStandingOnPlatform){
+			Ferr2DT_PathTerrain terrain = collisionObject.GetComponent<Ferr2DT_PathTerrain>();
+			if(terrain!=null) {
 
+			  isGrounded = true;
+			  isFalling = false;
+			  jump = false;
+
+			  GameObject dust = GameObject.FindGameObjectWithTag("DustPuff");
+			    if(dust) {
+			      ParticleSystem part = dust.GetComponent<ParticleSystem>();
+			      if(part!=null) {
+			       part.Play(true);
+				  }
+
+			    }
+
+			  }
+		}
 
 		
 
 	}
+
+	public void OnCollisionExit(Collision collisionInfo) {
+		if(!isStandingOnPlatform){
+			Ferr2DT_PathTerrain terrain = collisionInfo.gameObject.GetComponent<Ferr2DT_PathTerrain>();
+			if(terrain!=null) {
+
+			  isGrounded = false;
+
+			  GameObject dust = GameObject.FindGameObjectWithTag("DustPuff");
+			    if(dust) {
+			      ParticleSystem part = dust.GetComponent<ParticleSystem>();
+			      if(part!=null) {
+			       part.Stop(true);
+				  }
+
+			    }
+
+			  }
+		}
+    }
+
+    public bool IsPlayerGrounded() {
+      return isGrounded;
+    }
+
+    public bool IsPlayerLanded() {
+      return hasLanded;
+    }
 
 	//the name says it all no?? :-)
 	public void HandleCollisionWhileUsingGiftBalloon(BalloonScript ball, EnemyScript enemy) {
