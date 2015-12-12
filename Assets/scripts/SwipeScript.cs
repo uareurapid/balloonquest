@@ -87,6 +87,10 @@ public class SwipeScript : MonoBehaviour {
 								player.MoveBackward();
 							}
 						}
+						else if(player.IsPlayerGrounded()) {
+						 	//swipe is 0 and is grounded, do not move him
+							player.PlayerStationary();  
+						}
 						
 
 						if(swipeType.y != 0.0f ){
@@ -146,6 +150,11 @@ public class SwipeScript : MonoBehaviour {
 								Debug.Log("GO LEFT 2");
 							}
 							player.PlayMoveEffect();
+						}
+						else if(player.IsPlayerGrounded()) {
+						  //swipe is 0 and is grounded, do not move him
+						  player.PlayerStationary();  
+						  
 						}
 
 						if(swipeType.y != 0.0f ){

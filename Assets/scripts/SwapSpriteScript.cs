@@ -9,6 +9,8 @@ public class SwapSpriteScript : MonoBehaviour {
 	public bool canSwap = true;
 	private float lastSwapTime=0;
 	public float swapDelay = 0f;
+	public float maxSwaps = 0; //0 means forever
+	private int numSwaps = 0;
 
 	public bool isController = false; 
 	public float controllerSwitchDelay = 0.5f;//only applies if is controller
@@ -16,6 +18,7 @@ public class SwapSpriteScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		lastUsedSprite = 0;
+		numSwaps = 0;
 		lastSwapTime=0;
 		if (swapDelay > 0f && canSwap) {
 			Invoke ("AllowSwap", swapDelay);
@@ -37,7 +40,12 @@ public class SwapSpriteScript : MonoBehaviour {
 				
 				IncreaseSpriteIndex();		
 				SwapSprites();
+				numSwaps +=1;
 				lastSwapTime = 0f;
+
+				if(maxSwaps > 0 && numSwaps >= maxSwaps) {
+				  canSwap = false;
+				}
 			}
 		}
 	  

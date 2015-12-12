@@ -24,7 +24,7 @@ public class FallenTreeScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		isFalling = false;
-		if (applyDelayOnlyVisible == false && !fallOnlyIfVisible) {//if false apply delay immediatelly
+		if (applyDelayOnlyVisible == false || fallOnlyIfVisible==false) {//if false apply delay immediatelly
 			if(fallDelay>0f){
 				Invoke ("StartFalling", fallDelay);
 			}

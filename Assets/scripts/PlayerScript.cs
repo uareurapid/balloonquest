@@ -33,6 +33,8 @@ public class PlayerScript : MonoBehaviour
 	public Sprite greenBalloon;//green balloon
 	public Sprite redBalloon;//red balloon
 
+	//the position where it was when started falling
+	private Vector3 fallingStartPosition = new Vector3(0f,0f,0f);
 
 	public Sprite colouredBalloon;
 
@@ -275,11 +277,11 @@ public class PlayerScript : MonoBehaviour
 		if(isStandingOnPlatform) {
 		   ParticleSystem [] particles = landingPlatform.gameObject.GetComponentsInChildren<ParticleSystem>();
 		   foreach(ParticleSystem part in particles) {
-		     if(part.isPlaying) {
-		       part.Stop();
+		     if(part.tag!=null && part.CompareTag("PlatformSmoke")) {
+		       part.Play(true);
 		     }
 		     else {
-		       part.Play();
+		      part.Stop(true);
 		     }
 		  }
 		}
@@ -415,14 +417,16 @@ public class PlayerScript : MonoBehaviour
 						GetComponent<Rigidbody2D>().velocity = new Vector2(Mathf.Sign(GetComponent<Rigidbody2D>().velocity.x) * maxSpeed, GetComponent<Rigidbody2D>().velocity.y);
 
 					// If the input is moving the player right and the player is facing left...
-					if(input > 0 && !facingRight)
+					if(input > 0 && !facingRight) {
 						// ... flip the player.
 						Flip();
+						PlayMoveSound();
 					// Otherwise if the input is moving the player left and the player is facing right...
-					else if(input < 0 && facingRight)
+					}else if(input < 0 && facingRight) {
 						// ... flip the player.
 						Flip();
-
+						PlayMoveSound();
+					}
 					if(jump && !isFalling && (isStandingOnPlatform || isGrounded) ) {
 	
 					   PerformJump();
@@ -454,13 +458,17 @@ public class PlayerScript : MonoBehaviour
 						GetComponent<Rigidbody2D>().velocity = new Vector2(Mathf.Sign(GetComponent<Rigidbody2D>().velocity.x) * maxSpeed, GetComponent<Rigidbody2D>().velocity.y);
 					
 					// If the input is moving the player right and the player is facing left...
-					if(speed > 0 && !facingRight)
+					if(speed > 0 && !facingRight) {
 						// ... flip the player.
 						Flip();
+						PlayMoveSound();
+					}
 					// Otherwise if the input is moving the player left and the player is facing right...
-					else if(speed < 0 && facingRight)
+					else if(speed < 0 && facingRight) {
 						// ... flip the player.
 						Flip();
+						PlayMoveSound();
+					}
 				
 				} 
 
@@ -514,10 +522,15 @@ public class PlayerScript : MonoBehaviour
 
 	//TODO check also the particles
 	void HidePlatform() {
+	 //record the position when this started, because if the jump is to high from the ground/platform
+	 //it will splash and die
+	 fallingStartPosition = GetHero().transform.position;
+
 	 landingPlatform.GetComponent<SpriteRenderer>().enabled = false;
+	 landingPlatform.GetComponent<BoxCollider2D> ().enabled = false;
 	 ParticleSystem[] particles = landingPlatform.GetComponentsInChildren<ParticleSystem>();
 	 foreach(ParticleSystem part in particles) {
-	   part.Stop();
+	   part.Stop(true);
 	 }
 	 //explode it
 		if(scripts!=null) {
@@ -531,10 +544,17 @@ public class PlayerScript : MonoBehaviour
 	}
 
 	void ShowPlatform() {
+	  //how much distance has passed between hide/show the platform (aka, how big was the fall?)
+	  CheckFallingDistance();
+
 	  landingPlatform.GetComponent<SpriteRenderer>().enabled = true;
+	  landingPlatform.GetComponent<BoxCollider2D> ().enabled = true;
 	  ParticleSystem[] particles = landingPlatform.GetComponentsInChildren<ParticleSystem>();
 	  foreach(ParticleSystem part in particles) {
-	    part.Play();
+	    if(part.tag==null || !part.CompareTag("PlatformSmoke")) {
+	        //do not play the smoke particle "PlatformSmoke"
+			part.Play();
+	    }
 	  }
 	}
 
@@ -631,13 +651,10 @@ public class PlayerScript : MonoBehaviour
 	}
 
 	void PerformUpdate(GameObject collisionObject) {
-
-	Debug.Log("PERFORM UPDATE");
 		
 		EnemyScript enemy = collisionObject.GetComponent<EnemyScript> ();
 		//collided with enemy
 		if ( (enemy != null && IsPlayerAlive()) && !IsPlayerFallingToLand() ) {
-			Debug.Log("PERFORM UPDATE!!!!!");
 		    //do not handle grounded enemy collisions
 			if(PlayerTouchedGround()){
 			  return;
@@ -650,6 +667,8 @@ public class PlayerScript : MonoBehaviour
 		     HandleCollisionWhileUsingGiftBalloon(ball,enemy);
 		     return;
 		   }
+
+			PlayHitEffect(collisionObject.transform.position);
 
 				
 			if (PlayerHasBalloon ()) {
@@ -708,24 +727,49 @@ public class PlayerScript : MonoBehaviour
 			Ferr2DT_PathTerrain terrain = collisionObject.GetComponent<Ferr2DT_PathTerrain>();
 			if(terrain!=null) {
 
+			  //check how much did i fall
+			  CheckFallingDistance();
+
 			  isGrounded = true;
 			  isFalling = false;
 			  jump = false;
 
-			  GameObject dust = GameObject.FindGameObjectWithTag("DustPuff");
-			    if(dust) {
-			      ParticleSystem part = dust.GetComponent<ParticleSystem>();
-			      if(part!=null) {
-			       part.Play(true);
-				  }
-
-			    }
+			  PlayDustEffect();
 
 			  }
 		}
 
 		
 
+	}
+
+	//hit red effect
+	void PlayHitEffect(Vector3 position) {
+		SpecialEffectsHelper fx = scripts.GetComponentInChildren<SpecialEffectsHelper>();
+		if(fx!=null) {
+			fx.PlayHitDeadEffect(position);
+		}
+	}
+	//check how much did i fall
+	void CheckFallingDistance() {
+		Vector3 currentPosition = GetHero().transform.position;
+	  	float diff = currentPosition.y - fallingStartPosition.y;
+	    if(Mathf.Abs(diff) > 15f) {
+	    	PlayHitEffect(GetHero().transform.position);
+			GetHero().SwitchToSmashedSprite();
+	  	}
+	}
+
+	void PlayDustEffect() {
+
+		GameObject dust = GameObject.FindGameObjectWithTag("DustPuff");
+		if(dust) {
+			ParticleSystem part = dust.GetComponent<ParticleSystem>();
+			if(part!=null) {
+			   part.Play();
+			}
+
+		}
 	}
 
 	public void OnCollisionExit(Collision collisionInfo) {
@@ -1091,7 +1135,7 @@ public class PlayerScript : MonoBehaviour
 		//play effects
 		SpecialEffectsHelper fx = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
 		if (fx != null) {
-			fx.PlayJellySoulEffect(transform.position);
+			fx.PlaySoulEffect(transform.position);
 		}
 
 		Invoke("ShowGameOverAndDestroy",1.2f);
@@ -1135,6 +1179,13 @@ public class PlayerScript : MonoBehaviour
 	}
 
 	public void PlayMoveEffect() {
+		
+
+		if(!isStandingOnPlatform && isGrounded)
+		   PlayDustEffect();
+	}
+
+	public void PlayMoveSound() {
 		SoundEffectsHelper fx = scripts.GetComponentInChildren<SoundEffectsHelper>();
 		if(fx!=null) {
 			fx.PlayWooshSound();
@@ -1147,7 +1198,9 @@ public class PlayerScript : MonoBehaviour
 	}
 
 	public void PlayerStationary() {
-
+		moveForward = false;
+	    moveBackward =  false;
+	    moving = false;
 	}
 
 	public void SetOnLadder(bool onLadder) {
@@ -1184,10 +1237,7 @@ public class PlayerScript : MonoBehaviour
 		isLanding = false;
 
 		//play effects
-		SpecialEffectsHelper fx = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
-		if (fx != null) {
-			fx.PlayJellyHitDeadEffect(transform.position);
-		}
+		PlayHitEffect(transform.position);
 
 		//disable colliders and renderers
 		ReleaseBalloon();
@@ -1227,11 +1277,11 @@ public class PlayerScript : MonoBehaviour
 		gameObject.GetComponent<PolygonCollider2D> ().enabled = false;
 	}
 
-	public void ReleaseStandingPlatform() {
+	//public void ReleaseStandingPlatform() {
 		//GameObject parachute = GameObject.FindGameObjectWithTag("Parachute");
-		landingPlatform.GetComponent<SpriteRenderer> ().enabled = false;
-		landingPlatform.GetComponent<BoxCollider2D> ().enabled = false;
-	}
+	//	landingPlatform.GetComponent<SpriteRenderer> ().enabled = false;
+	//	landingPlatform.GetComponent<BoxCollider2D> ().enabled = false;
+	//}
 
 	void ReleaseParachute() {
 		GameObject parachute = GameObject.FindGameObjectWithTag("Parachute");
@@ -1267,7 +1317,7 @@ public class PlayerScript : MonoBehaviour
 		//play effects
 		SpecialEffectsHelper fx = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
 		if (fx != null) {
-			fx.PlayJellyHitDeadEffect(transform.position);
+			fx.PlayHitDeadEffect(transform.position);
 		}
 
 		ReleaseParachute();
@@ -1284,7 +1334,7 @@ public class PlayerScript : MonoBehaviour
 		//play effects
 		SpecialEffectsHelper fx = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
 		if (fx != null) {
-			fx.PlayJellyHitDeadEffect(transform.position);
+			fx.PlayHitDeadEffect(transform.position);
 		}
 
 		ReleaseUmbrella();
@@ -1299,20 +1349,24 @@ public class PlayerScript : MonoBehaviour
 	public void BurstStandingPlatform() {
 
 		//play effects
-		SpecialEffectsHelper fx = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
-		if (fx != null) {
-			fx.PlayJellyHitDeadEffect(transform.position);
-		}
+		PlayHitEffect(transform.position);
 
-		ReleaseStandingPlatform();
+		if(isStandingOnPlatform) {
+			HidePlatform();
+		}
+			
 		//make him fall to the ground
 		EnableGravityScale ();
-
+		//enable terrain collisions
+		EnableTerrainColliders();
+		//disable movement TODO check DisableMovement implementation
 		GetComponent<MoveScript>().enabled = false;
 
 		isFalling = true;
 		isLanding = false;
 		hasParachute = false;
+		isStandingOnPlatform = false;
+
 	}
 
 	//called from the ground script

@@ -49,32 +49,12 @@ public class SpecialEffectsHelper : MonoBehaviour
 		}
 		
 	}
-	
-	/// <summary>
-	/// Create an explosion at the given location
-	/// </summary>
-	/// <param name="position"></param>
-	/*public void Explosion(Vector3 position)
-	{
-		// Smoke on the water
-		instantiate(smokeEffect, position);
-		
-		// Tu tu tu, tu tu tudu
-		
-		// Fire in the sky
-		instantiate(fireEffect, position);
-
-
-		instantiate(boomExplosion, position);
-
-
-	}*/
 
 	public void PlayCoinBurstEffect(Vector3 position) {
 		instantiate(coinBurstEffect, position);
 	}
 
-	public void PlayJellyHitDeadEffect(Vector3 position) {
+	public void PlayHitDeadEffect(Vector3 position) {
 		instantiate(hitEffect, position);
 	}
 
@@ -87,7 +67,7 @@ public class SpecialEffectsHelper : MonoBehaviour
 		instantiate(landEffect, position);
 	}
 	
-	public void PlayJellySoulEffect(Vector3 position) {
+	public void PlaySoulEffect(Vector3 position) {
 		instantiate(soulEffect, position);
 	}
 

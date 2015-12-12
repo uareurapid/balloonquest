@@ -117,8 +117,6 @@ public class SpawnerScript : MonoBehaviour
 						//the position of the reference point, if any
 						Vector3 referencePosition = spawnReferencePoint.position;
 						newPosition.y = referencePosition.y + yDistanceToReferencePoint; //yDistanceToReferencePoint could be negative
-					  	Debug.Log("reference position: " +  referencePosition);
-						Debug.Log("spawning at Y position: " +  newPosition.y);
 					}
 					else {
 						newPosition.y = transform.position.y;

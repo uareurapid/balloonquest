@@ -30,6 +30,29 @@ public class HeroScript : MonoBehaviour {
 	void OnBecameVisible() {
 		isVisible = true;
 	}
+
+	//when smashed against the ground
+	public void SwitchToSmashedSprite() {
+
+	    GameObject heroSmashed = GameObject.FindGameObjectWithTag ("HeroSmashed");
+	    heroSmashed.transform.position = transform.position;//make sure they are in the same place
+
+	    //disable current
+		GetComponent<SpriteRenderer>().enabled = false;
+	    GetComponent<SwapSpriteScript>().enabled = false;
+	    //enable smashed one
+		heroSmashed.GetComponent<SpriteRenderer>().enabled = true;
+		SwapSpriteScript sc = heroSmashed.GetComponent<SwapSpriteScript>();
+		sc.enabled = true;
+		sc.AllowSwap();
+		//wait half a second and then kill the player
+		StartCoroutine(WaitBeforeDestroy());
+		player.KillPlayer();
+	}
+
+	IEnumerator WaitBeforeDestroy() {
+		yield return new WaitForSeconds(0.5f);
+	}
 	
 	void OnBecameInvisible() {
 		isVisible = false;

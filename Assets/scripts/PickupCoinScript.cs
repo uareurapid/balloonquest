@@ -83,6 +83,6 @@ public class PickupCoinScript : MonoBehaviour {
 	}
 
 	void OnDestroy() {
-    Debug.Log("Destroying coin");
+
    }
 }
