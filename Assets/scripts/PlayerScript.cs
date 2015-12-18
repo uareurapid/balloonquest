@@ -727,6 +727,7 @@ public class PlayerScript : MonoBehaviour
 			Ferr2DT_PathTerrain terrain = collisionObject.GetComponent<Ferr2DT_PathTerrain>();
 			if(terrain!=null) {
 
+			  Debug.Log("Check FAlling distance!!");
 			  //check how much did i fall
 			  CheckFallingDistance();
 
@@ -754,7 +755,8 @@ public class PlayerScript : MonoBehaviour
 	void CheckFallingDistance() {
 		Vector3 currentPosition = GetHero().transform.position;
 	  	float diff = currentPosition.y - fallingStartPosition.y;
-	    if(Mathf.Abs(diff) > 15f) {
+	  	//he will die right after the smash sequence
+		if(Mathf.Abs(diff) > 15f && IsPlayerAlive()) {
 	    	PlayHitEffect(GetHero().transform.position);
 			GetHero().SwitchToSmashedSprite();
 	  	}
