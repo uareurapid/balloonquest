@@ -6,7 +6,7 @@ gnore everything
 !/Assets/
 !/ProjectSettings/
 !.gitignore
- 
+/Assets/CorgiEngine/ 
 # OS Stuff
 .DS_Store
 ._*

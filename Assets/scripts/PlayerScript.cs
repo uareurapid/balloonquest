@@ -156,6 +156,12 @@ public class PlayerScript : MonoBehaviour
 
 	  ChangeAvatar(false,false,false);
 
+	  //show platform again
+	  isStandingOnPlatform = true;
+	  //is not falling, this to avoid calculate falling distance
+	  isFalling = false;
+      ShowPlatform();
+
 	}
 
 	//the key to open the chest!
@@ -174,8 +180,8 @@ public class PlayerScript : MonoBehaviour
 		DisableGravityScale();
 		EnableMoveScript();
 		ShowPlatform();
-		landingPlatform.ResetHealthBar();
 		isFalling = false;
+		landingPlatform.ResetHealthBar();
 		jump = false;
 		//disable the colliders again
 		DisableTerrainColliders();
@@ -500,9 +506,12 @@ public class PlayerScript : MonoBehaviour
 		Ferr2DT_PathTerrain[] terrains = GameObject.FindObjectsOfType<Ferr2DT_PathTerrain>();
 		foreach(Ferr2DT_PathTerrain terrain in terrains) {
 			List<Collider2D> colliders = terrain.GetAllTerrainColliders();
-			foreach(Collider2D collider in colliders) {
-			  collider.enabled = true;
+			if(colliders!=null) {
+				foreach(Collider2D collider in colliders) {
+			  		collider.enabled = true;
+				}
 			}
+
 		}
 
 	}
@@ -513,9 +522,12 @@ public class PlayerScript : MonoBehaviour
 		Ferr2DT_PathTerrain[] terrains = GameObject.FindObjectsOfType<Ferr2DT_PathTerrain>();
 		foreach(Ferr2DT_PathTerrain terrain in terrains) {
 			List<Collider2D> colliders = terrain.GetAllTerrainColliders();
-			foreach(Collider2D collider in colliders) {
-			  collider.enabled = false;
+			if(colliders!=null) {
+				foreach(Collider2D collider in colliders) {
+			  		collider.enabled = false;
+				}
 			}
+
 		}
 
 	}
@@ -545,7 +557,9 @@ public class PlayerScript : MonoBehaviour
 
 	void ShowPlatform() {
 	  //how much distance has passed between hide/show the platform (aka, how big was the fall?)
-	  CheckFallingDistance();
+	  if(isFalling) {
+		CheckFallingDistance();
+	  }
 
 	  landingPlatform.GetComponent<SpriteRenderer>().enabled = true;
 	  landingPlatform.GetComponent<BoxCollider2D> ().enabled = true;
@@ -727,7 +741,7 @@ public class PlayerScript : MonoBehaviour
 			Ferr2DT_PathTerrain terrain = collisionObject.GetComponent<Ferr2DT_PathTerrain>();
 			if(terrain!=null) {
 
-			  Debug.Log("Check FAlling distance!!");
+			  Debug.Log("Collided with terrain!!");
 			  //check how much did i fall
 			  CheckFallingDistance();
 
@@ -858,9 +872,12 @@ public class PlayerScript : MonoBehaviour
 
 	  counter.AddPickup();
 	  //add a new balloon?
-	  if(counter.numberPickups >= gem.giftAfter && hasBalloon) {
+	  if(counter.numberPickups >= gem.giftAfter) {
 	    //why the hasBalloon? Can´t i just pick one while falling? It would be nice, i could jump from a platform as well and get one
 
+	    //die the platform
+	    isStandingOnPlatform = false;
+	    HidePlatform();
 
 	    if( (isRed && hasRedGemGift) || (isBlue && hasBlueGemGift) || (isGreen && hasGreenGemGift) ) {
 				//just destroy the gem object, as i already have this gift, and they don´t acumulate

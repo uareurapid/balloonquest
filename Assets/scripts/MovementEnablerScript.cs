@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SnakeScript : MonoBehaviour {
+public class MovementEnablerScript : MonoBehaviour {
 
 	public bool enableMovementOnlyVisible = true;
 	public float enableDelay = 0f;

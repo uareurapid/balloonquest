@@ -269,7 +269,7 @@ public class GameOverScript : MonoBehaviour
 					GUI.color = Color.black;
 					//try to keep the scores aligned
 					if(!scoresHidden) {
-						GUI.Label (new Rect(width/2-60, height/2-120, 300, 60), score < 10 ? " "+ score : score.ToString(),style);
+						GUI.Label (new Rect(width/2-60, height/2-110, 300, 60), score < 10 ? " "+ score : score.ToString(),style);
 					}
 
 
