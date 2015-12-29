@@ -302,7 +302,7 @@ public class GameOverScript : MonoBehaviour
 				}
 				#if UNITY_ANDROID && !UNITY_EDITOR
 				if(rateRect.Contains(Event.current.mousePosition) ) {
-				  Application.OpenURL("market://details?id=com.pcdreams.superjellytroopers");
+				  Application.OpenURL("market://details?id=com.pcdreams.mrballoony");
 				}
 				#endif
 			
@@ -374,7 +374,7 @@ public class GameOverScript : MonoBehaviour
 		if (gameOver != null) {
 			SpriteRenderer spr = gameOver.GetComponent<SpriteRenderer>();
 			if(spr!=null) {
-				Debug.Log("HIDE GAME OVER");
+				//Debug.Log("HIDE GAME OVER");
 				spr.enabled = false;
 			}
 			

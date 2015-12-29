@@ -94,8 +94,8 @@ public class LandingPlatform : MonoBehaviour {
 		//if i'm already on a platform then ignore the collision
 		if(playerObj!=null && player!=null && !player.IsPlayerStandingOnPlatform()) {
 
-			player.PlayerLandedOnPlatform();
 			Destroy(gameObject);
+			player.PlayerLandedOnPlatform();
 		}
 
 	}

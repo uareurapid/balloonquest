@@ -86,7 +86,7 @@ public class PickupCounterScript : MonoBehaviour {
 		GUI.matrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,scaleVector);
 		//}
 		
-		if(Event.current.type==EventType.Repaint) {
+		if(Event.current.type==EventType.Repaint && (showIfNone || numberPickups>0) ) {
 
 		    if(xPosition>0) {
 

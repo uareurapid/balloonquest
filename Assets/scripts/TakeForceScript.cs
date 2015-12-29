@@ -24,7 +24,7 @@ public class TakeForceScript : MonoBehaviour {
 
 	//apply force from AddForceScript gameObject
 	public void TakeForce(Vector2 force) {
-	 Debug.Log("take force");
+	 //Debug.Log("take force");
 		
 		if(rig!=null) {
 		    MoveScript move = GetComponent<MoveScript>();

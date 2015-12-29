@@ -83,7 +83,7 @@ public class PlayerScript : MonoBehaviour
 	
 	private PickupCounterScript parachuteCounter;
 
-	private bool hasBalloon = true;
+	private bool hasBalloon = false;
 	private bool hasParachute = false;
 	private bool hasUmbrella = false;
 
@@ -123,7 +123,7 @@ public class PlayerScript : MonoBehaviour
 		failSafeUsed = false;
 		umbrellaUsed = false;
 		hasUmbrella = false;
-		hasBalloon = true;
+		hasBalloon = false;
 
 		platform = Application.platform;
 		isMobilePlatform = (platform == RuntimePlatform.IPhonePlayer) || (platform == RuntimePlatform.Android);
@@ -160,6 +160,7 @@ public class PlayerScript : MonoBehaviour
 	  isStandingOnPlatform = true;
 	  //is not falling, this to avoid calculate falling distance
 	  isFalling = false;
+	  hasBalloon = false;
       ShowPlatform();
 
 	}
@@ -176,9 +177,18 @@ public class PlayerScript : MonoBehaviour
 	}
 
 	public void PlayerLandedOnPlatform() {
+
 		isStandingOnPlatform = true;
+
+		//hide the sprite and disable the collider
+		if(hasBalloon) {
+		  ReleaseBalloon();
+		}
+		//stop falling
 		DisableGravityScale();
+		//enable move script
 		EnableMoveScript();
+		//show the landing platform
 		ShowPlatform();
 		isFalling = false;
 		landingPlatform.ResetHealthBar();
@@ -203,6 +213,7 @@ public class PlayerScript : MonoBehaviour
 
 
 	public void EnableGravityScale() {
+		Debug.Log("EnableGravityScale");
 		Rigidbody2D rig = GetComponent<Rigidbody2D>();
 		if(rig!=null) {
 			rig.gravityScale =1.0f;
@@ -211,6 +222,7 @@ public class PlayerScript : MonoBehaviour
 	}
 
 	public void DisableGravityScale() {
+		Debug.Log("DisableGravityScale");
 		Rigidbody2D rig = GetComponent<Rigidbody2D>();
 		if(rig!=null) {
 			rig.gravityScale =0.0f;//don´t let him continue to fall
@@ -333,6 +345,11 @@ public class PlayerScript : MonoBehaviour
 	void Update()
 	{
 
+	  if(isStandingOnPlatform) {
+	    MoveScript move = GetComponent<MoveScript>();
+	    Debug.Log("SPEED Y: " + move.speed.y);
+	    Debug.Log("GRAVITI SCALE: " + GetComponent<Rigidbody2D>().gravityScale);
+	  }
 
 		if(playerHealth.hitPoints==0 && !isDead) {
 		  HandleLooseAllLifes();
@@ -401,7 +418,7 @@ public class PlayerScript : MonoBehaviour
 				}
 
 
-				if(jumpingInput>0 && !jump && !isFalling && (isStandingOnPlatform || isGrounded) ) {
+				if(jumpingInput>0 && !jump && !isFalling && !hasBalloon && (isStandingOnPlatform || isGrounded) ) {
 
 				  //can jump
 				  jump = true;
@@ -489,8 +506,9 @@ public class PlayerScript : MonoBehaviour
 
 		DisableMoveScript();
 		EnableGravityScale();
-		if(isStandingOnPlatform)
+		if(isStandingOnPlatform) {
 			HidePlatform();
+		}
 
 		isStandingOnPlatform = false;
 	    isFalling = true;
@@ -539,7 +557,7 @@ public class PlayerScript : MonoBehaviour
 	 fallingStartPosition = GetHero().transform.position;
 
 	 landingPlatform.GetComponent<SpriteRenderer>().enabled = false;
-	 landingPlatform.GetComponent<BoxCollider2D> ().enabled = false;
+	 //landingPlatform.GetComponent<BoxCollider2D> ().enabled = false;
 	 ParticleSystem[] particles = landingPlatform.GetComponentsInChildren<ParticleSystem>();
 	 foreach(ParticleSystem part in particles) {
 	   part.Stop(true);
@@ -562,7 +580,7 @@ public class PlayerScript : MonoBehaviour
 	  }
 
 	  landingPlatform.GetComponent<SpriteRenderer>().enabled = true;
-	  landingPlatform.GetComponent<BoxCollider2D> ().enabled = true;
+	  //landingPlatform.GetComponent<BoxCollider2D> ().enabled = true;
 	  ParticleSystem[] particles = landingPlatform.GetComponentsInChildren<ParticleSystem>();
 	  foreach(ParticleSystem part in particles) {
 	    if(part.tag==null || !part.CompareTag("PlatformSmoke")) {
@@ -580,6 +598,8 @@ public class PlayerScript : MonoBehaviour
 	void EnableMoveScript() {
 	  MoveScript script =  GetComponent<MoveScript>();
 	  script.enabled = true;
+	  //script.speed.y = 2.0f;
+	  //script.direction.y=-1.0f;
 	}
 	
 	
@@ -884,17 +904,32 @@ public class PlayerScript : MonoBehaviour
 	  			Destroy(gem.gameObject);
 	    }
 	    else {
+
 			//i can only have one gift at the time
 			BalloonScript existing = GetComponentInChildren<BalloonScript>();
 			if(existing!=null) {
 		  		Destroy(existing.gameObject);
 			}
 
+			//if is grounded than disable the terrain collider, so he can start falling again
+			//also disable gravity scale, and enable movement
+			if(isGrounded) {
+			  DisableGravityScale();
+			  DisableTerrainColliders();
+			  EnableMoveScript();
+			  isGrounded = false;
+			}
+
 			Sprite newSprite = gem.GetBalloonGift();
+
 	    	SpriteRenderer renderer = GetComponent<SpriteRenderer> ();
 	    	renderer.sprite = newSprite;
 	    	renderer.enabled = true;
 	    	GetComponent<PolygonCollider2D> ().enabled = true;
+
+			//now we have a balloon
+			hasBalloon = true;
+
 	    	soundEffects.PlayPowerupSound();
 
 			gem.PlayPowerupEffect();
