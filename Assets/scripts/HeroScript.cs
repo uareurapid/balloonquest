@@ -63,6 +63,10 @@ public class HeroScript : MonoBehaviour {
 
 	}
 
+	public bool HasChestKey() {
+	  return player.HasChestKey();
+	}
+
 	public bool IsPlayerAlive() {
 	  return player!=null && player.IsPlayerAlive();
 	}
@@ -216,11 +220,28 @@ public class HeroScript : MonoBehaviour {
 
 	}
 
+	public void HandleEnemyCollision(EnemyScript enemy) {
+
+	}
+
+	public void FlipUpsideDown() {
+		//Vector3 flip = new Vector3(transform.localScale.x,transform.localScale.y*-1,transform.localScale.z);
+		//transform.localScale = flip;
+		transform.localRotation = Quaternion.Euler(0, 0, -90);
+
+		GameObject scripts = GameObject.FindGameObjectWithTag("Scripts");
+			if(scripts!=null) {
+				SpecialEffectsHelper sfx = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
+				if (sfx != null) {
+					sfx.PlayAuraEffect(transform.position);
+				}
+			}
+
+	}
+
 	public void BurnHero(bool dieAfterBurn) {
-		Debug.Log ("BURNING NOW");
+
 		if(skull!=null) {
-			//TODO
-			Debug.Log("start burn");
 			if(burnedCount == 0) {
 				InvokeRepeating("SwapBurnedSprite",0f,0.3f);
 				if(dieAfterBurn) {

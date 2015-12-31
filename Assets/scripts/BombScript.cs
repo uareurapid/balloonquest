@@ -3,6 +3,8 @@ using System.Collections;
 
 public class BombScript : MonoBehaviour
 {
+
+    public bool applyForceOnStart = false;
 	public float bombRadius = 10f;			// Radius within which enemies are killed.
 	public float bombForce = 100f;			// Force that enemies are thrown from the blast.
 	public AudioClip boom;					// Audioclip of explosion.
@@ -21,7 +23,10 @@ public class BombScript : MonoBehaviour
 
 	void Start ()
 	{
-		
+
+		if(applyForceOnStart) {
+			GetComponent<Rigidbody2D>().AddForce(new Vector2(0f, bombForce*4));
+		}
 		Invoke("StartDetonation",detonationDelay);
 	}
 
@@ -32,7 +37,7 @@ public class BombScript : MonoBehaviour
 	IEnumerator BombDetonation()
 	{
 		// Play the fuse audioclip.
-		AudioSource.PlayClipAtPoint(fuse, transform.position);
+		AudioSource.PlayClipAtPoint(fuse, Camera.main.transform.position);
 
 		// Wait for 2 seconds.
 		yield return new WaitForSeconds(fuseTime);
@@ -45,7 +50,7 @@ public class BombScript : MonoBehaviour
 	public void Explode()
 	{
 		//play explosion sound
-		AudioSource.PlayClipAtPoint(boom, transform.position);
+		AudioSource.PlayClipAtPoint(boom, Camera.main.transform.position);
 
 		// Find all the colliders on the PlayerLayer layer within the bombRadius.
 		Collider2D[] elements = Physics2D.OverlapCircleAll(transform.position, bombRadius, 1 << LayerMask.NameToLayer("PlayerLayer"));

@@ -19,6 +19,9 @@ public class SpawnerScript : MonoBehaviour
 	public Texture2D[] thumbnails;
 
     public bool canSpawn = false;
+
+    //add a specific z index to the spawned
+    public float zIndex = 0f;
     
     //index of the next thumbnail
 	private int nextThumbnail=-1;
@@ -57,6 +60,7 @@ public class SpawnerScript : MonoBehaviour
 		else {
 
 		}*/
+		spawnCount = 0;
 
 		InvokeRepeating("Spawn",spawnDelay,spawnTime);
 	}
@@ -100,6 +104,7 @@ public class SpawnerScript : MonoBehaviour
 	      if(minSpawnsSameTime < maxSpawnsSameTime) {
 			numSpawns= Random.Range(minSpawnsSameTime,maxSpawnsSameTime+1);
 	      }
+
 	      for(int i = 0; i < numSpawns; i++) {
 
 			int spawnedIndex = 0;
@@ -122,7 +127,13 @@ public class SpawnerScript : MonoBehaviour
 						newPosition.y = transform.position.y;
 					}
 
-					newPosition.z = transform.position.z;
+					if(zIndex != 0f) {
+						newPosition.z =  zIndex;
+					}
+					else {
+						newPosition.z = transform.position.z;
+					}
+
 
 	        		//the spawned object will have the same rotation of the spawner object itself
 				    nextSpawned = (GameObject)Instantiate(enemies[spawnedIndex], newPosition, transform.rotation);
@@ -139,7 +150,11 @@ public class SpawnerScript : MonoBehaviour
 
 	      }
 			
-	  
+
+		if(spawnCount>=maxSpawns) {
+	    	canSpawn = false;
+			CancelInvoke("Spawn");
+	  	}
 			
 			//canSpawn = false;
 			// Play the spawning effect from all of the particle systems.
@@ -178,54 +193,7 @@ public class SpawnerScript : MonoBehaviour
 		    canSpawn = false;
 		}*/
 	}
-	
-	void OnGUI(){
-		/*GUI.skin = skin;
-		
-		Matrix4x4 svMat = GUI.matrix;//save current matrix
-		
-		int width = GUIResolutionHelper.Instance.screenWidth;
-		Vector3 scaleVector = GUIResolutionHelper.Instance.scaleVector;
-		bool isWideScreen = GUIResolutionHelper.Instance.isWidescreen;
-		int increaseFactor = 0;
-		
-		if(isWideScreen) {
-			GUI.matrix = Matrix4x4.TRS(new Vector3( (GUIResolutionHelper.Instance.scaleX - scaleVector.y) / 2 * width, 0, 0), Quaternion.identity, scaleVector);
-			increaseFactor = 100;
-		}
-		else {
-			
-			GUI.matrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,scaleVector);
-		}
 
-		//don´t show nothing if game not running!
-		if(!controller.IsGameOver()) {
-			//was   //740
-			DrawText(translationManager.GetText(GameConstants.MSG_NEXT) + " ", controller.messagesFontSizeSmaller +10,740, 10,220,50);//Screen.width-150
-		
-			if(nextThumbnail>-1) {//TODO &&player still alive
-				Rect next = new Rect(850,20,32,32);//was ,850Screen.width-50+increaseFactor
-				GUI.DrawTexture(next, thumbnails[nextThumbnail]);
-			}
-		}
-
-
-		
-		//restore the matrix
-		GUI.matrix = svMat;*/
-
-	}
-	
-	public void DrawText(string text, int fontSize, int x, int y,int width,int height) {
-		
-		/*
-		GUIStyle centeredStyleSmaller = GUI.skin.GetStyle("Label");
-		centeredStyleSmaller.alignment = TextAnchor.MiddleLeft;
-		centeredStyleSmaller.font = controller.messagesFont;
-		centeredStyleSmaller.fontSize = fontSize;
-		
-		GUI.Label (new Rect(x, y, width, height), text);*/
-	}
 	
 	void OnBecameVisible() {
 		canSpawn = true;
@@ -246,6 +214,13 @@ public class SpawnerScript : MonoBehaviour
     public bool IsSpawningOnHold() {
       return spawnOnHold;
     }
+
+    public void EnableSpawn() {
+    	canSpawn = true;
+		spawnCount = 0;
+		InvokeRepeating("Spawn",spawnDelay,spawnTime);
+    }
+	
 
 		//alows spawning again
 	public void UnlockSpawning() {

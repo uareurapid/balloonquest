@@ -20,6 +20,8 @@ public class SpecialEffectsHelper : MonoBehaviour
 	public ParticleSystem lavaSplashEffect;
 	public ParticleSystem dustEffect;
 
+	public ParticleSystem auraEffect;
+
 	public ParticleSystem electricityEffect;
 
 	public ParticleSystem coinBurstEffect;
@@ -48,6 +50,10 @@ public class SpecialEffectsHelper : MonoBehaviour
 			instance = this;
 		}
 		
+	}
+
+	public void PlayAuraEffect(Vector3 position) {
+		instantiate(auraEffect, position);
 	}
 
 	public void PlayCoinBurstEffect(Vector3 position) {

@@ -7,6 +7,7 @@ public class PickupCounterScript : MonoBehaviour {
 	public Font font;
 	public int fontSize;
 	public Texture2D icon;
+	public int maxCount = 0;
 	//shows in UI, even if value is 0
 	public bool showIfNone = true;
 
@@ -48,7 +49,10 @@ public class PickupCounterScript : MonoBehaviour {
 	}
 
 	public void AddPickup() {
-		numberPickups+=1;
+	   if(maxCount == 0 || (maxCount > 0 && numberPickups < maxCount) ) {
+		 numberPickups+=1;
+	   }
+		
 	}
 	public void RemovePickup() {
 		if(numberPickups > 0)
@@ -56,6 +60,7 @@ public class PickupCounterScript : MonoBehaviour {
 	}
 	
 	public void AddMultiplePickups(int count) {
+		//TODO if(maxCount == 0 || (maxCount > 0 && numberPickups < maxCount) ) {
 		numberPickups+=count;
 	}
 

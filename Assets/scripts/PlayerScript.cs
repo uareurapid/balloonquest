@@ -11,7 +11,6 @@ public class PlayerScript : MonoBehaviour
 {
 	
 	//ScoreScript scoreScript;
-
 	//rect with the texture/direction icons
 	bool isDead = false;
 	public Texture2D lifeIcon;
@@ -41,6 +40,7 @@ public class PlayerScript : MonoBehaviour
 	//the user can move while standing on platform, along with her;
 	private LandingPlatform landingPlatform;
 
+	//the key is needed to open the chest
 	private bool hasKey = false;
 
 	private bool isVisible = true;
@@ -696,57 +696,34 @@ public class PlayerScript : MonoBehaviour
 
 		   //check if i have a gift ballooon undestructible
 		   BalloonScript ball = GetComponentInChildren<BalloonScript>();
-		   if(ball!=null) {
+		   if(ball!=null && hasBalloon) {
 		     //just handle the gift balloon stuff
 		     HandleCollisionWhileUsingGiftBalloon(ball,enemy);
-		     return;
+		     //return;
 		   }
 
 			PlayHitEffect(collisionObject.transform.position);
 
-				
-			if (PlayerHasBalloon ()) {
-				BurstBallon ();
-				if(enemy.isBurner) {
-					GetHero().BurnHero(false);
-				}
-				else {
-					GetHero().BlinkWhenHit();
-				}
+			//get reference for the hero
+			HeroScript hero = GetHero();
 
+				
+			if (hasBalloon) {
+	
+				BurstBallon ();
+				//BurnOrFlip(enemy,false);
 			}
 			else if (PlayerHasParachute ()) {
 				BurstParachute ();
-				if(enemy.isBurner) {
-					GetHero().BurnHero(false);
-				}
-				else {
-					GetHero().BlinkWhenHit();
-				}
+				//BurnOrFlip(enemy,false);
 			}
 			else if (PlayerHasUmbrella ()) {
 				BurstUmbrella ();
-				if(enemy.isBurner) {
-					GetHero().BurnHero(false);
-				}
-				else {
-					GetHero().BlinkWhenHit();
-				}
+				//BurnOrFlip(enemy,false);
 			}
 			else if(IsPlayerAlive()) {
-				if(enemy.isBurner) {
-					GetHero().BurnHero(true);
-					//will die after the animation
-				}
-				else {
-					GetHero().BlinkWhenHit();
-					if(!IsGroundVisible() && !IsPlayerFalling()) {
-						KillPlayer();
-					}
-					  
-					
 
-				}
+				BurnOrFlip(enemy,true);
 
 			}
 	
@@ -756,26 +733,46 @@ public class PlayerScript : MonoBehaviour
 		  hasKey = true;
 		  Destroy(collisionObject);
 		}
-		//not on platform, maybe collided with terrain
+		//not on platform, maybe collided with terrain, but i do not care if i have a balloon
 		else if(!isStandingOnPlatform){
 			Ferr2DT_PathTerrain terrain = collisionObject.GetComponent<Ferr2DT_PathTerrain>();
 			if(terrain!=null) {
 
-			  Debug.Log("Collided with terrain!!");
+			  Debug.Log("COLLIDED TERRAIN");
 			  //check how much did i fall
 			  CheckFallingDistance();
-
+				 
 			  isGrounded = true;
 			  isFalling = false;
 			  jump = false;
 
 			  PlayDustEffect();
 
+
 			  }
+
+
 		}
 
 		
 
+	}
+
+	void BurnOrFlip(EnemyScript enemy, bool dieAfter) {
+
+		if(enemy.isBurner) {
+
+			hero.BurnHero(dieAfter);
+		}
+		else {
+			hero.BlinkWhenHit();
+			hero.FlipUpsideDown();
+		}
+
+		//if is falling and i see the ground i don't die
+		if(dieAfter && !IsGroundVisible() && !IsPlayerFalling()) {
+			KillPlayer();
+		}
 	}
 
 	//hit red effect
@@ -850,7 +847,7 @@ public class PlayerScript : MonoBehaviour
 		      }
 
 		}
-		/*else if(ball.IsUndestructibleThroughTime()) {
+	   else if(ball.IsUndestructibleThroughTime()) {
 		       //green
 
 		    if(!ball.startDestroying) {
@@ -858,7 +855,7 @@ public class PlayerScript : MonoBehaviour
 				ball.StartCountdownDestruction();
 		     }
 
-		}*/
+		}
 	}
 
 	void UpdateHealthBar(float currentHealth) {
@@ -911,15 +908,6 @@ public class PlayerScript : MonoBehaviour
 		  		Destroy(existing.gameObject);
 			}
 
-			//if is grounded than disable the terrain collider, so he can start falling again
-			//also disable gravity scale, and enable movement
-			if(isGrounded) {
-			  DisableGravityScale();
-			  DisableTerrainColliders();
-			  EnableMoveScript();
-			  isGrounded = false;
-			}
-
 			Sprite newSprite = gem.GetBalloonGift();
 
 	    	SpriteRenderer renderer = GetComponent<SpriteRenderer> ();
@@ -929,6 +917,20 @@ public class PlayerScript : MonoBehaviour
 
 			//now we have a balloon
 			hasBalloon = true;
+
+				//if is grounded than disable the terrain collider, so he can start falling again
+			//also disable gravity scale, and enable movement
+			if(isGrounded || hasBalloon) {
+			  //to enable movement script
+			  DisableGravityScale();
+			  //do not collide with terrain while in balloon
+			  DisableTerrainColliders();
+			  //enable movement
+			  EnableMoveScript();
+			  //not anymore
+			  isGrounded = false;
+			}
+
 
 	    	soundEffects.PlayPowerupSound();
 
@@ -1128,7 +1130,7 @@ public class PlayerScript : MonoBehaviour
 	public int GetRemainingLifes() {
 	  return playerHealth.hitPoints;
 	}
-	
+
 	
 	//wait for 3 seconds before show next level
 	IEnumerator PrepareForNextLevel()
@@ -1139,8 +1141,12 @@ public class PlayerScript : MonoBehaviour
 
 	void ShowGameOverAndDestroy()
 	{
-		
-		//yield return new WaitForSeconds(3);
+		StartCoroutine(PrepareForGameOver());
+	}
+
+	IEnumerator PrepareForGameOver()
+	{
+		yield return new WaitForSeconds(2);
 		ShowGameOver(false);
 		Destroy(gameObject);
 	}
@@ -1196,6 +1202,9 @@ public class PlayerScript : MonoBehaviour
 
 
 	}
+
+	//TODO CHECK IF GOING UP OR DOWN
+	//http://answers.unity3d.com/questions/414146/how-to-detect-object-go-up-or-down.html
 
 
 
@@ -1329,6 +1338,7 @@ public class PlayerScript : MonoBehaviour
 	void ReleaseBalloon() {
 		gameObject.GetComponent<SpriteRenderer> ().enabled = false;
 		gameObject.GetComponent<PolygonCollider2D> ().enabled = false;
+		hasBalloon = false;
 	}
 
 	//public void ReleaseStandingPlatform() {
@@ -1341,12 +1351,14 @@ public class PlayerScript : MonoBehaviour
 		GameObject parachute = GameObject.FindGameObjectWithTag("Parachute");
 		parachute.GetComponent<SpriteRenderer> ().enabled = false;
 		parachute.GetComponent<CircleCollider2D> ().enabled = false;
+		hasParachute = false;
 	}
 
 	void ReleaseUmbrella() {
 		GameObject umbrella = GameObject.FindGameObjectWithTag("Umbrella");
 		umbrella.GetComponent<SpriteRenderer> ().enabled = false;
 		umbrella.GetComponent<PolygonCollider2D> ().enabled = false;
+		hasUmbrella = false;
 	}
 
 	//this is here, because the idea is:

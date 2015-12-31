@@ -21,30 +21,39 @@ public class TreasureChestScript : MonoBehaviour {
 
 		GameObject collisionObject = otherCollider.gameObject;
 		HeroScript player = collisionObject.GetComponent<HeroScript> ();
-		if (player != null && player.IsPlayerAlive() && !opened) {
-			//Open the chest
-			Animator anim = GetComponent<Animator>();
-			anim.enabled = true;
-			ActivateScript part = GetComponent<ActivateScript>();
-			if(part!=null) {
-				part.Activate();
+		if (player != null && player.IsPlayerAlive() && !opened ) {
+
+			if(player.HasChestKey()) {
+				//Open the chest
+				Animator anim = GetComponent<Animator>();
+				anim.enabled = true;
+				ActivateScript part = GetComponent<ActivateScript>();
+				if(part!=null) {
+					part.Activate();
+				}
+				opened = true;
+				player.OpenChest(opened);
+
+				ShowPointer();
+
+				//play sound
+				AudioSource au = GetComponent<AudioSource>();
+				if(au!=null) {
+					au.Play();
+				}
+
+				ChangeColorFlash();
+				ChangeRainbowColor();
+				Invoke("UnleashColors",2f);
 			}
-			opened = true;
-			player.OpenChest(opened);
-
-			ShowPointer();
-
-			//play sound
-			AudioSource au = GetComponent<AudioSource>();
-			if(au!=null) {
-				au.Play();
+			else {
+			 //POSSIBLE TO GO UP AGAIN??
 			}
 
-			ChangeColorFlash();
-			ChangeRainbowColor();
-			Invoke("UnleashColors",2f);
+
 
 		}
+
 		
 	}
 
