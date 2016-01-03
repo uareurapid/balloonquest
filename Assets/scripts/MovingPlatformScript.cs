@@ -92,7 +92,13 @@ private float originalZPosition = 0f;
 
 		  if(vertical) {
 		   if(!max) {//continue until reach max
-		     currentPosition.y +=step;
+		     if(!startGoingDown) {
+				currentPosition.y +=step;
+		     }
+		     else {
+			  currentPosition.y -=step;
+		     }
+
 		   }
 		   else if(!stopOnMax) {
 		     currentPosition.y -=step;//go down

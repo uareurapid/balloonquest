@@ -3,6 +3,9 @@ using System.Collections;
 
 public class MoveTowardsScript : MonoBehaviour {
 
+    //if there is a tag, find the associated game object
+    public string targetTag;
+
 	public Transform target;//where to move after landing... center marker, near the wood sign
 	public bool startMoveTowards = false;
 	public float moveTowardsSpeed = 1.3f;
@@ -10,13 +13,15 @@ public class MoveTowardsScript : MonoBehaviour {
 	public bool adjustYOnStart = false;
 	public bool adjustXOnStart =  false;
 	public bool adjustZOnStart =  true;
-
+	public bool destroyWhenReach = false;
 	//in this case the movement is not automatic, but manual
 	public bool allowManualMovement = true;
 
 	// Use this for initialization
 	void Start () {
-
+	  if(targetTag!=null && target==null) {
+	    target = GameObject.FindGameObjectWithTag(targetTag).transform;
+	  }
 	}
 	
 	// Update is called once per frame
@@ -39,6 +44,9 @@ public class MoveTowardsScript : MonoBehaviour {
  			//It is within ~0.1f range, do stuff
 			reachedTarget = true;
 			Debug.Log("Reached position");
+			if(destroyWhenReach) {
+			  Destroy(gameObject);
+			}
  		}
 	 }
 

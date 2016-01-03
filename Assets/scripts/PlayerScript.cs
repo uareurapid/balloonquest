@@ -154,7 +154,7 @@ public class PlayerScript : MonoBehaviour
 	  hasGreenGemGift = false;
 	  hasBlueGemGift = false;
 
-	  ChangeAvatar(false,false,false);
+	  ChangeAvatar(false,false,false,true);
 
 	  //show platform again
 	  isStandingOnPlatform = true;
@@ -588,6 +588,7 @@ public class PlayerScript : MonoBehaviour
 			part.Play();
 	    }
 	  }
+	  ChangeAvatar(false,false,false,true);
 	}
 
 	void DisableMoveScript() {
@@ -728,10 +729,16 @@ public class PlayerScript : MonoBehaviour
 			}
 	
 				
-		}
+		}//collider with the level chest key
 		else if(collisionObject.GetComponent<GoldenKeyScript>()!=null) {
 		  hasKey = true;
-		  Destroy(collisionObject);
+		  //move towards the key counter object
+		  MoveTowardsScript moveTowards = collisionObject.GetComponent<MoveTowardsScript>();
+		  if(moveTowards) {
+		    moveTowards.StartMovingTowards(true);
+		  }
+		  //only destroy when reach final target
+		  //Destroy(collisionObject);
 		}
 		//not on platform, maybe collided with terrain, but i do not care if i have a balloon
 		else if(!isStandingOnPlatform){
@@ -873,6 +880,7 @@ public class PlayerScript : MonoBehaviour
 	   bool isBlue =  false;
 	   bool isGreen = false;
 
+
 	  if(gem.isRed) {
 			counter = GameObject.FindGameObjectWithTag("RedGemCounter").GetComponent<PickupCounterScript>();
 			isRed = true;
@@ -886,19 +894,41 @@ public class PlayerScript : MonoBehaviour
 			counter = GameObject.FindGameObjectWithTag("BlueGemCounter").GetComponent<PickupCounterScript>();
 			isBlue = true;
 	  }
+       //only increase counter on reach target
+	  //counter.AddPickup();
+	 
+	  //move towards the fake counter object
+	  MoveTowardsScript moveTowards = gem.GetComponent<MoveTowardsScript>();
+	  if(moveTowards!=null) {
+	    moveTowards.StartMovingTowards(true);
+	  }
+	  //avoid any other unwanted collision
+	  gem.DisableColliders();
 
-	  counter.AddPickup();
-	  //add a new balloon?
+	  //add a new gift balloon?
 	  if(counter.numberPickups >= gem.giftAfter) {
 	    //why the hasBalloon? Can´t i just pick one while falling? It would be nice, i could jump from a platform as well and get one
 
-	    //die the platform
+	   
+
+	    //TODO maybe i should keep track of current platform health, and then restore it back???
+	    //but maybe i was not standing on the platform, and i was on the air??
+
+	    if(isStandingOnPlatform) {
+
+			//TODO get current health to restore afterwards
+			landingPlatform.StopCountdown();
+	    }
+		//die the platform
 	    isStandingOnPlatform = false;
-	    HidePlatform();
+	    //call hide anyway
+		HidePlatform();
+
 
 	    if( (isRed && hasRedGemGift) || (isBlue && hasBlueGemGift) || (isGreen && hasGreenGemGift) ) {
 				//just destroy the gem object, as i already have this gift, and they don´t acumulate
-	  			Destroy(gem.gameObject);
+	  			if(moveTowards==null)
+	  			   Destroy(gem.gameObject);
 	    }
 	    else {
 
@@ -943,10 +973,11 @@ public class PlayerScript : MonoBehaviour
 	    	hasRedGemGift = isRed;
 	    	hasBlueGemGift = isBlue;
 
-	    	ChangeAvatar(isRed,isGreen,isBlue);
+	    	ChangeAvatar(isRed,isGreen,isBlue,false);
 
 	    	//destroy this gem
-			Destroy(gem.gameObject);
+			if(moveTowards==null)
+			   Destroy(gem.gameObject);
 
 	    }
 		
@@ -956,7 +987,8 @@ public class PlayerScript : MonoBehaviour
 	  }
 	  else {
 	    //just destroy it
-		Destroy(gem.gameObject);
+		if(moveTowards==null)
+			Destroy(gem.gameObject);
 	  }
 
 
@@ -964,24 +996,38 @@ public class PlayerScript : MonoBehaviour
 	}
 
 	//Change the avatar background on the UI canvas
-	void ChangeAvatar(bool red, bool green, bool blue) {
-		GameObject avatar = GameObject.FindGameObjectWithTag("AvatarBalloon");
-		if(avatar!=null) {
-			UnityEngine.UI.Image image = avatar.GetComponent<UnityEngine.UI.Image>();
+	void ChangeAvatar(bool red, bool green, bool blue, bool platform) {
+		GameObject avatarBalloon = GameObject.FindGameObjectWithTag("AvatarBalloon");
+		GameObject avatarPlatform = GameObject.FindGameObjectWithTag("AvatarPlatform");
+
+		UnityEngine.UI.Image balloonImage = avatarBalloon.GetComponent<UnityEngine.UI.Image>();
+		UnityEngine.UI.Image platformImage = avatarPlatform.GetComponent<UnityEngine.UI.Image>();
+
+		if(platform) {
+			balloonImage.enabled = false;
+			platformImage.sprite = landingPlatform.GetComponent<SpriteRenderer>().sprite;
+			platformImage.enabled = true;
+		}
+		else {
+			platformImage.enabled = false;
+
 			if(red) {
-				image.sprite = redBalloon;
+				balloonImage.sprite = redBalloon;
 			}
 			else if(green) {
-				image.sprite = greenBalloon;
+				balloonImage.sprite = greenBalloon;
 			}
 			else if(blue) {
-				image.sprite = blueBalloon;
+				balloonImage.sprite = blueBalloon;
 			}
 			else {
 				//the landing platform sprite
-				image.sprite = landingPlatform.GetComponent<SpriteRenderer>().sprite;
+				platformImage.sprite = landingPlatform.GetComponent<SpriteRenderer>().sprite;
 			}
+
+			balloonImage.enabled = true;
 		}
+
 
    }
 
@@ -1316,8 +1362,15 @@ public class PlayerScript : MonoBehaviour
 			EnableUmbrella();
 		} 
 		else {
-			//make him fall to the ground
-			EnableGravityScale ();
+			if(landingPlatform.IsCountdownPaused()) {
+		  		landingPlatform.RestoreCurrentHealth();
+		  		ShowPlatform();
+			}
+			else {
+				//make him fall to the ground
+				EnableGravityScale ();
+			}
+
 
 		}
 	}

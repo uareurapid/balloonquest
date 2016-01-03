@@ -130,8 +130,25 @@ public class GemScript : MonoBehaviour {
 
    }
    void OnDestroy() {
-    Debug.Log("Destroying gem");
+
+     Debug.Log("Destroying gem");
+	 PickupCounterScript counter;
+
+	  if(isRed) {
+			counter = GameObject.FindGameObjectWithTag("RedGemCounter").GetComponent<PickupCounterScript>();
+	  }
+	  else if(isGreen) {
+			counter = GameObject.FindGameObjectWithTag("GreenGemCounter").GetComponent<PickupCounterScript>();
+	  }
+	  else {
+	  		//blue
+			counter = GameObject.FindGameObjectWithTag("BlueGemCounter").GetComponent<PickupCounterScript>();
+	  }
+	  if(counter!=null)
+	    counter.AddPickup();
    }
 
-
+	public void DisableColliders() {
+	 GetComponent<BoxCollider2D>().enabled = false;
+	}
 }

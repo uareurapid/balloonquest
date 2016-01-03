@@ -7,6 +7,9 @@ public class LandingPlatform : MonoBehaviour {
 	PlayerScript player;
 	BoxCollider2D colliderBox;
 
+	private bool restoreCurrentHealth = false;
+	private bool pauseCounter = false;
+
 	public float platformLifetime = 15f; //15 seconds
 	private float currentPlatformLifetime = 15f; //15 seconds
 	private bool startDestroying = false;
@@ -31,6 +34,22 @@ public class LandingPlatform : MonoBehaviour {
 		}
 
 	}
+
+	//restore health
+	public void RestoreCurrentHealth() {
+	//start counting again
+	 pauseCounter = false;
+	 startDestroying = true;
+	}
+
+	//stop counter
+	public void StopCountdown() {
+	  pauseCounter = true;
+	}
+
+	public bool IsCountdownPaused() {
+	  return pauseCounter;
+	}
 	
 	// Update is called once per frame
 	void Update () {
@@ -46,6 +65,9 @@ public class LandingPlatform : MonoBehaviour {
 	}
 
 	public void DecreaseSecondsCounter() {
+	  if(pauseCounter) {
+	    return;//do nothing
+	  }
 	  currentPlatformLifetime-=1f;
 		if(currentPlatformLifetime < 0f) {
 			currentPlatformLifetime = 0f;

@@ -247,7 +247,7 @@ public class GameControllerScript : MonoBehaviour {
 
 		metersHealtBarScript = metersHealthBar.GetComponent<JetpackBar>();
 		metersHealtBarScript.SetMaxValue(missionTimeInSeconds);
-		//metersHealtBarScript.SetCurrentValue(elapsedMissionMeters);
+		metersHealtBarScript.SetCurrentValue(missionTimeInSeconds);
 	}
 
 	void OnLevelWasLoaded(int level) {
@@ -398,6 +398,8 @@ public class GameControllerScript : MonoBehaviour {
 
 	 totalRemainingMissionTimeInSeconds -=1;
 
+	    //update the blue health bar
+		metersHealtBarScript.SetCurrentValue(totalRemainingMissionTimeInSeconds);
 
 		//time is up! player dead!
 	    if(elapsedMissionMinutes==0 && elapsedMissionSeconds==0) {
