@@ -116,6 +116,19 @@ public class LandingPlatform : MonoBehaviour {
 		//if i'm already on a platform then ignore the collision
 		if(playerObj!=null && player!=null && !player.IsPlayerStandingOnPlatform()) {
 
+		    //assign the player movement with the same direction of the platform mevement
+		    MovingPlatformScript moving = GetComponent<MovingPlatformScript>();
+		    if(moving!=null) {
+				MoveScript movement = player.GetComponent<MoveScript>();
+		    	if(moving.startGoingDown) {
+		    	  //down movement
+		    	  movement.direction.y = -1f;
+		    	}
+		    	else {
+		    	  movement.direction.y = 1f;
+		    	}
+		    }
+		    //destroy the platform
 			Destroy(gameObject);
 			player.PlayerLandedOnPlatform();
 		}
