@@ -6,6 +6,8 @@ namespace MrBalloony
 		public class GameConstants
 		{
 				public const int MINIMUM_COINS_FAILSAFE_PARACHUTE = 5;
+				public const int MINIMUM_COINS_FAILSAFE_UMBRELLA = 10;
+
 				public const string PLAYING_WORLD = "last_world";
 				public const string PLAYING_LEVEL = "last_level";
 

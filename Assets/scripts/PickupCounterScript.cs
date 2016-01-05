@@ -11,6 +11,9 @@ public class PickupCounterScript : MonoBehaviour {
 	//shows in UI, even if value is 0
 	public bool showIfNone = true;
 
+	//for onGUI
+	public bool displayable = true;
+
 	//something that we instantiate and add to player object
 	public GameObject transformGift = null;
 	//this will be the balloon script basically
@@ -76,38 +79,38 @@ public class PickupCounterScript : MonoBehaviour {
 	}
 	
 	void OnGUI() {
-	    
-	    GUI.skin = skin;
-		Matrix4x4 svMat = GUI.matrix;//save current matrix
-		int width = resolutionHelper.screenWidth;
-		Vector3 scaleVector = resolutionHelper.scaleVector;
-		bool isWideScreen = resolutionHelper.isWidescreen;
-		
-		//if(isWideScreen) {
-		//	GUI.matrix = Matrix4x4.TRS(new Vector3( (resolutionHelper.scaleX - scaleVector.y) / 2 * width, 0, 0), Quaternion.identity, scaleVector);
-		//}
-		//else {
+
+		if(displayable) {
+
+			GUI.skin = skin;
+			Matrix4x4 svMat = GUI.matrix;//save current matrix
+			int width = resolutionHelper.screenWidth;
+			Vector3 scaleVector = resolutionHelper.scaleVector;
+			bool isWideScreen = resolutionHelper.isWidescreen;
+
+			GUI.matrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,scaleVector);
+			//}
 			
-		GUI.matrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,scaleVector);
-		//}
-		
-		if(Event.current.type==EventType.Repaint && (showIfNone || numberPickups>0) ) {
+			if(Event.current.type==EventType.Repaint && (showIfNone || numberPickups>0) ) {
 
-		    if(xPosition>0) {
+			    if(xPosition>0) {
 
-				DrawText( "X " + numberPickups, fontSize,xPosition+textureWidth ,yPosition,120,60);
-				GUI.DrawTexture(new Rect(xPosition,yPosition,textureWidth,textureHeight),icon);
-		    }
-		    else {
+					DrawText( "X " + numberPickups, fontSize,xPosition+textureWidth ,yPosition,120,60);
+					GUI.DrawTexture(new Rect(xPosition,yPosition,textureWidth,textureHeight),icon);
+			    }
+			    else {
 
-				DrawText( "X " + numberPickups, fontSize, width-textureWidth,yPosition,120,60);
-				GUI.DrawTexture(new Rect(width-textureWidth*2,yPosition,textureWidth,textureHeight),icon);
-		    }
+					DrawText( "X " + numberPickups, fontSize, width-textureWidth,yPosition,120,60);
+					GUI.DrawTexture(new Rect(width-textureWidth*2,yPosition,textureWidth,textureHeight),icon);
+			    }
 
-       
-			
+	       
+				
+			}
+			GUI.matrix = svMat;
 		}
-		GUI.matrix = svMat;
+	    
+
 	}
 	
 	public void DrawText(string text, int fontSize, int x, int y,int width,int height) {
@@ -123,6 +126,7 @@ public class PickupCounterScript : MonoBehaviour {
 
 	//add this transform to the player object
 	public void AddGiftGameObjectToPlayer(PlayerScript player) {
+
 	  if(transformGift!=null) {
 		 GameObject newBalloonObject = (GameObject)Instantiate(transformGift, player.transform.position, player.transform.rotation);	
 		 newBalloonObject.transform.parent = player.transform;
@@ -151,9 +155,6 @@ public class PickupCounterScript : MonoBehaviour {
 		   HealthBar bar = healthbar.GetComponent<HealthBar>();
 			//set visible
 		   bar.SetMaxHealth(initialValue);
-		//	foreach(UnityEngine.UI.Image img in bar.gameObject.GetComponentsInChildren<UnityEngine.UI.Image>()){
-		//	   img.enabled=true;
-		//	}
 		}
 	}
 	

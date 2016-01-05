@@ -82,6 +82,8 @@ public class PlayerScript : MonoBehaviour
 	private bool canMove = true;
 	
 	private PickupCounterScript parachuteCounter;
+	private PickupCounterScript umbrellaCounter;
+	private PickupCounterScript coinCounter;
 
 	private bool hasBalloon = false;
 	private bool hasParachute = false;
@@ -113,7 +115,10 @@ public class PlayerScript : MonoBehaviour
 		startingPos = cachedTransform.position;
 		
 		scripts = GameObject.FindGameObjectWithTag("Scripts");
-		parachuteCounter = scripts.GetComponent<PickupCounterScript>();
+		parachuteCounter = GameObject.FindGameObjectWithTag("ParachuteCounter").GetComponent<PickupCounterScript>();
+		umbrellaCounter = GameObject.FindGameObjectWithTag("UmbrellaCounter").GetComponent<PickupCounterScript>();
+		coinCounter = scripts.GetComponent<PickupCounterScript>();
+
 		controller = scripts.GetComponent<GameControllerScript> ();
 		//make sure we have this updated
 		resolutionHelper = scripts.GetComponent<GUIResolutionHelper> ();
@@ -154,13 +159,19 @@ public class PlayerScript : MonoBehaviour
 	  hasGreenGemGift = false;
 	  hasBlueGemGift = false;
 
+	  //hide the balloon
+	  ReleaseBalloon();
+
+	  //change the avatar as well
 	  ChangeAvatar(false,false,false,true);
 
-	  //show platform again
+	  //on platform again
 	  isStandingOnPlatform = true;
 	  //is not falling, this to avoid calculate falling distance
 	  isFalling = false;
 	  hasBalloon = false;
+
+	  //show it again and reset health bar as well
       ShowPlatform();
 
 	}
@@ -184,6 +195,7 @@ public class PlayerScript : MonoBehaviour
 		if(hasBalloon) {
 		  ReleaseBalloon();
 		}
+
 		//stop falling
 		DisableGravityScale();
 		//enable move script
@@ -191,13 +203,18 @@ public class PlayerScript : MonoBehaviour
 		//show the landing platform
 		ShowPlatform();
 		isFalling = false;
-		landingPlatform.ResetHealthBar();
+		//landingPlatform.ResetHealthBar();
 		jump = false;
 		//disable the colliders again
 		DisableTerrainColliders();
 
 		if(isStandingOnPlatform && !hasParachute/* && !hasBalloon*/) {
 		  canMove = true;
+		}
+
+		if(isGrounded) {
+		   //not anymore
+			isGrounded = false;
 		}
 
 	}
@@ -261,7 +278,7 @@ public class PlayerScript : MonoBehaviour
 	   //buyedInfiniteLifes = PlayerPrefs.HasKey(Soomla.MyStore.JellyTrooperAssets.JELLY_TROOPERS_INFINITE_LIFES_PRODUCT_ID);
 	 }
 	
-	void OnGUI() {
+	/*void OnGUI() {
 	
 		GUI.skin = skin;
 		
@@ -281,7 +298,7 @@ public class PlayerScript : MonoBehaviour
 			GUI.matrix = svMat;
 
 		}
-	}
+	}*/
 
 	//TODO this should be an interface, somewhere
 	string GetTranslationKey(string key) {
@@ -588,6 +605,10 @@ public class PlayerScript : MonoBehaviour
 			part.Play();
 	    }
 	  }
+
+		//reset the health bar
+	  landingPlatform.ResetHealthBar();
+
 	  ChangeAvatar(false,false,false,true);
 	}
 
@@ -642,7 +663,7 @@ public class PlayerScript : MonoBehaviour
 		}
 	}
 
-	public void AddUmbrella() {
+	public void AddFailsafeUmbrella() {
 		
 		hasUmbrella = true;
 		SpecialEffectsHelper effects = scripts.GetComponentInChildren<SpecialEffectsHelper> ();
@@ -753,6 +774,15 @@ public class PlayerScript : MonoBehaviour
 			  isFalling = false;
 			  jump = false;
 
+			  //NOTE the balloon does not collide with terrain, as this is a gift to the player
+			  //but the parachute and the umbrellas burst!
+			  if(hasParachute) {
+			    BurstParachute();
+			  }
+			  else if(hasUmbrella) {
+			   BurstUmbrella();
+			  }
+
 			  PlayDustEffect();
 
 
@@ -854,7 +884,7 @@ public class PlayerScript : MonoBehaviour
 		      }
 
 		}
-	   else if(ball.IsUndestructibleThroughTime()) {
+	   /*else if(ball.IsUndestructibleThroughTime()) {
 		       //green
 
 		    if(!ball.startDestroying) {
@@ -862,7 +892,7 @@ public class PlayerScript : MonoBehaviour
 				ball.StartCountdownDestruction();
 		     }
 
-		}
+		}*/
 	}
 
 	void UpdateHealthBar(float currentHealth) {
@@ -906,7 +936,7 @@ public class PlayerScript : MonoBehaviour
 	  gem.DisableColliders();
 
 	  //add a new gift balloon?
-	  if(counter.numberPickups >= gem.giftAfter) {
+		if(counter.numberPickups > 0 && (counter.numberPickups % gem.giftAfter == 0) ) {
 	    //why the hasBalloon? Can´t i just pick one while falling? It would be nice, i could jump from a platform as well and get one
 
 	   
@@ -915,8 +945,7 @@ public class PlayerScript : MonoBehaviour
 	    //but maybe i was not standing on the platform, and i was on the air??
 
 	    if(isStandingOnPlatform) {
-
-			//TODO get current health to restore afterwards
+			//stop decreasing counter
 			landingPlatform.StopCountdown();
 	    }
 		//die the platform
@@ -951,21 +980,14 @@ public class PlayerScript : MonoBehaviour
 				//if is grounded than disable the terrain collider, so he can start falling again
 			//also disable gravity scale, and enable movement
 			if(isGrounded || hasBalloon) {
-			  //to enable movement script
-			  DisableGravityScale();
-			  //do not collide with terrain while in balloon
-			  DisableTerrainColliders();
-			  //enable movement
-			  EnableMoveScript();
-			  //not anymore
-			  isGrounded = false;
-			}
 
+				RestartDescent();
+			}
 
 	    	soundEffects.PlayPowerupSound();
 
 			gem.PlayPowerupEffect();
-	    	//add the balloon script
+	    	//add the balloon script, will restart the health counter too
 	    	counter.AddGiftGameObjectToPlayer(this);
 
 	    	//now i need to reset it when i destroy the balloon script
@@ -993,6 +1015,17 @@ public class PlayerScript : MonoBehaviour
 
 
 
+	}
+
+	void RestartDescent() {
+		//to enable movement script
+		DisableGravityScale();
+		//do not collide with terrain while in balloon
+		DisableTerrainColliders();
+		//enable movement
+		EnableMoveScript();
+		//not anymore
+		isGrounded = false;
 	}
 
 	//Change the avatar background on the UI canvas
@@ -1318,14 +1351,33 @@ public class PlayerScript : MonoBehaviour
 
 	public void IncreaseCoins(int value) {
 
-      if(parachuteCounter!=null) {
-        parachuteCounter.AddPickup();
-		if(parachuteCounter.numberPickups>=GameConstants.MINIMUM_COINS_FAILSAFE_PARACHUTE && !hasParachute) {
-			//should be bought with virtual currency?
-			AddFailsafeParachute();
-			parachuteCounter.RemoveMultiplePickups(GameConstants.MINIMUM_COINS_FAILSAFE_PARACHUTE);
+		if(coinCounter!=null) {
+		  coinCounter.AddPickup();
 		}
-      }
+
+		if(coinCounter.numberPickups >= GameConstants.MINIMUM_COINS_FAILSAFE_PARACHUTE) {
+
+			if(parachuteCounter!=null) {
+	        	parachuteCounter.AddPickup();
+				if(parachuteCounter.numberPickups > 0  && (parachuteCounter.numberPickups % GameConstants.MINIMUM_COINS_FAILSAFE_PARACHUTE == 0) && !hasParachute) {
+					//should be bought with virtual currency?
+					AddFailsafeParachute();
+					parachuteCounter.RemoveMultiplePickups(GameConstants.MINIMUM_COINS_FAILSAFE_PARACHUTE);
+				}
+			}
+		}
+
+		if(coinCounter.numberPickups >= GameConstants.MINIMUM_COINS_FAILSAFE_PARACHUTE)  {
+			if(umbrellaCounter!=null) {
+				umbrellaCounter.AddPickup();
+				if(umbrellaCounter.numberPickups > 0 && (umbrellaCounter.numberPickups % GameConstants.MINIMUM_COINS_FAILSAFE_UMBRELLA == 0)  && !hasUmbrella) {
+					//should be bought with virtual currency?
+					AddFailsafeUmbrella();
+					umbrellaCounter.RemoveMultiplePickups(GameConstants.MINIMUM_COINS_FAILSAFE_UMBRELLA);
+				}
+      		}
+		}
+     
 	}
 	
 
@@ -1351,28 +1403,34 @@ public class PlayerScript : MonoBehaviour
 		//disable colliders and renderers
 		ReleaseBalloon();
 
-		if (hasParachute) {
-			//enable parachute sprite, will reset the vars:
-			//isFalling and isLanding
-			EnableParachute ();
-		} 
-		if (hasUmbrella) {
-			//enable parachute sprite, will reset the vars:
-			//isFalling and isLanding
-			EnableUmbrella();
-		} 
+
+		if(landingPlatform.IsCountdownPaused()) {
+		  		//landingPlatform.ResetHealthBar();
+		  	ShowPlatform();
+		}
 		else {
-			if(landingPlatform.IsCountdownPaused()) {
-		  		landingPlatform.RestoreCurrentHealth();
-		  		ShowPlatform();
-			}
+		    
+			if (hasParachute && !isGrounded) {
+				//enable parachute sprite, will reset the vars:
+				//isFalling and isLanding
+				EnableParachute ();
+				//DisableTerrainColliders();
+			} 
+			else if (hasUmbrella && !isGrounded) {
+				//enable parachute sprite, will reset the vars:
+				//isFalling and isLanding
+				EnableUmbrella();
+				//DisableTerrainColliders();
+			} 
 			else {
-				//make him fall to the ground
+				//just make him fall to the ground
 				EnableGravityScale ();
 			}
 
-
 		}
+
+
+		
 	}
 
 	public bool PlayerHasBalloon() {
@@ -1473,18 +1531,36 @@ public class PlayerScript : MonoBehaviour
 		if(isStandingOnPlatform) {
 			HidePlatform();
 		}
-			
-		//make him fall to the ground
-		EnableGravityScale ();
-		//enable terrain collisions
-		EnableTerrainColliders();
-		//disable movement TODO check DisableMovement implementation
-		GetComponent<MoveScript>().enabled = false;
 
-		isFalling = true;
-		isLanding = false;
-		hasParachute = false;
+		if (hasParachute) {
+			//enable parachute sprite, will reset the vars:
+			//isFalling and isLanding
+			EnableParachute ();
+		} 
+		else if (hasUmbrella) {
+			//enable parachute sprite, will reset the vars:
+			//isFalling and isLanding
+			EnableUmbrella();
+		} 
+		else {
+			//just make him fall to the ground
+			EnableGravityScale ();
+
+			//disable movement TODO check DisableMovement implementation
+			GetComponent<MoveScript>().enabled = false;
+
+			isFalling = true;
+			isLanding = false;
+			hasParachute = false;
+			hasUmbrella = false;
+
+		}
+		//in any case i am not on the platform
 		isStandingOnPlatform = false;
+		//enable terrain collisions in any case
+		EnableTerrainColliders();
+
+
 
 	}
 
@@ -1504,8 +1580,12 @@ public class PlayerScript : MonoBehaviour
 			failSafeUsed = true;
 		}
 
+		hasParachute = true;
 		isFalling = false;
 		isLanding = false;
+
+
+		//&& hasParachute && !failSafeUsed
 	}
 
 	private void EnableUmbrella() {
@@ -1516,6 +1596,7 @@ public class PlayerScript : MonoBehaviour
 			umbrellaUsed = true;
 		}
 
+		hasUmbrella = true;
 		isFalling = false;
 		isLanding = false;
 	}

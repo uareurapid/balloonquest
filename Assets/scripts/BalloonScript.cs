@@ -68,6 +68,7 @@ public class BalloonScript : MonoBehaviour {
 		}
 	}
 
+	//this is called manually
 	public void DecreaseHitsCounter() {
 
 	  undestructibleForNHits-=1;
@@ -91,7 +92,14 @@ public class BalloonScript : MonoBehaviour {
 	  startDestroying = true;
 	}
 
+	//this is called automatically, so need to call CanceInvoke as well
 	public void DecreaseSecondsCounter() {
+
+	  //do nothing
+	  if(destroyable) {
+	    return;
+	  }
+
 	  undestructibleForNSeconds-=1;
 	  if(undestructibleForNSeconds < 0) {
 		undestructibleForNSeconds = 0;
@@ -101,6 +109,7 @@ public class BalloonScript : MonoBehaviour {
 
 	  if(undestructibleForNSeconds==0) {
 	    destroyable = true;
+		CancelInvoke("DecreaseSecondsCounter");
 	  }
 	}
 
@@ -124,29 +133,6 @@ public class BalloonScript : MonoBehaviour {
 	  return initialNumberOfSeconds;
 	}
 
-	/*void OnGUI() {
-	
-		GUI.skin = skin;
-
-		if(centeredStyleSmaller==null) {
-		  BuildStyle();
-		}
-		
-		if(Event.current.type==EventType.Repaint ) {//&& !controller.IsGameOver()
-
-			
-			//Matrix4x4 svMat = GUI.matrix;//save current matrix
-			//GUI.matrix = Matrix4x4.TRS(Vector3.zero,Quaternion.identity,resolutionHelper.scaleVector);
-
-
-			  
-
-			 
-		
-
-		}
-	}*/
-
 	public void DrawText(string text, int fontSize, int x, int y,int width,int height) {
 		
 		GUI.Label (new Rect(x, y, width, height), text,centeredStyleSmaller);
@@ -162,7 +148,9 @@ public class BalloonScript : MonoBehaviour {
 
 	//just avoid calling this again
 	void OnDestroy() {
-		destroyable = false;
+	    destroyable = false;
+	    //do i need to call CancelInvoke as well?, should not.
+		
 	}
 
 	void UpdateHealthBar(float currentValue) {

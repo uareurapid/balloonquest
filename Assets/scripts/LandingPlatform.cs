@@ -7,7 +7,6 @@ public class LandingPlatform : MonoBehaviour {
 	PlayerScript player;
 	BoxCollider2D colliderBox;
 
-	private bool restoreCurrentHealth = false;
 	private bool pauseCounter = false;
 
 	public float platformLifetime = 15f; //15 seconds
@@ -33,13 +32,6 @@ public class LandingPlatform : MonoBehaviour {
 		   healthbar = bar.GetComponent<HealthBar>();
 		}
 
-	}
-
-	//restore health
-	public void RestoreCurrentHealth() {
-	//start counting again
-	 pauseCounter = false;
-	 startDestroying = true;
 	}
 
 	//stop counter
@@ -91,7 +83,11 @@ public class LandingPlatform : MonoBehaviour {
 
 	public void ResetHealthBar() {
 	  CancelInvoke("DecreaseSecondsCounter");
+	  pauseCounter = false;
 	  currentPlatformLifetime = platformLifetime;
+	  //actually reset the canvas object
+	  SetHealthBar();
+	  //start counting again
 	  StartCountdownDestruction();
 	}
 
@@ -117,7 +113,7 @@ public class LandingPlatform : MonoBehaviour {
 		if(playerObj!=null && player!=null && !player.IsPlayerStandingOnPlatform()) {
 
 		    //assign the player movement with the same direction of the platform mevement
-		    MovingPlatformScript moving = GetComponent<MovingPlatformScript>();
+		    /*MovingPlatformScript moving = GetComponent<MovingPlatformScript>();
 		    if(moving!=null) {
 				MoveScript movement = player.GetComponent<MoveScript>();
 		    	if(moving.startGoingDown) {
@@ -127,7 +123,7 @@ public class LandingPlatform : MonoBehaviour {
 		    	else {
 		    	  movement.direction.y = 1f;
 		    	}
-		    }
+		    }*/
 		    //destroy the platform
 			Destroy(gameObject);
 			player.PlayerLandedOnPlatform();
